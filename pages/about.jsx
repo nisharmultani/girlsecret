@@ -28,13 +28,13 @@ export default function About() {
                   and confident in her own skin, starting with the intimates she wears every day.
                 </p>
                 <p>
-                  We believe that comfort and beauty should never be compromised. That's why we carefully design
+                  We believe that comfort and beauty should never be compromised. That&apos;s why we carefully design
                   and curate each piece in our collection—from supportive everyday bras to delicate lace lingerie.
                   Every item features soft fabrics, thoughtful construction, and styles that celebrate your body.
                 </p>
                 <p>
                   Our commitment to the perfect fit, premium quality, and your privacy has made us a trusted
-                  destination for intimate apparel. We're not just selling underwear; we're empowering women
+                  destination for intimate apparel. We&apos;re not just selling underwear; we&apos;re empowering women
                   to feel confident and beautiful from the inside out.
                 </p>
               </div>

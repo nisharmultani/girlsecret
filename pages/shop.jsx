@@ -12,7 +12,7 @@ const sortOptions = [
 ];
 
 export default function Shop({ products: initialProducts, categories }) {
-  // const [products, setProducts] = useState(initialProducts);
+  const [products, setProducts] = useState(initialProducts);
   const [filteredProducts, setFilteredProducts] = useState(initialProducts);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedSort, setSelectedSort] = useState(sortOptions[0]);

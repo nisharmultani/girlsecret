@@ -29,7 +29,7 @@ export default function Contact() {
           <div className="text-center">
             <h1 className="section-title">Contact Us</h1>
             <p className="section-subtitle">
-              Have a question? We'd love to hear from you
+              Have a question? We&apos;d love to hear from you
             </p>
           </div>
         </div>
@@ -43,7 +43,7 @@ export default function Contact() {
 
             {submitted && (
               <div className="mb-6 bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg">
-                Thank you for your message! We'll get back to you soon.
+                Thank you for your message! We&apos;ll get back to you soon.
               </div>
             )}
 

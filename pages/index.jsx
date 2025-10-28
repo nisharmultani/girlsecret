@@ -47,11 +47,13 @@ export default function Home({ featuredProducts }) {
               <div className="absolute inset-0 bg-gradient-to-br from-rose-200/50 to-blush-200/50 rounded-3xl transform rotate-3"></div>
               <div className="relative h-full bg-white rounded-3xl shadow-2xl overflow-hidden">
                 <Image
-                  src="https://images.unsplash.com/photo-1583241800698-d6e6a6891a18?w=800"
+                  src="https://unsplash.com/photos/woman-in-white-floral-brassiere-SyHGuq6HrGA"
                   alt="Beautiful Intimate Apparel"
-                  fill
+                  // fill
+                  height={34}
+                  width={49}
                   className="object-cover"
-                  priority
+                  // priority
                 />
               </div>
             </div>

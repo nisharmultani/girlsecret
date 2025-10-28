@@ -86,7 +86,7 @@ Fields:
 - `Email` (Email)
 - `Rating` (Number, 1-5)
 - `Comment` (Long text)
-- `CreatedAt` (Date)
+- `Created_At` (Date)
 - `Approved` (Checkbox)
 
 #### PromoCodes Table
@@ -103,7 +103,7 @@ Fields:
 Fields:
 - `ReferrerEmail` (Email)
 - `ReferredEmail` (Email)
-- `CreatedAt` (Date)
+- `Created_At` (Date)
 - `Status` (Single select: Pending, Completed)
 
 ### 3. Configure Environment Variables

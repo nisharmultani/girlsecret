@@ -1,5 +1,8 @@
 import { useState } from 'react';
 import { ChevronDownIcon } from '@heroicons/react/24/outline';
+import Link from "next/link";
+
+
 
 const faqs = [
   {
@@ -178,9 +181,9 @@ export default function FAQ() {
           <p className="text-gray-600 mb-6">
             Our fit specialists are here to help you find your perfect fit
           </p>
-          <a href="/contact" className="btn-primary inline-block">
+          <Link href="/contact" className="btn-primary inline-block">
             Contact Us
-          </a>
+          </Link>
         </div>
       </div>
     </div>

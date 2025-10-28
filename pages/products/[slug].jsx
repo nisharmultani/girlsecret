@@ -318,7 +318,7 @@ export default function ProductDetail({ product, reviews }) {
                         <span className="font-semibold">{review.name}</span>
                       </div>
                       <span className="text-sm text-gray-500">
-                        {new Date(review.createdAt).toLocaleDateString()}
+                        {new Date(review.created_At).toLocaleDateString()}
                       </span>
                     </div>
                     <p className="text-gray-700">{review.comment}</p>

@@ -13,7 +13,7 @@ export default function Terms() {
           <section>
             <h2 className="text-2xl font-serif font-bold text-gray-900 mb-4">1. Agreement to Terms</h2>
             <p>
-              By accessing and using GirlSecret's website, you agree to be bound by these Terms of Service.
+              By accessing and using GirlSecret&apos;s website, you agree to be bound by these Terms of Service.
               If you do not agree with any part of these terms, you may not use our services.
             </p>
           </section>
