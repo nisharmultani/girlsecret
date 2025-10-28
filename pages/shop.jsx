@@ -43,9 +43,9 @@ export default function Shop({ products: initialProducts, categories }) {
       {/* Header */}
       <div className="bg-white shadow-sm">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
-          <h1 className="section-title">Shop All Products</h1>
+          <h1 className="section-title">Intimate Apparel Collection</h1>
           <p className="section-subtitle">
-            Discover our complete collection of luxury beauty and lifestyle products
+            Beautiful bras, panties, and lingerie designed for comfort and confidence
           </p>
         </div>
       </div>
@@ -61,7 +61,7 @@ export default function Shop({ products: initialProducts, categories }) {
                   onClick={() => setSelectedCategory('all')}
                   className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${
                     selectedCategory === 'all'
-                      ? 'bg-luxury-600 text-white'
+                      ? 'bg-rose-500 text-white'
                       : 'hover:bg-gray-100'
                   }`}
                 >
@@ -73,7 +73,7 @@ export default function Shop({ products: initialProducts, categories }) {
                     onClick={() => setSelectedCategory(category)}
                     className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${
                       selectedCategory === category
-                        ? 'bg-luxury-600 text-white'
+                        ? 'bg-rose-500 text-white'
                         : 'hover:bg-gray-100'
                     }`}
                   >
@@ -115,7 +115,7 @@ export default function Shop({ products: initialProducts, categories }) {
                           key={option.value}
                           className={({ active }) =>
                             `relative cursor-pointer select-none py-2 px-4 ${
-                              active ? 'bg-luxury-50 text-luxury-900' : 'text-gray-900'
+                              active ? 'bg-rose-50 text-rose-900' : 'text-gray-900'
                             }`
                           }
                           value={option}
@@ -152,9 +152,9 @@ export async function getStaticProps() {
         products,
         categories,
         seo: {
-          title: 'Shop All Products',
-          description: 'Browse our complete collection of luxury beauty and lifestyle products.',
-          keywords: 'shop beauty products, buy cosmetics, luxury beauty store, skincare products',
+          title: 'Shop Intimate Apparel',
+          description: 'Browse our complete collection of beautiful bras, panties, lingerie, and intimate apparel.',
+          keywords: 'buy bras, shop panties, lingerie store, intimate apparel, women\'s underwear, comfortable bras',
           path: '/shop',
         },
       },

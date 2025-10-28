@@ -16,27 +16,31 @@
 
 @layer components {
   .btn-primary {
-    @apply bg-luxury-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-luxury-700 transition-all duration-200 shadow-md hover:shadow-lg;
+    @apply bg-rose-500 text-white px-6 py-3 rounded-lg font-medium hover:bg-rose-600 transition-all duration-200 shadow-md hover:shadow-lg;
   }
 
   .btn-secondary {
-    @apply bg-white text-luxury-600 px-6 py-3 rounded-lg font-medium border-2 border-luxury-600 hover:bg-luxury-50 transition-all duration-200;
+    @apply bg-white text-rose-600 px-6 py-3 rounded-lg font-medium border-2 border-rose-300 hover:bg-rose-50 transition-all duration-200;
   }
 
-  .btn-gold {
-    @apply bg-gradient-to-r from-gold-500 to-gold-600 text-white px-6 py-3 rounded-lg font-medium hover:from-gold-600 hover:to-gold-700 transition-all duration-200 shadow-md hover:shadow-lg;
+  .btn-blush {
+    @apply bg-gradient-to-r from-blush-400 to-rose-400 text-white px-6 py-3 rounded-lg font-medium hover:from-blush-500 hover:to-rose-500 transition-all duration-200 shadow-md hover:shadow-lg;
+  }
+
+  .btn-outline {
+    @apply bg-transparent text-gray-700 px-6 py-3 rounded-lg font-medium border-2 border-gray-300 hover:border-rose-400 hover:text-rose-600 transition-all duration-200;
   }
 
   .input-field {
-    @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-500 focus:border-luxury-500 transition-all duration-200;
+    @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-400 focus:border-rose-400 transition-all duration-200;
   }
 
   .card {
     @apply bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-2xl;
   }
 
-  .luxury-gradient {
-    @apply bg-gradient-to-br from-luxury-100 via-gold-50 to-luxury-200;
+  .intimate-gradient {
+    @apply bg-gradient-to-br from-rose-50 via-blush-50 to-lavender-50;
   }
 
   .section-title {
@@ -50,7 +54,7 @@
 
 @layer utilities {
   .text-gradient {
-    @apply bg-gradient-to-r from-luxury-600 to-gold-600 bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-rose-500 to-blush-500 bg-clip-text text-transparent;
   }
 
   .animate-shimmer {

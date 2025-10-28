@@ -14,6 +14,12 @@ export default function ProductCard({ product }) {
   const hasDiscount = product.salePrice && product.salePrice < product.price;
   const discountPercent = hasDiscount ? formatDiscount(product.price, product.salePrice) : 0;
 
+  // Parse sizes and colors from product data
+  const sizes = product.sizes || [];
+  const colors = product.colors || [];
+  const displaySizes = sizes.slice(0, 5); // Show first 5 sizes
+  const displayColors = colors.slice(0, 5); // Show first 5 colors
+
   const handleAddToCart = (e) => {
     e.preventDefault();
     setIsAdding(true);
@@ -41,7 +47,7 @@ export default function ProductCard({ product }) {
 
           {/* Discount Badge */}
           {hasDiscount && (
-            <div className="absolute top-4 left-4 bg-luxury-600 text-white px-3 py-1 rounded-full text-sm font-bold">
+            <div className="absolute top-4 left-4 bg-rose-500 text-white px-3 py-1 rounded-full text-sm font-bold">
               -{discountPercent}%
             </div>
           )}
@@ -50,11 +56,11 @@ export default function ProductCard({ product }) {
           <div className="absolute top-4 right-4 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
             <button
               onClick={toggleWishlist}
-              className="bg-white p-2 rounded-full shadow-md hover:bg-luxury-50 transition-colors"
+              className="bg-white p-2 rounded-full shadow-md hover:bg-rose-50 transition-colors"
               aria-label="Add to wishlist"
             >
               {isWishlisted ? (
-                <HeartSolidIcon className="h-5 w-5 text-luxury-600" />
+                <HeartSolidIcon className="h-5 w-5 text-rose-500" />
               ) : (
                 <HeartIcon className="h-5 w-5 text-gray-700" />
               )}
@@ -63,7 +69,7 @@ export default function ProductCard({ product }) {
             <button
               onClick={handleAddToCart}
               disabled={isAdding || !product.inStock}
-              className="bg-white p-2 rounded-full shadow-md hover:bg-luxury-50 transition-colors disabled:opacity-50"
+              className="bg-white p-2 rounded-full shadow-md hover:bg-rose-50 transition-colors disabled:opacity-50"
               aria-label="Add to cart"
             >
               <ShoppingBagIcon className="h-5 w-5 text-gray-700" />
@@ -90,15 +96,57 @@ export default function ProductCard({ product }) {
           )}
 
           {/* Name */}
-          <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-luxury-600 transition-colors">
+          <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-rose-600 transition-colors">
             {product.name}
           </h3>
+
+          {/* Sizes */}
+          {displaySizes.length > 0 && (
+            <div className="mb-2">
+              <div className="flex flex-wrap gap-1">
+                {displaySizes.map((size, idx) => (
+                  <span
+                    key={idx}
+                    className="px-2 py-1 text-xs border border-gray-300 rounded text-gray-600"
+                  >
+                    {size}
+                  </span>
+                ))}
+                {sizes.length > 5 && (
+                  <span className="px-2 py-1 text-xs text-gray-500">
+                    +{sizes.length - 5}
+                  </span>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Colors */}
+          {displayColors.length > 0 && (
+            <div className="mb-2">
+              <div className="flex gap-1.5">
+                {displayColors.map((color, idx) => (
+                  <div
+                    key={idx}
+                    className="w-5 h-5 rounded-full border border-gray-300"
+                    style={{ backgroundColor: color }}
+                    title={color}
+                  />
+                ))}
+                {colors.length > 5 && (
+                  <span className="text-xs text-gray-500 self-center">
+                    +{colors.length - 5}
+                  </span>
+                )}
+              </div>
+            </div>
+          )}
 
           {/* Price */}
           <div className="mt-auto flex items-center gap-2">
             {hasDiscount ? (
               <>
-                <span className="text-xl font-bold text-luxury-600">
+                <span className="text-xl font-bold text-rose-600">
                   {formatPrice(product.salePrice)}
                 </span>
                 <span className="text-sm text-gray-500 line-through">

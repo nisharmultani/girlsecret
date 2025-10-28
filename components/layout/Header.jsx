@@ -12,9 +12,11 @@ import { getCartCount } from '../../lib/cart';
 
 const navigation = [
   { name: 'Home', href: '/' },
-  { name: 'Shop', href: '/shop' },
+  { name: 'Shop All', href: '/shop' },
+  { name: 'Bras', href: '/shop?category=Bras' },
+  { name: 'Panties', href: '/shop?category=Panties' },
+  { name: 'Lingerie', href: '/shop?category=Lingerie' },
   { name: 'About', href: '/about' },
-  { name: 'Contact', href: '/contact' },
 ];
 
 export default function Header() {
@@ -81,7 +83,7 @@ export default function Header() {
               <Link
                 key={item.name}
                 href={item.href}
-                className="text-sm font-semibold leading-6 text-gray-900 hover:text-luxury-600 transition-colors"
+                className="text-sm font-semibold leading-6 text-gray-900 hover:text-rose-600 transition-colors"
               >
                 {item.name}
               </Link>
@@ -92,7 +94,7 @@ export default function Header() {
           <div className="hidden lg:flex lg:flex-1 lg:justify-end lg:gap-x-6">
             <button
               type="button"
-              className="text-gray-700 hover:text-luxury-600 transition-colors"
+              className="text-gray-700 hover:text-rose-600 transition-colors"
               aria-label="Search"
             >
               <MagnifyingGlassIcon className="h-6 w-6" />
@@ -100,7 +102,7 @@ export default function Header() {
 
             <button
               type="button"
-              className="text-gray-700 hover:text-luxury-600 transition-colors"
+              className="text-gray-700 hover:text-rose-600 transition-colors"
               aria-label="Wishlist"
             >
               <HeartIcon className="h-6 w-6" />
@@ -108,12 +110,12 @@ export default function Header() {
 
             <Link
               href="/cart"
-              className="relative text-gray-700 hover:text-luxury-600 transition-colors"
+              className="relative text-gray-700 hover:text-rose-600 transition-colors"
               aria-label="Shopping cart"
             >
               <ShoppingBagIcon className="h-6 w-6" />
               {cartCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-luxury-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                <span className="absolute -top-2 -right-2 bg-rose-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
                   {cartCount}
                 </span>
               )}
@@ -187,7 +189,7 @@ export default function Header() {
                       <ShoppingBagIcon className="h-6 w-6" />
                       Cart
                       {cartCount > 0 && (
-                        <span className="ml-auto bg-luxury-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                        <span className="ml-auto bg-rose-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
                           {cartCount}
                         </span>
                       )}

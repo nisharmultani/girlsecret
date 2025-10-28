@@ -19,6 +19,12 @@ export default function ProductDetail({ product, reviews }) {
   const [quantity, setQuantity] = useState(1);
   const [isAdding, setIsAdding] = useState(false);
   const [showReviewForm, setShowReviewForm] = useState(false);
+  const [selectedSize, setSelectedSize] = useState('');
+  const [selectedColor, setSelectedColor] = useState('');
+
+  // Parse sizes and colors from product data
+  const sizes = product.sizes || [];
+  const colors = product.colors || [];
 
   if (router.isFallback) {
     return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
@@ -97,7 +103,7 @@ export default function ProductDetail({ product, reviews }) {
                   priority
                 />
                 {hasDiscount && (
-                  <div className="absolute top-4 left-4 bg-luxury-600 text-white px-4 py-2 rounded-full text-lg font-bold">
+                  <div className="absolute top-4 left-4 bg-rose-500 text-white px-4 py-2 rounded-full text-lg font-bold">
                     -{discountPercent}%
                   </div>
                 )}
@@ -111,7 +117,7 @@ export default function ProductDetail({ product, reviews }) {
                       key={index}
                       onClick={() => setSelectedImage(index)}
                       className={`relative aspect-square rounded-lg overflow-hidden ${
-                        selectedImage === index ? 'ring-2 ring-luxury-600' : ''
+                        selectedImage === index ? 'ring-2 ring-rose-500' : ''
                       }`}
                     >
                       <Image
@@ -144,7 +150,7 @@ export default function ProductDetail({ product, reviews }) {
                   <div className="flex">
                     {[1, 2, 3, 4, 5].map((star) => (
                       star <= Math.round(averageRating) ? (
-                        <StarIcon key={star} className="h-5 w-5 text-gold-500" />
+                        <StarIcon key={star} className="h-5 w-5 text-rose-400" />
                       ) : (
                         <StarOutlineIcon key={star} className="h-5 w-5 text-gray-300" />
                       )
@@ -160,7 +166,7 @@ export default function ProductDetail({ product, reviews }) {
               <div className="flex items-center gap-4 mb-6">
                 {hasDiscount ? (
                   <>
-                    <span className="text-4xl font-bold text-luxury-600">
+                    <span className="text-4xl font-bold text-rose-600">
                       {formatPrice(product.salePrice)}
                     </span>
                     <span className="text-2xl text-gray-500 line-through">
@@ -178,6 +184,63 @@ export default function ProductDetail({ product, reviews }) {
               <p className="text-gray-700 mb-6 leading-relaxed">
                 {product.description}
               </p>
+
+              {/* Size Selector */}
+              {sizes.length > 0 && (
+                <div className="mb-6">
+                  <div className="flex items-center justify-between mb-3">
+                    <label className="text-sm font-semibold text-gray-900">
+                      Select Size {selectedSize && `- ${selectedSize}`}
+                    </label>
+                    <button className="text-sm text-rose-600 hover:text-rose-700 font-medium">
+                      Size Guide
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
+                    {sizes.map((size) => (
+                      <button
+                        key={size}
+                        onClick={() => setSelectedSize(size)}
+                        className={`px-3 py-2 border-2 rounded-lg text-sm font-medium transition-all ${
+                          selectedSize === size
+                            ? 'border-rose-500 bg-rose-50 text-rose-700'
+                            : 'border-gray-300 hover:border-rose-300'
+                        }`}
+                      >
+                        {size}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Color Selector */}
+              {colors.length > 0 && (
+                <div className="mb-6">
+                  <label className="text-sm font-semibold text-gray-900 mb-3 block">
+                    Select Color {selectedColor && `- ${selectedColor}`}
+                  </label>
+                  <div className="flex flex-wrap gap-3">
+                    {colors.map((color) => (
+                      <button
+                        key={color}
+                        onClick={() => setSelectedColor(color)}
+                        className={`relative w-10 h-10 rounded-full border-2 transition-all ${
+                          selectedColor === color
+                            ? 'border-rose-500 ring-2 ring-rose-200'
+                            : 'border-gray-300 hover:border-rose-300'
+                        }`}
+                        title={color}
+                      >
+                        <div
+                          className="w-full h-full rounded-full"
+                          style={{ backgroundColor: color }}
+                        />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Quantity & Add to Cart */}
               <div className="flex gap-4 mb-6">
@@ -214,12 +277,12 @@ export default function ProductDetail({ product, reviews }) {
               {/* Features */}
               <div className="space-y-3 mb-6 border-t border-b border-gray-200 py-6">
                 <div className="flex items-center gap-3 text-gray-700">
-                  <TruckIcon className="w-6 h-6 text-luxury-600" />
-                  <span>Free shipping on orders over $50</span>
+                  <TruckIcon className="w-6 h-6 text-rose-500" />
+                  <span>Free shipping on orders over $50 in discreet packaging</span>
                 </div>
                 <div className="flex items-center gap-3 text-gray-700">
-                  <ShieldCheckIcon className="w-6 h-6 text-luxury-600" />
-                  <span>30-day return policy</span>
+                  <ShieldCheckIcon className="w-6 h-6 text-rose-500" />
+                  <span>Easy exchanges & 30-day returns</span>
                 </div>
               </div>
 
@@ -246,7 +309,7 @@ export default function ProductDetail({ product, reviews }) {
                         <div className="flex">
                           {[1, 2, 3, 4, 5].map((star) => (
                             star <= review.rating ? (
-                              <StarIcon key={star} className="h-5 w-5 text-gold-500" />
+                              <StarIcon key={star} className="h-5 w-5 text-rose-400" />
                             ) : (
                               <StarOutlineIcon key={star} className="h-5 w-5 text-gray-300" />
                             )
@@ -327,7 +390,7 @@ export async function getStaticProps({ params }) {
         seo: {
           title: product.name,
           description: product.description,
-          keywords: product.keywords || `${product.name}, ${product.category}, luxury beauty`,
+          keywords: product.keywords || `${product.name}, ${product.category}, intimate apparel, lingerie`,
           path: `/products/${product.slug}`,
           image: product.images[0]?.url || product.images[0]?.thumbnails?.large?.url,
         },
