@@ -10,8 +10,8 @@ const footerNavigation = {
   company: [
     { name: 'About Us', href: '/about' },
     { name: 'Contact', href: '/contact' },
-    { name: 'FAQ', href: '/faq' },
-    { name: 'Blog', href: '/blog' },
+    // { name: 'FAQ', href: '/faq' },
+    // { name: 'Blog', href: '/blog' },
   ],
   legal: [
     { name: 'Privacy Policy', href: '/privacy' },
