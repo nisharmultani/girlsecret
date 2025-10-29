@@ -383,6 +383,11 @@ export async function getStaticProps({ params }) {
 
     const reviews = await getProductReviews(product.id);
 
+    // Ensure image URL is a string or empty string to avoid serialization errors
+    const imageUrl = product.images?.[0]?.url
+      || product.images?.[0]?.thumbnails?.large?.url
+      || '';
+
     return {
       props: {
         product,
@@ -392,7 +397,7 @@ export async function getStaticProps({ params }) {
           description: product.description,
           keywords: product.keywords || `${product.name}, ${product.category}, intimate apparel, lingerie`,
           path: `/products/${product.slug}`,
-          image: product.images[0]?.url || product.images[0]?.thumbnails?.large?.url,
+          image: imageUrl,
         },
       },
       revalidate: 60,
