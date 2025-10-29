@@ -13,7 +13,7 @@ import { StarIcon as StarOutlineIcon } from '@heroicons/react/24/outline';
 import { ShoppingBagIcon, HeartIcon, TruckIcon, ShieldCheckIcon } from '@heroicons/react/24/outline';
 import Head from 'next/head';
 
-export default function ProductDetail({ product, reviews }) {
+export default function ProductDetail({ product, reviews = [] }) {
   const router = useRouter();
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
@@ -22,10 +22,6 @@ export default function ProductDetail({ product, reviews }) {
   const [selectedSize, setSelectedSize] = useState('');
   const [selectedColor, setSelectedColor] = useState('');
 
-  // Parse sizes and colors from product data
-  const sizes = product.sizes || [];
-  const colors = product.colors || [];
-
   if (router.isFallback) {
     return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
   }
@@ -33,6 +29,10 @@ export default function ProductDetail({ product, reviews }) {
   if (!product) {
     return <div className="min-h-screen flex items-center justify-center">Product not found</div>;
   }
+
+  // Parse sizes and colors from product data
+  const sizes = product.sizes || [];
+  const colors = product.colors || [];
 
   const images = product.images || [];
   const hasDiscount = product.salePrice && product.salePrice < product.price;
