@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { getAllProducts } from '../lib/airtable';
 import ProductGrid from '../components/product/ProductGrid';
 import { ArrowRightIcon, SparklesIcon, TruckIcon, ShieldCheckIcon } from '@heroicons/react/24/outline';
+import coverImage from "../images/coverImage.avif"
 
 export default function Home({ featuredProducts }) {
   return (
@@ -47,13 +48,11 @@ export default function Home({ featuredProducts }) {
               <div className="absolute inset-0 bg-gradient-to-br from-rose-200/50 to-blush-200/50 rounded-3xl transform rotate-3"></div>
               <div className="relative h-full bg-white rounded-3xl shadow-2xl overflow-hidden">
                 <Image
-                  src="https://unsplash.com/photos/woman-in-white-floral-brassiere-SyHGuq6HrGA"
+                  src={coverImage}
                   alt="Beautiful Intimate Apparel"
-                  // fill
-                  height={34}
-                  width={49}
+                  fill
                   className="object-cover"
-                  // priority
+                  priority
                 />
               </div>
             </div>

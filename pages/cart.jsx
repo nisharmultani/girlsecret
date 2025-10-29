@@ -93,7 +93,7 @@ export default function Cart() {
                 <div className="flex gap-4">
                   <div className="relative w-24 h-24 flex-shrink-0">
                     <Image
-                      src={item.image || '/placeholder-product.jpg'}
+                      src={item.image}
                       alt={item.name}
                       fill
                       className="object-cover rounded-lg"

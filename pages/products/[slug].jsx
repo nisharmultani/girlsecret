@@ -96,7 +96,7 @@ export default function ProductDetail({ product, reviews = [] }) {
             <div>
               <div className="relative aspect-square bg-gray-100 rounded-lg overflow-hidden mb-4">
                 <Image
-                  src={images[selectedImage]?.url || images[selectedImage]?.thumbnails?.large?.url || '/placeholder-product.jpg'}
+                  src={images[selectedImage]?.url || images[selectedImage]?.thumbnails?.large?.url}
                   alt={product.name}
                   fill
                   className="object-cover"

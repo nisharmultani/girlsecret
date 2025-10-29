@@ -10,7 +10,7 @@ export default function ProductCard({ product }) {
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
 
-  const imageUrl = product.images[0]?.thumbnails?.large?.url || product.images[0]?.url || '/placeholder-product.jpg';
+  const imageUrl = product.images[0]?.thumbnails?.large?.url || product.images[0]?.url;
   const hasDiscount = product.salePrice && product.salePrice < product.price;
   const discountPercent = hasDiscount ? formatDiscount(product.price, product.salePrice) : 0;
 
