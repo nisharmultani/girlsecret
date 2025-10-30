@@ -1,6 +1,7 @@
 import '../styles/globals.css';
 import Layout from '../components/layout/Layout';
 import SEO from '../components/SEO';
+import GoogleAnalytics, { trackPageView } from '../components/GoogleAnalytics';
 import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 
@@ -8,14 +9,18 @@ export default function App({ Component, pageProps }) {
   const router = useRouter();
 
   useEffect(() => {
-    // Track page views with GTM
+    // Track page views with GTM and GA4
     const handleRouteChange = (url) => {
+      // GTM tracking
       if (window.dataLayer) {
         window.dataLayer.push({
           event: 'pageview',
           page: url,
         });
       }
+
+      // GA4 tracking
+      trackPageView(url);
     };
 
     router.events.on('routeChangeComplete', handleRouteChange);
@@ -27,10 +32,15 @@ export default function App({ Component, pageProps }) {
   // Check if component has custom layout
   const getLayout = Component.getLayout || ((page) => <Layout>{page}</Layout>);
 
-  return getLayout(
+  return (
     <>
-      <SEO page={pageProps.seo} />
-      <Component {...pageProps} />
+      <GoogleAnalytics />
+      {getLayout(
+        <>
+          <SEO page={pageProps.seo} />
+          <Component {...pageProps} />
+        </>
+      )}
     </>
   );
 }
