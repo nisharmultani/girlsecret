@@ -133,8 +133,8 @@ export default function Contact() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900 mb-1">Email</h3>
-                  <p className="text-gray-600">support@girlsecret.com</p>
-                  <p className="text-gray-600">info@girlsecret.com</p>
+                  <p className="text-gray-600">support@girlsecretuk.com</p>
+                  <p className="text-gray-600">info@girlsecretuk.com</p>
                 </div>
               </div>
 
@@ -146,8 +146,8 @@ export default function Contact() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900 mb-1">Phone</h3>
-                  <p className="text-gray-600">+1 (555) 123-4567</p>
-                  <p className="text-sm text-gray-500 mt-1">Mon-Fri 9am-6pm EST</p>
+                  <p className="text-gray-600">+44 (0) 20 1234 5678</p>
+                  <p className="text-sm text-gray-500 mt-1">Mon-Fri 9am-6pm GMT</p>
                 </div>
               </div>
 
@@ -160,9 +160,10 @@ export default function Contact() {
                 <div>
                   <h3 className="font-semibold text-gray-900 mb-1">Address</h3>
                   <p className="text-gray-600">
-                    123 Beauty Lane<br />
-                    Suite 456<br />
-                    New York, NY 10001
+                    GirlSecret UK Ltd<br />
+                    Suite 100, Oxford Street<br />
+                    London, W1D 1BS<br />
+                    United Kingdom
                   </p>
                 </div>
               </div>
@@ -171,8 +172,8 @@ export default function Contact() {
             <div className="mt-10 bg-luxury-50 rounded-lg p-6">
               <h3 className="font-semibold text-gray-900 mb-2">Customer Support Hours</h3>
               <div className="space-y-2 text-sm text-gray-600">
-                <p>Monday - Friday: 9:00 AM - 6:00 PM EST</p>
-                <p>Saturday: 10:00 AM - 4:00 PM EST</p>
+                <p>Monday - Friday: 9:00 AM - 6:00 PM GMT</p>
+                <p>Saturday: 10:00 AM - 4:00 PM GMT</p>
                 <p>Sunday: Closed</p>
               </div>
             </div>
@@ -188,8 +189,8 @@ export async function getStaticProps() {
     props: {
       seo: {
         title: 'Contact Us',
-        description: 'Get in touch with GirlSecret. We are here to help with any questions about our luxury beauty products.',
-        keywords: 'contact girlsecret, customer support, beauty products help, contact us',
+        description: 'Get in touch with GirlSecret UK. We are here to help with any questions about our luxury intimate apparel. Customer support available Mon-Fri 9am-6pm GMT.',
+        keywords: 'contact girlsecret uk, customer support, intimate apparel help, contact us',
         path: '/contact',
       },
     },
