@@ -1,14 +1,17 @@
 import { Fragment, useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Dialog, Transition } from '@headlessui/react';
+import { Dialog, Transition, Menu } from '@headlessui/react';
 import {
   Bars3Icon,
   XMarkIcon,
   ShoppingBagIcon,
   HeartIcon,
   MagnifyingGlassIcon,
+  UserCircleIcon,
+  ChevronDownIcon,
 } from '@heroicons/react/24/outline';
 import { getCartCount } from '../../lib/cart';
+import { useAuth } from '../../context/AuthContext';
 
 const navigation = [
   { name: 'Home', href: '/' },
@@ -23,6 +26,7 @@ export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [cartCount, setCartCount] = useState(0);
   const [scrolled, setScrolled] = useState(false);
+  const { user, isAuthenticated, logout } = useAuth();
 
   useEffect(() => {
     // Update cart count
@@ -91,7 +95,7 @@ export default function Header() {
           </div>
 
           {/* Right side actions */}
-          <div className="hidden lg:flex lg:flex-1 lg:justify-end lg:gap-x-6">
+          <div className="hidden lg:flex lg:flex-1 lg:justify-end lg:gap-x-6 lg:items-center">
             <button
               type="button"
               className="text-gray-700 hover:text-rose-600 transition-colors"
@@ -120,6 +124,106 @@ export default function Header() {
                 </span>
               )}
             </Link>
+
+            {/* User Menu or Login/Register */}
+            {isAuthenticated ? (
+              <Menu as="div" className="relative">
+                <Menu.Button className="flex items-center gap-2 text-gray-700 hover:text-rose-600 transition-colors">
+                  <UserCircleIcon className="h-6 w-6" />
+                  <span className="text-sm font-semibold hidden xl:block">{user?.firstName}</span>
+                  <ChevronDownIcon className="h-4 w-4 hidden xl:block" />
+                </Menu.Button>
+                <Transition
+                  as={Fragment}
+                  enter="transition ease-out duration-100"
+                  enterFrom="transform opacity-0 scale-95"
+                  enterTo="transform opacity-100 scale-100"
+                  leave="transition ease-in duration-75"
+                  leaveFrom="transform opacity-100 scale-100"
+                  leaveTo="transform opacity-0 scale-95"
+                >
+                  <Menu.Items className="absolute right-0 mt-2 w-48 origin-top-right rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                    <div className="py-1">
+                      <Menu.Item>
+                        {({ active }) => (
+                          <Link
+                            href="/account"
+                            className={`${
+                              active ? 'bg-gray-100' : ''
+                            } block px-4 py-2 text-sm text-gray-700`}
+                          >
+                            My Account
+                          </Link>
+                        )}
+                      </Menu.Item>
+                      <Menu.Item>
+                        {({ active }) => (
+                          <Link
+                            href="/account/orders"
+                            className={`${
+                              active ? 'bg-gray-100' : ''
+                            } block px-4 py-2 text-sm text-gray-700`}
+                          >
+                            My Orders
+                          </Link>
+                        )}
+                      </Menu.Item>
+                      <Menu.Item>
+                        {({ active }) => (
+                          <Link
+                            href="/account/addresses"
+                            className={`${
+                              active ? 'bg-gray-100' : ''
+                            } block px-4 py-2 text-sm text-gray-700`}
+                          >
+                            Addresses
+                          </Link>
+                        )}
+                      </Menu.Item>
+                      <Menu.Item>
+                        {({ active }) => (
+                          <Link
+                            href="/account/settings"
+                            className={`${
+                              active ? 'bg-gray-100' : ''
+                            } block px-4 py-2 text-sm text-gray-700`}
+                          >
+                            Settings
+                          </Link>
+                        )}
+                      </Menu.Item>
+                      <Menu.Item>
+                        {({ active }) => (
+                          <button
+                            onClick={logout}
+                            className={`${
+                              active ? 'bg-gray-100' : ''
+                            } block w-full text-left px-4 py-2 text-sm text-red-700`}
+                          >
+                            Sign Out
+                          </button>
+                        )}
+                      </Menu.Item>
+                    </div>
+                  </Menu.Items>
+                </Transition>
+              </Menu>
+            ) : (
+              <div className="flex items-center gap-4">
+                <Link
+                  href="/login"
+                  className="text-sm font-semibold text-gray-700 hover:text-rose-600 transition-colors"
+                >
+                  Sign In
+                </Link>
+                <Link
+                  href="/register"
+                  className="rounded-lg bg-luxury-600 px-4 py-2 text-sm font-semibold text-white hover:bg-luxury-700 transition-colors"
+                >
+                  Register
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       </nav>
@@ -194,6 +298,72 @@ export default function Header() {
                         </span>
                       )}
                     </Link>
+
+                    {/* Mobile Auth Links */}
+                    {isAuthenticated ? (
+                      <>
+                        <div className="border-t border-gray-200 pt-4">
+                          <p className="px-3 text-sm font-medium text-gray-500 mb-2">
+                            Hello, {user?.firstName}
+                          </p>
+                          <Link
+                            href="/account"
+                            className="flex items-center gap-x-3 rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                            onClick={() => setMobileMenuOpen(false)}
+                          >
+                            <UserCircleIcon className="h-6 w-6" />
+                            My Account
+                          </Link>
+                          <Link
+                            href="/account/orders"
+                            className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                            onClick={() => setMobileMenuOpen(false)}
+                          >
+                            My Orders
+                          </Link>
+                          <Link
+                            href="/account/addresses"
+                            className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                            onClick={() => setMobileMenuOpen(false)}
+                          >
+                            Addresses
+                          </Link>
+                          <Link
+                            href="/account/settings"
+                            className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                            onClick={() => setMobileMenuOpen(false)}
+                          >
+                            Settings
+                          </Link>
+                          <button
+                            onClick={() => {
+                              logout();
+                              setMobileMenuOpen(false);
+                            }}
+                            className="-mx-3 block w-full text-left rounded-lg px-3 py-2 text-base font-semibold leading-7 text-red-600 hover:bg-gray-50"
+                          >
+                            Sign Out
+                          </button>
+                        </div>
+                      </>
+                    ) : (
+                      <div className="border-t border-gray-200 pt-4 space-y-2">
+                        <Link
+                          href="/login"
+                          className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          Sign In
+                        </Link>
+                        <Link
+                          href="/register"
+                          className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 bg-luxury-600 text-white hover:bg-luxury-700"
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          Register
+                        </Link>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
