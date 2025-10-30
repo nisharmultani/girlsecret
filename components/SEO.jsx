@@ -11,6 +11,21 @@ export default function SEO({ page = {} }) {
       <meta name="keywords" content={seo.keywords} />
       <link rel="canonical" href={seo.canonical} />
 
+      {/* SEO Essentials */}
+      <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+      <meta name="googlebot" content="index, follow" />
+      <meta name="bingbot" content="index, follow" />
+      <meta name="author" content={process.env.NEXT_PUBLIC_SITE_NAME || 'GirlSecret'} />
+      <meta name="language" content="English" />
+      <meta name="revisit-after" content="7 days" />
+
+      {/* Mobile Optimization */}
+      <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover" />
+      <meta name="mobile-web-app-capable" content="yes" />
+      <meta name="apple-mobile-web-app-capable" content="yes" />
+      <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+      <meta name="format-detection" content="telephone=no" />
+
       {/* Open Graph */}
       <meta property="og:type" content={seo.openGraph.type} />
       <meta property="og:locale" content={seo.openGraph.locale} />
@@ -21,6 +36,13 @@ export default function SEO({ page = {} }) {
       {seo.openGraph.images.map((image, index) => (
         <meta key={index} property="og:image" content={image.url} />
       ))}
+      {seo.openGraph.images[0] && (
+        <>
+          <meta property="og:image:width" content="1200" />
+          <meta property="og:image:height" content="630" />
+          <meta property="og:image:alt" content={seo.openGraph.title} />
+        </>
+      )}
 
       {/* Twitter */}
       <meta name="twitter:card" content={seo.twitter.cardType} />
@@ -36,11 +58,13 @@ export default function SEO({ page = {} }) {
       <link rel="icon" href="/favicon.ico" />
       <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
 
-      {/* Viewport */}
-      <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
-
       {/* Theme Color */}
       <meta name="theme-color" content="#c35d3f" />
+
+      {/* Preconnect to external domains for performance */}
+      <link rel="preconnect" href="https://www.googletagmanager.com" />
+      <link rel="preconnect" href="https://www.google-analytics.com" />
+      <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
     </Head>
   );
 }
