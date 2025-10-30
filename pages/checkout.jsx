@@ -4,7 +4,8 @@ import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { getCart, getCartTotal, clearCart } from '../lib/cart';
 import { useAuth } from '../context/AuthContext';
-import { CheckCircleIcon, MapPinIcon } from '@heroicons/react/24/outline';
+import { CheckCircleIcon, MapPinIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+import { lookupPostcode, formatPostcode } from '../lib/postcode';
 
 export default function Checkout() {
   const router = useRouter();
@@ -20,6 +21,10 @@ export default function Checkout() {
   const [selectedAddressId, setSelectedAddressId] = useState('');
   const [showAddressForm, setShowAddressForm] = useState(!isAuthenticated);
   const [saveAddress, setSaveAddress] = useState(false);
+
+  // Postcode lookup
+  const [postcodeLoading, setPostcodeLoading] = useState(false);
+  const [postcodeError, setPostcodeError] = useState('');
 
   useEffect(() => {
     const cartItems = getCart();
@@ -86,6 +91,39 @@ export default function Checkout() {
       if (address) {
         selectAddress(address);
       }
+    }
+  };
+
+  const handlePostcodeLookup = async () => {
+    const postcodeValue = document.getElementById('postcode')?.value;
+
+    if (!postcodeValue) {
+      setPostcodeError('Please enter a postcode');
+      return;
+    }
+
+    setPostcodeLoading(true);
+    setPostcodeError('');
+
+    try {
+      const result = await lookupPostcode(postcodeValue);
+
+      if (result.success) {
+        // Auto-fill city and format postcode
+        setValue('city', result.city);
+        setValue('postcode', result.postcode);
+        setValue('country', result.country);
+
+        // Success feedback
+        setPostcodeError('');
+      } else {
+        setPostcodeError(result.error || 'Postcode not found');
+      }
+    } catch (error) {
+      console.error('Postcode lookup failed:', error);
+      setPostcodeError('Failed to lookup postcode');
+    } finally {
+      setPostcodeLoading(false);
     }
   };
 
@@ -373,35 +411,63 @@ export default function Checkout() {
                       />
                     </div>
 
-                    <div className="grid sm:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          City *
-                        </label>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Postcode *
+                      </label>
+                      <div className="flex gap-2">
                         <input
-                          type="text"
-                          {...register('city', { required: 'City is required' })}
-                          className="input-field"
-                        />
-                        {errors.city && (
-                          <p className="mt-1 text-sm text-red-600">{errors.city.message}</p>
-                        )}
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Postcode *
-                        </label>
-                        <input
+                          id="postcode"
                           type="text"
                           {...register('postcode', { required: 'Postcode is required' })}
-                          className="input-field"
+                          className="input-field flex-1"
                           placeholder="SW1A 1AA"
                         />
-                        {errors.postcode && (
-                          <p className="mt-1 text-sm text-red-600">{errors.postcode.message}</p>
-                        )}
+                        <button
+                          type="button"
+                          onClick={handlePostcodeLookup}
+                          disabled={postcodeLoading}
+                          className="px-4 py-2 bg-luxury-600 text-white rounded-lg hover:bg-luxury-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 whitespace-nowrap"
+                        >
+                          {postcodeLoading ? (
+                            <>
+                              <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                              </svg>
+                              Looking up...
+                            </>
+                          ) : (
+                            <>
+                              <MagnifyingGlassIcon className="h-4 w-4" />
+                              Find Address
+                            </>
+                          )}
+                        </button>
                       </div>
+                      {errors.postcode && (
+                        <p className="mt-1 text-sm text-red-600">{errors.postcode.message}</p>
+                      )}
+                      {postcodeError && (
+                        <p className="mt-1 text-sm text-orange-600">{postcodeError}</p>
+                      )}
+                      <p className="mt-1 text-xs text-gray-500">
+                        Enter your postcode and click "Find Address" to auto-fill your city
+                      </p>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        City *
+                      </label>
+                      <input
+                        type="text"
+                        {...register('city', { required: 'City is required' })}
+                        className="input-field"
+                      />
+                      {errors.city && (
+                        <p className="mt-1 text-sm text-red-600">{errors.city.message}</p>
+                      )}
                     </div>
 
                     <div>
