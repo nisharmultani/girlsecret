@@ -2,6 +2,7 @@ import '../styles/globals.css';
 import Layout from '../components/layout/Layout';
 import SEO from '../components/SEO';
 import GoogleAnalytics, { trackPageView } from '../components/GoogleAnalytics';
+import { AuthProvider } from '../context/AuthContext';
 import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 
@@ -33,7 +34,7 @@ export default function App({ Component, pageProps }) {
   const getLayout = Component.getLayout || ((page) => <Layout>{page}</Layout>);
 
   return (
-    <>
+    <AuthProvider>
       <GoogleAnalytics />
       {getLayout(
         <>
@@ -41,6 +42,6 @@ export default function App({ Component, pageProps }) {
           <Component {...pageProps} />
         </>
       )}
-    </>
+    </AuthProvider>
   );
 }
