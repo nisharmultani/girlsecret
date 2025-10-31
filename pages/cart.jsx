@@ -23,13 +23,13 @@ export default function Cart() {
     setCart(getCart());
   };
 
-  const handleUpdateQuantity = (productId, newQuantity) => {
-    updateCartQuantity(productId, newQuantity);
+  const handleUpdateQuantity = (productId, newQuantity, size, color) => {
+    updateCartQuantity(productId, newQuantity, size, color);
     loadCart();
   };
 
-  const handleRemove = (productId) => {
-    removeFromCart(productId);
+  const handleRemove = (productId, size, color) => {
+    removeFromCart(productId, size, color);
     loadCart();
   };
 
@@ -88,8 +88,8 @@ export default function Cart() {
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Cart Items */}
           <div className="lg:col-span-2 space-y-4">
-            {cart.map((item) => (
-              <div key={item.id} className="bg-white rounded-lg shadow-md p-6">
+            {cart.map((item, index) => (
+              <div key={`${item.id}-${item.size}-${item.color}-${index}`} className="bg-white rounded-lg shadow-md p-6">
                 <div className="flex gap-4">
                   <div className="relative w-24 h-24 flex-shrink-0">
                     <Image
@@ -108,13 +108,31 @@ export default function Cart() {
                             {item.name}
                           </h3>
                         </Link>
+                        {/* Display size and color */}
+                        {(item.size || item.color) && (
+                          <div className="flex gap-2 mt-1 text-sm text-gray-600">
+                            {item.size && (
+                              <span className="bg-gray-100 px-2 py-1 rounded">Size: {item.size}</span>
+                            )}
+                            {item.color && (
+                              <span className="flex items-center gap-1 bg-gray-100 px-2 py-1 rounded">
+                                Color:
+                                <span
+                                  className="inline-block w-4 h-4 rounded-full border border-gray-300"
+                                  style={{ backgroundColor: item.color }}
+                                ></span>
+                                {item.color}
+                              </span>
+                            )}
+                          </div>
+                        )}
                         <p className="text-luxury-600 font-bold mt-1">
                           {formatPrice(item.price)}
                         </p>
                       </div>
 
                       <button
-                        onClick={() => handleRemove(item.id)}
+                        onClick={() => handleRemove(item.id, item.size, item.color)}
                         className="text-red-600 hover:text-red-700"
                         aria-label="Remove item"
                       >
@@ -125,7 +143,7 @@ export default function Cart() {
                     <div className="flex items-center gap-4 mt-4">
                       <div className="flex items-center border border-gray-300 rounded-lg">
                         <button
-                          onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
+                          onClick={() => handleUpdateQuantity(item.id, item.quantity - 1, item.size, item.color)}
                           className="px-3 py-1 hover:bg-gray-100"
                         >
                           -
@@ -134,7 +152,7 @@ export default function Cart() {
                           {item.quantity}
                         </span>
                         <button
-                          onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
+                          onClick={() => handleUpdateQuantity(item.id, item.quantity + 1, item.size, item.color)}
                           className="px-3 py-1 hover:bg-gray-100"
                         >
                           +
