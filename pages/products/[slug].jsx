@@ -42,8 +42,20 @@ export default function ProductDetail({ product, reviews = [] }) {
     : 0;
 
   const handleAddToCart = () => {
+    // Validate size selection if sizes are available
+    if (sizes.length > 0 && !selectedSize) {
+      alert('Please select a size');
+      return;
+    }
+
+    // Validate color selection if colors are available
+    if (colors.length > 0 && !selectedColor) {
+      alert('Please select a color');
+      return;
+    }
+
     setIsAdding(true);
-    addToCart(product, quantity);
+    addToCart(product, quantity, selectedSize || null, selectedColor || null);
     setTimeout(() => {
       setIsAdding(false);
       router.push('/cart');
