@@ -219,6 +219,31 @@ export default function Orders() {
                     </div>
                   </div>
 
+                  {/* Tracking Information */}
+                  {order.trackingNumber && order.carrier && (
+                    <div className="mt-4 pt-4 border-t border-gray-200">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm font-medium text-gray-900 mb-1">
+                            Tracking Information
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            <span className="font-medium">Carrier:</span> {order.carrier}
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            <span className="font-medium">Tracking:</span> {order.trackingNumber}
+                          </p>
+                        </div>
+                        <Link
+                          href={`/track-order?number=${order.orderNumber}`}
+                          className="text-sm text-luxury-600 hover:text-luxury-700 font-medium"
+                        >
+                          Track Package →
+                        </Link>
+                      </div>
+                    </div>
+                  )}
+
                   {/* Shipping Address */}
                   {order.shippingAddress && (
                     <div className="mt-4 pt-4 border-t border-gray-200">
@@ -235,6 +260,23 @@ export default function Orders() {
                       </p>
                     </div>
                   )}
+
+                  {/* Order Actions */}
+                  <div className="mt-4 pt-4 border-t border-gray-200 flex gap-3">
+                    <Link
+                      href={`/track-order?number=${order.orderNumber}`}
+                      className="text-sm text-luxury-600 hover:text-luxury-700 font-medium"
+                    >
+                      View Order Details
+                    </Link>
+                    <span className="text-gray-300">|</span>
+                    <a
+                      href={`mailto:support@girlsecretuk.com?subject=Order ${order.orderNumber}`}
+                      className="text-sm text-gray-600 hover:text-gray-900 font-medium"
+                    >
+                      Contact Support
+                    </a>
+                  </div>
                 </div>
               </div>
             ))}
