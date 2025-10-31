@@ -30,13 +30,34 @@ export default function ProductDetail({ product, reviews = [] }) {
     return <div className="min-h-screen flex items-center justify-center">Product not found</div>;
   }
 
-  // Parse sizes and colors from product data
+  // Parse sizes and colors from product data (from Airtable)
   const sizes = product.sizes || [];
   const colors = product.colors || [];
 
   const images = product.images || [];
   const hasDiscount = product.salePrice && product.salePrice < product.price;
-  const discountPercent = hasDiscount ? formatDiscount(product.price, product.salePrice) : 0;
+  const discountPercent = hasDiscount
+    ? Math.round(((product.price - product.salePrice) / product.price) * 100)
+    : 0;
+  const discountAmount = hasDiscount ? product.price - product.salePrice : 0;
+
+  // Quantity-based pricing tiers for upselling
+  const getQuantityPrice = (qty) => {
+    const basePrice = product.salePrice || product.price;
+
+    // Define quantity discount tiers
+    if (qty >= 3) {
+      return basePrice * 0.85; // 15% off for 3+
+    } else if (qty >= 2) {
+      return basePrice * 0.90; // 10% off for 2+
+    }
+    return basePrice;
+  };
+
+  const currentPrice = getQuantityPrice(quantity);
+  const totalPrice = currentPrice * quantity;
+  const savings = ((product.salePrice || product.price) - currentPrice) * quantity;
+
   const averageRating = reviews.length > 0
     ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
     : 0;
@@ -175,21 +196,61 @@ export default function ProductDetail({ product, reviews = [] }) {
               )}
 
               {/* Price */}
-              <div className="flex items-center gap-4 mb-6">
-                {hasDiscount ? (
-                  <>
-                    <span className="text-4xl font-bold text-rose-600">
-                      {formatPrice(product.salePrice)}
-                    </span>
-                    <span className="text-2xl text-gray-500 line-through">
+              <div className="mb-6">
+                <div className="flex items-center gap-4">
+                  {hasDiscount ? (
+                    <>
+                      <span className="text-4xl font-bold text-rose-600">
+                        {formatPrice(product.salePrice)}
+                      </span>
+                      <span className="text-2xl text-gray-500 line-through">
+                        {formatPrice(product.price)}
+                      </span>
+                      <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-rose-100 text-rose-800">
+                        SAVE {discountPercent}%
+                      </span>
+                    </>
+                  ) : (
+                    <span className="text-4xl font-bold text-gray-900">
                       {formatPrice(product.price)}
                     </span>
-                  </>
-                ) : (
-                  <span className="text-4xl font-bold text-gray-900">
-                    {formatPrice(product.price)}
-                  </span>
+                  )}
+                </div>
+                {hasDiscount && (
+                  <p className="text-sm text-rose-600 mt-2">
+                    You save {formatPrice(discountAmount)} on this item!
+                  </p>
                 )}
+              </div>
+
+              {/* Quantity-Based Upselling */}
+              <div className="bg-gradient-to-r from-luxury-50 to-rose-50 rounded-xl p-5 mb-6 border border-luxury-200">
+                <h3 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2">
+                  <svg className="w-5 h-5 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  Buy More, Save More!
+                </h3>
+                <div className="space-y-2 text-sm">
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-700">Buy 1:</span>
+                    <span className="font-semibold text-gray-900">{formatPrice(product.salePrice || product.price)} each</span>
+                  </div>
+                  <div className="flex items-center justify-between bg-white bg-opacity-60 rounded px-2 py-1">
+                    <span className="text-gray-700 flex items-center gap-1">
+                      Buy 2:
+                      <span className="text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded-full font-semibold">10% OFF</span>
+                    </span>
+                    <span className="font-semibold text-green-700">{formatPrice(getQuantityPrice(2))} each</span>
+                  </div>
+                  <div className="flex items-center justify-between bg-white bg-opacity-60 rounded px-2 py-1">
+                    <span className="text-gray-700 flex items-center gap-1">
+                      Buy 3+:
+                      <span className="text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded-full font-semibold">15% OFF</span>
+                    </span>
+                    <span className="font-semibold text-green-700">{formatPrice(getQuantityPrice(3))} each</span>
+                  </div>
+                </div>
               </div>
 
               {/* Description */}
@@ -202,7 +263,8 @@ export default function ProductDetail({ product, reviews = [] }) {
                 <div className="mb-6">
                   <div className="flex items-center justify-between mb-3">
                     <label className="text-sm font-semibold text-gray-900">
-                      Select Size {selectedSize && `- ${selectedSize}`}
+                      Size {selectedSize && <span className="text-rose-600">- {selectedSize}</span>}
+                      <span className="text-gray-500 font-normal ml-2">({sizes.length} sizes available)</span>
                     </label>
                     <button className="text-sm text-rose-600 hover:text-rose-700 font-medium">
                       Size Guide
@@ -215,8 +277,8 @@ export default function ProductDetail({ product, reviews = [] }) {
                         onClick={() => setSelectedSize(size)}
                         className={`px-3 py-2 border-2 rounded-lg text-sm font-medium transition-all ${
                           selectedSize === size
-                            ? 'border-rose-500 bg-rose-50 text-rose-700'
-                            : 'border-gray-300 hover:border-rose-300'
+                            ? 'border-rose-500 bg-rose-50 text-rose-700 shadow-md'
+                            : 'border-gray-300 hover:border-rose-300 hover:bg-gray-50'
                         }`}
                       >
                         {size}
@@ -230,17 +292,18 @@ export default function ProductDetail({ product, reviews = [] }) {
               {colors.length > 0 && (
                 <div className="mb-6">
                   <label className="text-sm font-semibold text-gray-900 mb-3 block">
-                    Select Color {selectedColor && `- ${selectedColor}`}
+                    Color {selectedColor && <span className="text-rose-600">- {selectedColor}</span>}
+                    <span className="text-gray-500 font-normal ml-2">({colors.length} colors available)</span>
                   </label>
                   <div className="flex flex-wrap gap-3">
                     {colors.map((color) => (
                       <button
                         key={color}
                         onClick={() => setSelectedColor(color)}
-                        className={`relative w-10 h-10 rounded-full border-2 transition-all ${
+                        className={`relative w-12 h-12 rounded-full border-2 transition-all ${
                           selectedColor === color
-                            ? 'border-rose-500 ring-2 ring-rose-200'
-                            : 'border-gray-300 hover:border-rose-300'
+                            ? 'border-rose-500 ring-4 ring-rose-200 shadow-lg'
+                            : 'border-gray-300 hover:border-rose-300 hover:shadow-md'
                         }`}
                         title={color}
                       >
@@ -248,6 +311,13 @@ export default function ProductDetail({ product, reviews = [] }) {
                           className="w-full h-full rounded-full"
                           style={{ backgroundColor: color }}
                         />
+                        {selectedColor === color && (
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <svg className="w-6 h-6 text-white drop-shadow-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                            </svg>
+                          </div>
+                        )}
                       </button>
                     ))}
                   </div>
