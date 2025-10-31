@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { getSession, saveSession, clearSession, isAuthenticated } from '../lib/auth';
+import { clearCart } from '../lib/cart';
 
 const AuthContext = createContext();
 
@@ -76,7 +77,12 @@ export function AuthProvider({ children }) {
 
   const logout = () => {
     clearSession();
+    clearCart(); // Clear cart when user logs out
     setUser(null);
+    // Trigger cart update event so header/cart badge updates
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new Event('cartUpdated'));
+    }
   };
 
   const updateProfile = async (updates) => {

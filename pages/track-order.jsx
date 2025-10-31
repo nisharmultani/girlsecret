@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { useForm } from 'react-hook-form';
 import Link from 'next/link';
 import Layout from '../components/layout/Layout';
+import Image from 'next/image';
 import {
   MagnifyingGlassIcon,
   CheckCircleIcon,
@@ -262,9 +263,11 @@ export default function TrackOrder() {
                   {order.items.map((item, index) => (
                     <div key={index} className="py-4 flex gap-4">
                       {item.image && (
-                        <img
+                        <Image
                           src={item.image}
                           alt={item.name}
+                          height={20}
+                          width={20}
                           className="w-20 h-20 object-cover rounded-lg"
                         />
                       )}

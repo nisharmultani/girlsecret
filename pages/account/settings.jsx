@@ -170,7 +170,7 @@ export default function Settings() {
                   placeholder="+44 20 1234 5678"
                 />
                 <p className="mt-1 text-xs text-gray-500">
-                  Optional - We'll use this to contact you about your orders
+                  Optional - We&apos;ll use this to contact you about your orders
                 </p>
               </div>
 

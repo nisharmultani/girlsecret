@@ -21,6 +21,8 @@ export default function ProductDetail({ product, reviews = [] }) {
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [selectedSize, setSelectedSize] = useState('');
   const [selectedColor, setSelectedColor] = useState('');
+  const [showSizeGuide, setShowSizeGuide] = useState(false);
+  const [selectedVariants, setSelectedVariants] = useState([]); // Store multiple variant selections
 
   if (router.isFallback) {
     return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
@@ -30,24 +32,129 @@ export default function ProductDetail({ product, reviews = [] }) {
     return <div className="min-h-screen flex items-center justify-center">Product not found</div>;
   }
 
-  // Parse sizes and colors from product data
+  // Parse sizes and colors from product data (from Airtable)
   const sizes = product.sizes || [];
-  const colors = product.colors || [];
+  const rawColors = product.colors || [];
+
+  // Parse colors - supports formats: "ColorName-#HexCode" or just "#HexCode"
+  const colors = rawColors.map(color => {
+    if (color.includes('-')) {
+      const [name, hex] = color.split('-');
+      return { name: name.trim(), hex: hex.trim() };
+    }
+    // If only hex code, try to guess name or use hex
+    return { name: color, hex: color };
+  });
 
   const images = product.images || [];
   const hasDiscount = product.salePrice && product.salePrice < product.price;
-  const discountPercent = hasDiscount ? formatDiscount(product.price, product.salePrice) : 0;
+  const discountPercent = hasDiscount
+    ? Math.round(((product.price - product.salePrice) / product.price) * 100)
+    : 0;
+  const discountAmount = hasDiscount ? product.price - product.salePrice : 0;
+
+  // Quantity-based pricing tiers for upselling
+  const getQuantityPrice = (qty) => {
+    const basePrice = product.salePrice || product.price;
+
+    // Define quantity discount tiers
+    if (qty >= 3) {
+      return basePrice * 0.85; // 15% off for 3+
+    } else if (qty >= 2) {
+      return basePrice * 0.90; // 10% off for 2+
+    }
+    return basePrice;
+  };
+
+  const currentPrice = getQuantityPrice(quantity);
+  const totalPrice = currentPrice * quantity;
+  const savings = ((product.salePrice || product.price) - currentPrice) * quantity;
+
   const averageRating = reviews.length > 0
     ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
     : 0;
 
+  // Add current selection to variants list
+  const handleAddVariant = () => {
+    // Validate size selection if sizes are available
+    if (sizes.length > 0 && !selectedSize) {
+      alert('Please select a size');
+      return;
+    }
+
+    // Validate color selection if colors are available
+    if (colors.length > 0 && !selectedColor) {
+      alert('Please select a color');
+      return;
+    }
+
+    // Check if this variant combination already exists
+    const variantExists = selectedVariants.some(
+      v => v.size === selectedSize && v.color === selectedColor
+    );
+
+    if (variantExists) {
+      alert('This size and color combination is already added');
+      return;
+    }
+
+    // Add to variants list
+    setSelectedVariants([
+      ...selectedVariants,
+      {
+        size: selectedSize || null,
+        color: selectedColor || null,
+        quantity: 1,
+      },
+    ]);
+
+    // Reset selections for next variant
+    setSelectedSize('');
+    setSelectedColor('');
+  };
+
+  // Remove a variant from the list
+  const handleRemoveVariant = (index) => {
+    setSelectedVariants(selectedVariants.filter((_, i) => i !== index));
+  };
+
+  // Update variant quantity
+  const handleUpdateVariantQuantity = (index, newQty) => {
+    const updated = [...selectedVariants];
+    updated[index].quantity = Math.max(1, newQty);
+    setSelectedVariants(updated);
+  };
+
+  // Add all selected variants to cart
   const handleAddToCart = () => {
-    setIsAdding(true);
-    addToCart(product, quantity);
-    setTimeout(() => {
-      setIsAdding(false);
-      router.push('/cart');
-    }, 500);
+    if (selectedVariants.length === 0) {
+      // If no variants selected, add the current selection
+      if (sizes.length > 0 && !selectedSize) {
+        alert('Please select a size');
+        return;
+      }
+      if (colors.length > 0 && !selectedColor) {
+        alert('Please select a color');
+        return;
+      }
+
+      setIsAdding(true);
+      addToCart(product, quantity, selectedSize || null, selectedColor || null);
+      setTimeout(() => {
+        setIsAdding(false);
+        router.push('/cart');
+      }, 500);
+    } else {
+      // Add all variants to cart
+      setIsAdding(true);
+      selectedVariants.forEach(variant => {
+        addToCart(product, variant.quantity, variant.size, variant.color);
+      });
+      setTimeout(() => {
+        setIsAdding(false);
+        router.push('/cart');
+      }, 500);
+    }
   };
 
   const productUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/products/${product.slug}`;
@@ -163,21 +270,61 @@ export default function ProductDetail({ product, reviews = [] }) {
               )}
 
               {/* Price */}
-              <div className="flex items-center gap-4 mb-6">
-                {hasDiscount ? (
-                  <>
-                    <span className="text-4xl font-bold text-rose-600">
-                      {formatPrice(product.salePrice)}
-                    </span>
-                    <span className="text-2xl text-gray-500 line-through">
+              <div className="mb-6">
+                <div className="flex items-center gap-4">
+                  {hasDiscount ? (
+                    <>
+                      <span className="text-4xl font-bold text-rose-600">
+                        {formatPrice(product.salePrice)}
+                      </span>
+                      <span className="text-2xl text-gray-500 line-through">
+                        {formatPrice(product.price)}
+                      </span>
+                      <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-rose-100 text-rose-800">
+                        SAVE {discountPercent}%
+                      </span>
+                    </>
+                  ) : (
+                    <span className="text-4xl font-bold text-gray-900">
                       {formatPrice(product.price)}
                     </span>
-                  </>
-                ) : (
-                  <span className="text-4xl font-bold text-gray-900">
-                    {formatPrice(product.price)}
-                  </span>
+                  )}
+                </div>
+                {hasDiscount && (
+                  <p className="text-sm text-rose-600 mt-2">
+                    You save {formatPrice(discountAmount)} on this item!
+                  </p>
                 )}
+              </div>
+
+              {/* Quantity-Based Upselling */}
+              <div className="bg-gradient-to-r from-luxury-50 to-rose-50 rounded-xl p-5 mb-6 border border-luxury-200">
+                <h3 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2">
+                  <svg className="w-5 h-5 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  Buy More, Save More!
+                </h3>
+                <div className="space-y-2 text-sm">
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-700">Buy 1:</span>
+                    <span className="font-semibold text-gray-900">{formatPrice(product.salePrice || product.price)} each</span>
+                  </div>
+                  <div className="flex items-center justify-between bg-white bg-opacity-60 rounded px-2 py-1">
+                    <span className="text-gray-700 flex items-center gap-1">
+                      Buy 2:
+                      <span className="text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded-full font-semibold">10% OFF</span>
+                    </span>
+                    <span className="font-semibold text-green-700">{formatPrice(getQuantityPrice(2))} each</span>
+                  </div>
+                  <div className="flex items-center justify-between bg-white bg-opacity-60 rounded px-2 py-1">
+                    <span className="text-gray-700 flex items-center gap-1">
+                      Buy 3+:
+                      <span className="text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded-full font-semibold">15% OFF</span>
+                    </span>
+                    <span className="font-semibold text-green-700">{formatPrice(getQuantityPrice(3))} each</span>
+                  </div>
+                </div>
               </div>
 
               {/* Description */}
@@ -190,9 +337,14 @@ export default function ProductDetail({ product, reviews = [] }) {
                 <div className="mb-6">
                   <div className="flex items-center justify-between mb-3">
                     <label className="text-sm font-semibold text-gray-900">
-                      Select Size {selectedSize && `- ${selectedSize}`}
+                      Size {selectedSize && <span className="text-rose-600">- {selectedSize}</span>}
+                      <span className="text-gray-500 font-normal ml-2">({sizes.length} sizes available)</span>
                     </label>
-                    <button className="text-sm text-rose-600 hover:text-rose-700 font-medium">
+                    <button
+                      onClick={() => setShowSizeGuide(true)}
+                      className="text-sm text-rose-600 hover:text-rose-700 font-medium"
+                      type="button"
+                    >
                       Size Guide
                     </button>
                   </div>
@@ -203,8 +355,8 @@ export default function ProductDetail({ product, reviews = [] }) {
                         onClick={() => setSelectedSize(size)}
                         className={`px-3 py-2 border-2 rounded-lg text-sm font-medium transition-all ${
                           selectedSize === size
-                            ? 'border-rose-500 bg-rose-50 text-rose-700'
-                            : 'border-gray-300 hover:border-rose-300'
+                            ? 'border-rose-500 bg-rose-50 text-rose-700 shadow-md'
+                            : 'border-gray-300 hover:border-rose-300 hover:bg-gray-50'
                         }`}
                       >
                         {size}
@@ -218,25 +370,104 @@ export default function ProductDetail({ product, reviews = [] }) {
               {colors.length > 0 && (
                 <div className="mb-6">
                   <label className="text-sm font-semibold text-gray-900 mb-3 block">
-                    Select Color {selectedColor && `- ${selectedColor}`}
+                    Color {selectedColor && <span className="text-rose-600">- {selectedColor}</span>}
                   </label>
                   <div className="flex flex-wrap gap-3">
-                    {colors.map((color) => (
+                    {colors.map((color, index) => (
                       <button
-                        key={color}
-                        onClick={() => setSelectedColor(color)}
-                        className={`relative w-10 h-10 rounded-full border-2 transition-all ${
-                          selectedColor === color
-                            ? 'border-rose-500 ring-2 ring-rose-200'
-                            : 'border-gray-300 hover:border-rose-300'
+                        key={index}
+                        onClick={() => setSelectedColor(color.name)}
+                        className={`relative w-12 h-12 rounded-full border-2 transition-all ${
+                          selectedColor === color.name
+                            ? 'border-rose-500 ring-4 ring-rose-200 shadow-lg'
+                            : 'border-gray-300 hover:border-rose-300 hover:shadow-md'
                         }`}
-                        title={color}
+                        title={color.name}
+                        type="button"
                       >
                         <div
                           className="w-full h-full rounded-full"
-                          style={{ backgroundColor: color }}
+                          style={{ backgroundColor: color.hex }}
                         />
+                        {selectedColor === color.name && (
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <svg className="w-6 h-6 text-white drop-shadow-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                            </svg>
+                          </div>
+                        )}
                       </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Add Variant Button (for selecting multiple size/color combinations) */}
+              {(sizes.length > 0 || colors.length > 0) && (
+                <div className="mb-6">
+                  <button
+                    onClick={handleAddVariant}
+                    type="button"
+                    className="w-full px-4 py-3 border-2 border-rose-300 text-rose-700 rounded-lg hover:bg-rose-50 font-medium transition-colors flex items-center justify-center gap-2"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    </svg>
+                    Add This Variant (to select multiple sizes/colors)
+                  </button>
+                </div>
+              )}
+
+              {/* Selected Variants List */}
+              {selectedVariants.length > 0 && (
+                <div className="mb-6 bg-gray-50 rounded-lg p-4">
+                  <h4 className="text-sm font-semibold text-gray-900 mb-3">
+                    Selected Variants ({selectedVariants.length})
+                  </h4>
+                  <div className="space-y-2">
+                    {selectedVariants.map((variant, index) => (
+                      <div key={index} className="flex items-center justify-between bg-white p-3 rounded-lg">
+                        <div className="flex items-center gap-3">
+                          <div className="text-sm">
+                            {variant.size && (
+                              <span className="inline-block bg-gray-100 px-2 py-1 rounded mr-2">
+                                Size: <strong>{variant.size}</strong>
+                              </span>
+                            )}
+                            {variant.color && (
+                              <span className="inline-block bg-gray-100 px-2 py-1 rounded">
+                                Color: <strong>{variant.color}</strong>
+                              </span>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <button
+                              onClick={() => handleUpdateVariantQuantity(index, variant.quantity - 1)}
+                              className="w-7 h-7 flex items-center justify-center border border-gray-300 rounded hover:bg-gray-100"
+                              type="button"
+                            >
+                              -
+                            </button>
+                            <span className="w-10 text-center text-sm font-medium">{variant.quantity}</span>
+                            <button
+                              onClick={() => handleUpdateVariantQuantity(index, variant.quantity + 1)}
+                              className="w-7 h-7 flex items-center justify-center border border-gray-300 rounded hover:bg-gray-100"
+                              type="button"
+                            >
+                              +
+                            </button>
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => handleRemoveVariant(index)}
+                          className="text-red-500 hover:text-red-700 p-1"
+                          type="button"
+                        >
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
+                      </div>
                     ))}
                   </div>
                 </div>
@@ -278,7 +509,7 @@ export default function ProductDetail({ product, reviews = [] }) {
               <div className="space-y-3 mb-6 border-t border-b border-gray-200 py-6">
                 <div className="flex items-center gap-3 text-gray-700">
                   <TruckIcon className="w-6 h-6 text-rose-500" />
-                  <span>Free shipping on orders over $50 in discreet packaging</span>
+                  <span>Free shipping on orders over £50 in discreet packaging</span>
                 </div>
                 <div className="flex items-center gap-3 text-gray-700">
                   <ShieldCheckIcon className="w-6 h-6 text-rose-500" />
@@ -349,6 +580,175 @@ export default function ProductDetail({ product, reviews = [] }) {
             )}
           </div>
         </div>
+
+        {/* Size Guide Modal */}
+        {showSizeGuide && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+            <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+              <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+                <h3 className="text-2xl font-serif font-bold text-gray-900">Size Guide</h3>
+                <button
+                  onClick={() => setShowSizeGuide(false)}
+                  className="text-gray-400 hover:text-gray-600 p-1"
+                  type="button"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+
+              <div className="p-6">
+                {/* Bra Sizes */}
+                <div className="mb-8">
+                  <h4 className="text-lg font-semibold text-gray-900 mb-4">Bra Sizes</h4>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm border-collapse">
+                      <thead>
+                        <tr className="bg-rose-50">
+                          <th className="border border-gray-300 px-4 py-2 text-left">UK Size</th>
+                          <th className="border border-gray-300 px-4 py-2 text-left">EU Size</th>
+                          <th className="border border-gray-300 px-4 py-2 text-left">US Size</th>
+                          <th className="border border-gray-300 px-4 py-2 text-left">Band (inches)</th>
+                          <th className="border border-gray-300 px-4 py-2 text-left">Cup</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td className="border border-gray-300 px-4 py-2">30A</td>
+                          <td className="border border-gray-300 px-4 py-2">65A</td>
+                          <td className="border border-gray-300 px-4 py-2">30A</td>
+                          <td className="border border-gray-300 px-4 py-2">28-30</td>
+                          <td className="border border-gray-300 px-4 py-2">A</td>
+                        </tr>
+                        <tr className="bg-gray-50">
+                          <td className="border border-gray-300 px-4 py-2">32B</td>
+                          <td className="border border-gray-300 px-4 py-2">70B</td>
+                          <td className="border border-gray-300 px-4 py-2">32B</td>
+                          <td className="border border-gray-300 px-4 py-2">30-32</td>
+                          <td className="border border-gray-300 px-4 py-2">B</td>
+                        </tr>
+                        <tr>
+                          <td className="border border-gray-300 px-4 py-2">34C</td>
+                          <td className="border border-gray-300 px-4 py-2">75C</td>
+                          <td className="border border-gray-300 px-4 py-2">34C</td>
+                          <td className="border border-gray-300 px-4 py-2">32-34</td>
+                          <td className="border border-gray-300 px-4 py-2">C</td>
+                        </tr>
+                        <tr className="bg-gray-50">
+                          <td className="border border-gray-300 px-4 py-2">36D</td>
+                          <td className="border border-gray-300 px-4 py-2">80D</td>
+                          <td className="border border-gray-300 px-4 py-2">36D</td>
+                          <td className="border border-gray-300 px-4 py-2">34-36</td>
+                          <td className="border border-gray-300 px-4 py-2">D</td>
+                        </tr>
+                        <tr>
+                          <td className="border border-gray-300 px-4 py-2">38DD</td>
+                          <td className="border border-gray-300 px-4 py-2">85E</td>
+                          <td className="border border-gray-300 px-4 py-2">38DD/E</td>
+                          <td className="border border-gray-300 px-4 py-2">36-38</td>
+                          <td className="border border-gray-300 px-4 py-2">DD/E</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                {/* Clothing Sizes */}
+                <div className="mb-8">
+                  <h4 className="text-lg font-semibold text-gray-900 mb-4">Clothing Sizes</h4>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm border-collapse">
+                      <thead>
+                        <tr className="bg-rose-50">
+                          <th className="border border-gray-300 px-4 py-2 text-left">UK Size</th>
+                          <th className="border border-gray-300 px-4 py-2 text-left">EU Size</th>
+                          <th className="border border-gray-300 px-4 py-2 text-left">US Size</th>
+                          <th className="border border-gray-300 px-4 py-2 text-left">Bust (inches)</th>
+                          <th className="border border-gray-300 px-4 py-2 text-left">Waist (inches)</th>
+                          <th className="border border-gray-300 px-4 py-2 text-left">Hips (inches)</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td className="border border-gray-300 px-4 py-2">XS (6-8)</td>
+                          <td className="border border-gray-300 px-4 py-2">34-36</td>
+                          <td className="border border-gray-300 px-4 py-2">2-4</td>
+                          <td className="border border-gray-300 px-4 py-2">32-34</td>
+                          <td className="border border-gray-300 px-4 py-2">24-26</td>
+                          <td className="border border-gray-300 px-4 py-2">34-36</td>
+                        </tr>
+                        <tr className="bg-gray-50">
+                          <td className="border border-gray-300 px-4 py-2">S (8-10)</td>
+                          <td className="border border-gray-300 px-4 py-2">36-38</td>
+                          <td className="border border-gray-300 px-4 py-2">4-6</td>
+                          <td className="border border-gray-300 px-4 py-2">34-36</td>
+                          <td className="border border-gray-300 px-4 py-2">26-28</td>
+                          <td className="border border-gray-300 px-4 py-2">36-38</td>
+                        </tr>
+                        <tr>
+                          <td className="border border-gray-300 px-4 py-2">M (10-12)</td>
+                          <td className="border border-gray-300 px-4 py-2">38-40</td>
+                          <td className="border border-gray-300 px-4 py-2">6-8</td>
+                          <td className="border border-gray-300 px-4 py-2">36-38</td>
+                          <td className="border border-gray-300 px-4 py-2">28-30</td>
+                          <td className="border border-gray-300 px-4 py-2">38-40</td>
+                        </tr>
+                        <tr className="bg-gray-50">
+                          <td className="border border-gray-300 px-4 py-2">L (12-14)</td>
+                          <td className="border border-gray-300 px-4 py-2">40-42</td>
+                          <td className="border border-gray-300 px-4 py-2">8-10</td>
+                          <td className="border border-gray-300 px-4 py-2">38-40</td>
+                          <td className="border border-gray-300 px-4 py-2">30-32</td>
+                          <td className="border border-gray-300 px-4 py-2">40-42</td>
+                        </tr>
+                        <tr>
+                          <td className="border border-gray-300 px-4 py-2">XL (14-16)</td>
+                          <td className="border border-gray-300 px-4 py-2">42-44</td>
+                          <td className="border border-gray-300 px-4 py-2">10-12</td>
+                          <td className="border border-gray-300 px-4 py-2">40-42</td>
+                          <td className="border border-gray-300 px-4 py-2">32-34</td>
+                          <td className="border border-gray-300 px-4 py-2">42-44</td>
+                        </tr>
+                        <tr className="bg-gray-50">
+                          <td className="border border-gray-300 px-4 py-2">XXL (16-18)</td>
+                          <td className="border border-gray-300 px-4 py-2">44-46</td>
+                          <td className="border border-gray-300 px-4 py-2">12-14</td>
+                          <td className="border border-gray-300 px-4 py-2">42-44</td>
+                          <td className="border border-gray-300 px-4 py-2">34-36</td>
+                          <td className="border border-gray-300 px-4 py-2">44-46</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                {/* Measurement Tips */}
+                <div className="bg-rose-50 rounded-lg p-4">
+                  <h4 className="text-lg font-semibold text-gray-900 mb-3">How to Measure</h4>
+                  <ul className="space-y-2 text-sm text-gray-700">
+                    <li className="flex items-start gap-2">
+                      <span className="text-rose-600 font-bold">•</span>
+                      <span><strong>Bust:</strong> Measure around the fullest part of your bust</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-rose-600 font-bold">•</span>
+                      <span><strong>Waist:</strong> Measure around the narrowest part of your waist</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-rose-600 font-bold">•</span>
+                      <span><strong>Hips:</strong> Measure around the fullest part of your hips</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-rose-600 font-bold">•</span>
+                      <span><strong>Band Size:</strong> Measure directly under your bust, keeping the tape snug but not tight</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </>
   );

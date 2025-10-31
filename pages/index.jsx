@@ -39,7 +39,7 @@ export default function Home({ featuredProducts }) {
                 </div>
                 <div className="flex items-center gap-2">
                   <TruckIcon className="w-5 h-5 text-rose-500" />
-                  <span>Free Shipping $50+</span>
+                  <span>Free Shipping £50+</span>
                 </div>
               </div>
             </div>
@@ -77,7 +77,7 @@ export default function Home({ featuredProducts }) {
                 <TruckIcon className="w-8 h-8 text-rose-600" />
               </div>
               <h3 className="text-xl font-semibold mb-2">Discreet Delivery</h3>
-              <p className="text-gray-600">Free shipping over $50 in plain, unmarked packaging for your privacy.</p>
+              <p className="text-gray-600">Free shipping over £50 in plain, unmarked packaging for your privacy.</p>
             </div>
 
             <div className="text-center p-6">

@@ -18,7 +18,14 @@ export default function ProductCard({ product }) {
   const sizes = product.sizes || [];
   const colors = product.colors || [];
   const displaySizes = sizes.slice(0, 5); // Show first 5 sizes
-  const displayColors = colors.slice(0, 5); // Show first 5 colors
+  const displayColors = colors.slice(0, 8).map(color => {
+    if (color.includes('-')) {
+      const [name, hex] = color.split('-');
+      return { name: name.trim(), hex: hex.trim() };
+    }
+    // If only hex code, try to guess name or use hex
+    return { name: color, hex: color };
+  });
 
   const handleAddToCart = (e) => {
     e.preventDefault();
@@ -129,7 +136,7 @@ export default function ProductCard({ product }) {
                   <div
                     key={idx}
                     className="w-5 h-5 rounded-full border border-gray-300"
-                    style={{ backgroundColor: color }}
+                    style={{ backgroundColor: color.hex  }}
                     title={color}
                   />
                 ))}
