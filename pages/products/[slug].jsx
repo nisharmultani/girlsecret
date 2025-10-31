@@ -371,7 +371,6 @@ export default function ProductDetail({ product, reviews = [] }) {
                 <div className="mb-6">
                   <label className="text-sm font-semibold text-gray-900 mb-3 block">
                     Color {selectedColor && <span className="text-rose-600">- {selectedColor}</span>}
-                    <span className="text-gray-500 font-normal ml-2">({colors.length} colors available)</span>
                   </label>
                   <div className="flex flex-wrap gap-3">
                     {colors.map((color, index) => (
