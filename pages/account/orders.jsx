@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { useAuth } from '../../context/AuthContext';
 import { ShoppingBagIcon, TruckIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
+import Image from 'next/image';
 
 export default function Orders() {
   const router = useRouter();
@@ -174,9 +175,11 @@ export default function Orders() {
                     {order.items.map((item, index) => (
                       <div key={index} className="flex items-center gap-4">
                         {item.image && (
-                          <img
+                          <Image
                             src={item.image}
                             alt={item.name}
+                            height={16}
+                            width={16}
                             className="w-16 h-16 object-cover rounded-lg"
                           />
                         )}

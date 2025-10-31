@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import { getCart, getCartTotal, clearCart } from '../lib/cart';
 import { useAuth } from '../context/AuthContext';
 import { CheckCircleIcon, MapPinIcon } from '@heroicons/react/24/outline';
+import Image from 'next/image';
 import PostcodeAutocomplete from '../components/PostcodeAutocomplete';
 
 export default function Checkout() {
@@ -526,9 +527,11 @@ export default function Checkout() {
                   {cart.map((item) => (
                     <div key={item.id} className="flex gap-3">
                       {item.image && (
-                        <img
+                        <Image
                           src={item.image}
                           alt={item.name}
+                          height={16}
+                          width={16}
                           className="w-16 h-16 object-cover rounded-lg"
                         />
                       )}

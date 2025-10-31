@@ -208,7 +208,7 @@ export default function Register() {
         </div>
 
         <p className="text-center text-xs text-gray-500 mt-6">
-          By creating an account, you'll enjoy faster checkout, order tracking, and exclusive offers.
+          By creating an account, you&apos;ll enjoy faster checkout, order tracking, and exclusive offers.
         </p>
       </div>
     </div>
