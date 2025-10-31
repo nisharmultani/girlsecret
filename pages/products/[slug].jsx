@@ -509,7 +509,7 @@ export default function ProductDetail({ product, reviews = [] }) {
               <div className="space-y-3 mb-6 border-t border-b border-gray-200 py-6">
                 <div className="flex items-center gap-3 text-gray-700">
                   <TruckIcon className="w-6 h-6 text-rose-500" />
-                  <span>Free shipping on orders over $50 in discreet packaging</span>
+                  <span>Free shipping on orders over £50 in discreet packaging</span>
                 </div>
                 <div className="flex items-center gap-3 text-gray-700">
                   <ShieldCheckIcon className="w-6 h-6 text-rose-500" />

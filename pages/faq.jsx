@@ -48,7 +48,7 @@ const faqs = [
     questions: [
       {
         q: 'Do you offer free shipping?',
-        a: 'Yes! We offer free standard shipping on all orders over $50. Orders under $50 have a flat shipping rate of $10.',
+        a: 'Yes! We offer free standard shipping on all orders over £50. Orders under £50 have a flat shipping rate of £10.',
       },
       {
         q: 'How long does shipping take?',
@@ -73,7 +73,7 @@ const faqs = [
       },
       {
         q: 'Do you charge for returns or exchanges?',
-        a: 'Exchanges are always free! For returns, we provide a prepaid shipping label and deduct $6 from your refund to cover return shipping costs.',
+        a: 'Exchanges are always free! For returns, we provide a prepaid shipping label and deduct £6 from your refund to cover return shipping costs.',
       },
       {
         q: 'When will I receive my refund?',
