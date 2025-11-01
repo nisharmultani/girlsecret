@@ -12,6 +12,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { getCartCount } from '../../lib/cart';
 import { useAuth } from '../../context/AuthContext';
+import SearchModal from '../SearchModal';
 
 const navigation = [
   { name: 'Home', href: '/' },
@@ -24,6 +25,7 @@ const navigation = [
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const [cartCount, setCartCount] = useState(0);
   const [scrolled, setScrolled] = useState(false);
   const { user, isAuthenticated, logout } = useAuth();
@@ -98,6 +100,7 @@ export default function Header() {
           <div className="hidden lg:flex lg:flex-1 lg:justify-end lg:gap-x-6 lg:items-center">
             <button
               type="button"
+              onClick={() => setSearchOpen(true)}
               className="text-gray-700 hover:text-rose-600 transition-colors"
               aria-label="Search"
             >
@@ -285,6 +288,17 @@ export default function Header() {
                   </div>
 
                   <div className="py-6 space-y-4">
+                    <button
+                      onClick={() => {
+                        setSearchOpen(true);
+                        setMobileMenuOpen(false);
+                      }}
+                      className="w-full flex items-center gap-x-3 rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                    >
+                      <MagnifyingGlassIcon className="h-6 w-6" />
+                      Search
+                    </button>
+
                     <Link
                       href="/cart"
                       className="flex items-center gap-x-3 rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
@@ -371,6 +385,9 @@ export default function Header() {
           </Transition.Child>
         </Dialog>
       </Transition.Root>
+
+      {/* Search Modal */}
+      <SearchModal isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
     </header>
   );
 }
