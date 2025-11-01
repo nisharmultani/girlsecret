@@ -30,13 +30,21 @@ export default async function handler(req, res) {
       results = results.filter((product) => {
         const name = (product.name || '').toLowerCase();
         const description = (product.description || '').toLowerCase();
-        const keywords = (product.keywords || '').toLowerCase();
+
+        // Handle keywords - can be string or array
+        let keywordsText = '';
+        if (typeof product.keywords === 'string') {
+          keywordsText = product.keywords.toLowerCase();
+        } else if (Array.isArray(product.keywords)) {
+          keywordsText = product.keywords.join(' ').toLowerCase();
+        }
+
         const productCategory = (product.category || '').toLowerCase();
 
         return (
           name.includes(query) ||
           description.includes(query) ||
-          keywords.includes(query) ||
+          keywordsText.includes(query) ||
           productCategory.includes(query)
         );
       });
