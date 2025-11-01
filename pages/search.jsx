@@ -3,7 +3,11 @@ import { useRouter } from 'next/router';
 import Head from 'next/head';
 import Layout from '../components/layout/Layout';
 import ProductGrid from '../components/product/ProductGrid';
+import FilterSidebar from '../components/product/FilterSidebar';
 import { MagnifyingGlassIcon, FunnelIcon } from '@heroicons/react/24/outline';
+
+// Define common categories for search filtering
+const CATEGORIES = ['Bras', 'Panties', 'Lingerie', 'Sleepwear'];
 
 export default function Search() {
   const router = useRouter();
@@ -13,16 +17,14 @@ export default function Search() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [resultCount, setResultCount] = useState(0);
-  const [filters, setFilters] = useState({
-    category: 'all',
-    minPrice: '',
-    maxPrice: '',
-    sort: 'featured',
-  });
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [sortValue, setSortValue] = useState('featured');
+  const [minPrice, setMinPrice] = useState('');
+  const [maxPrice, setMaxPrice] = useState('');
   const [showFilters, setShowFilters] = useState(false);
 
   // Perform search
-  const performSearch = async (query, currentFilters) => {
+  const performSearch = async (query, category, sort, minP, maxP) => {
     if (!query || query.trim() === '') {
       setProducts([]);
       setResultCount(0);
@@ -33,7 +35,10 @@ export default function Search() {
     try {
       const params = new URLSearchParams({
         q: query,
-        ...currentFilters,
+        category: category,
+        sort: sort,
+        minPrice: minP,
+        maxPrice: maxP,
       });
 
       const response = await fetch(`/api/search?${params}`);
@@ -56,13 +61,13 @@ export default function Search() {
     }
   };
 
-  // Update search when query param changes
+  // Update search when query param or filters change
   useEffect(() => {
     if (q) {
       setSearchQuery(q);
-      performSearch(q, filters);
+      performSearch(q, selectedCategory, sortValue, minPrice, maxPrice);
     }
-  }, [q]);
+  }, [q, selectedCategory, sortValue, minPrice, maxPrice]);
 
   // Handle search submit
   const handleSearch = (e) => {
@@ -72,12 +77,12 @@ export default function Search() {
     }
   };
 
-  // Handle filter change
-  const handleFilterChange = (filterName, value) => {
-    const newFilters = { ...filters, [filterName]: value };
-    setFilters(newFilters);
-    if (searchQuery) {
-      performSearch(searchQuery, newFilters);
+  // Handle price change
+  const handlePriceChange = (type, value) => {
+    if (type === 'min') {
+      setMinPrice(value);
+    } else {
+      setMaxPrice(value);
     }
   };
 
@@ -91,23 +96,31 @@ export default function Search() {
       </Head>
 
       <div className="min-h-screen bg-gray-50">
+        {/* Header */}
         <div className="bg-white shadow-sm border-b">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <h1 className="text-3xl md:text-4xl font-serif font-bold text-gray-900 mb-2">
+              Search Products
+            </h1>
+            <p className="text-gray-600 mb-6">
+              Find the perfect bras, panties, and lingerie for you
+            </p>
+
             {/* Search Bar */}
-            <form onSubmit={handleSearch} className="max-w-3xl mx-auto">
+            <form onSubmit={handleSearch} className="max-w-2xl">
               <div className="relative">
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search for bras, panties, lingerie..."
-                  className="w-full px-6 py-4 pl-14 text-lg border-2 border-gray-300 rounded-full focus:border-rose-500 focus:ring-2 focus:ring-rose-200 outline-none transition-all"
+                  placeholder="Search products..."
+                  className="w-full px-4 py-3 pl-12 border-2 border-gray-300 rounded-lg focus:border-rose-500 focus:ring-2 focus:ring-rose-200 outline-none transition-all"
                   autoFocus
                 />
-                <MagnifyingGlassIcon className="absolute left-5 top-1/2 -translate-y-1/2 h-6 w-6 text-gray-400" />
+                <MagnifyingGlassIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                 <button
                   type="submit"
-                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-rose-500 hover:bg-rose-600 text-white px-8 py-3 rounded-full font-semibold transition-colors"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-rose-500 hover:bg-rose-600 text-white px-6 py-2 rounded-lg font-semibold transition-colors text-sm"
                 >
                   Search
                 </button>
@@ -116,7 +129,7 @@ export default function Search() {
 
             {/* Results Count */}
             {searchQuery && (
-              <div className="mt-6 text-center">
+              <div className="mt-4">
                 <p className="text-gray-600">
                   {loading ? (
                     'Searching...'
@@ -128,12 +141,12 @@ export default function Search() {
                           {resultCount === 1 ? 'result' : 'results'} for "
                           <span className="font-semibold">{searchQuery}</span>"
                         </>
-                      ) : (
+                      ) : searchQuery ? (
                         <>
                           No results found for "
                           <span className="font-semibold">{searchQuery}</span>"
                         </>
-                      )}
+                      ) : null}
                     </>
                   )}
                 </p>
@@ -146,153 +159,92 @@ export default function Search() {
         {searchQuery && (
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <div className="flex flex-col lg:flex-row gap-8">
-              {/* Filters Sidebar */}
-              <div className="lg:w-64 flex-shrink-0">
-                <div className="bg-white rounded-lg shadow-sm p-6 sticky top-24">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg font-semibold text-gray-900">
-                      Filters
-                    </h3>
-                    <button
-                      onClick={() => setShowFilters(!showFilters)}
-                      className="lg:hidden"
-                    >
-                      <FunnelIcon className="h-5 w-5 text-gray-500" />
-                    </button>
-                  </div>
-
-                  <div
-                    className={`space-y-6 ${
-                      showFilters ? 'block' : 'hidden lg:block'
-                    }`}
-                  >
-                    {/* Category Filter */}
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Category
-                      </label>
-                      <select
-                        value={filters.category}
-                        onChange={(e) =>
-                          handleFilterChange('category', e.target.value)
-                        }
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
-                      >
-                        <option value="all">All Categories</option>
-                        <option value="Bras">Bras</option>
-                        <option value="Panties">Panties</option>
-                        <option value="Lingerie">Lingerie</option>
-                        <option value="Sleepwear">Sleepwear</option>
-                      </select>
-                    </div>
-
-                    {/* Price Range */}
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Price Range
-                      </label>
-                      <div className="flex gap-2 items-center">
-                        <input
-                          type="number"
-                          placeholder="Min"
-                          value={filters.minPrice}
-                          onChange={(e) =>
-                            handleFilterChange('minPrice', e.target.value)
-                          }
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
-                          min="0"
-                        />
-                        <span className="text-gray-500">-</span>
-                        <input
-                          type="number"
-                          placeholder="Max"
-                          value={filters.maxPrice}
-                          onChange={(e) =>
-                            handleFilterChange('maxPrice', e.target.value)
-                          }
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
-                          min="0"
-                        />
-                      </div>
-                    </div>
-
-                    {/* Sort */}
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Sort By
-                      </label>
-                      <select
-                        value={filters.sort}
-                        onChange={(e) =>
-                          handleFilterChange('sort', e.target.value)
-                        }
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
-                      >
-                        <option value="featured">Featured</option>
-                        <option value="price-asc">Price: Low to High</option>
-                        <option value="price-desc">Price: High to Low</option>
-                        <option value="name-asc">Name: A to Z</option>
-                        <option value="name-desc">Name: Z to A</option>
-                        <option value="newest">Newest</option>
-                      </select>
-                    </div>
-
-                    {/* Clear Filters */}
-                    <button
-                      onClick={() => {
-                        setFilters({
-                          category: 'all',
-                          minPrice: '',
-                          maxPrice: '',
-                          sort: 'featured',
-                        });
-                        if (searchQuery) {
-                          performSearch(searchQuery, {
-                            category: 'all',
-                            minPrice: '',
-                            maxPrice: '',
-                            sort: 'featured',
-                          });
-                        }
-                      }}
-                      className="w-full px-4 py-2 text-sm text-gray-600 hover:text-gray-900 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-                    >
-                      Clear All Filters
-                    </button>
-                  </div>
-                </div>
-              </div>
+              {/* Filter Sidebar */}
+              <FilterSidebar
+                categories={CATEGORIES}
+                selectedCategory={selectedCategory}
+                onCategoryChange={setSelectedCategory}
+                minPrice={minPrice}
+                maxPrice={maxPrice}
+                onPriceChange={handlePriceChange}
+                sortValue={sortValue}
+                onSortChange={setSortValue}
+                showFilters={showFilters}
+                onToggleFilters={() => setShowFilters(!showFilters)}
+                productCount={resultCount}
+              />
 
               {/* Results */}
               <div className="flex-1">
+                {/* Toolbar */}
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+                  <p className="text-gray-600">
+                    Showing <span className="font-semibold">{products.length}</span>{' '}
+                    {products.length === 1 ? 'result' : 'results'}
+                  </p>
+
+                  <button
+                    onClick={() => setShowFilters(!showFilters)}
+                    className="lg:hidden inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors"
+                  >
+                    <FunnelIcon className="w-5 h-5 mr-2" />
+                    Filters
+                  </button>
+                </div>
+
+                {/* Products */}
                 {loading ? (
                   <div className="flex items-center justify-center py-20">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rose-500"></div>
                   </div>
                 ) : products.length > 0 ? (
                   <ProductGrid products={products} />
-                ) : searchQuery ? (
-                  <div className="text-center py-20">
-                    <MagnifyingGlassIcon className="mx-auto h-16 w-16 text-gray-300" />
-                    <h3 className="mt-4 text-lg font-medium text-gray-900">
+                ) : (
+                  <div className="text-center py-16">
+                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 mb-4">
+                      <MagnifyingGlassIcon className="w-8 h-8 text-gray-400" />
+                    </div>
+                    <h3 className="text-lg font-medium text-gray-900 mb-1">
                       No products found
                     </h3>
-                    <p className="mt-2 text-gray-500">
+                    <p className="text-gray-500">
                       Try adjusting your search or filters to find what you're
                       looking for.
                     </p>
                   </div>
-                ) : (
-                  <div className="text-center py-20">
-                    <MagnifyingGlassIcon className="mx-auto h-16 w-16 text-gray-300" />
-                    <h3 className="mt-4 text-lg font-medium text-gray-900">
-                      Start searching
-                    </h3>
-                    <p className="mt-2 text-gray-500">
-                      Enter a search term to find products
-                    </p>
-                  </div>
                 )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Empty State - No Search Query */}
+        {!searchQuery && (
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+            <div className="text-center">
+              <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gray-100 mb-4">
+                <MagnifyingGlassIcon className="w-10 h-10 text-gray-400" />
+              </div>
+              <h3 className="text-xl font-medium text-gray-900 mb-2">
+                Start searching
+              </h3>
+              <p className="text-gray-500 mb-8">
+                Enter a search term above to find products
+              </p>
+              <div className="flex flex-wrap justify-center gap-2">
+                <span className="text-sm text-gray-500">Popular searches:</span>
+                {['Bras', 'Panties', 'Lingerie', 'Sleepwear'].map((term) => (
+                  <button
+                    key={term}
+                    onClick={() => {
+                      setSearchQuery(term);
+                      router.push(`/search?q=${encodeURIComponent(term)}`);
+                    }}
+                    className="px-4 py-2 text-sm bg-white border border-gray-300 rounded-lg hover:border-rose-500 hover:text-rose-600 transition-colors"
+                  >
+                    {term}
+                  </button>
+                ))}
               </div>
             </div>
           </div>
