@@ -68,7 +68,7 @@ export default function SearchModal({ isOpen, onClose }) {
   const handleSearch = (e) => {
     e.preventDefault();
     if (query.trim()) {
-      router.push(`/search?q=${encodeURIComponent(query)}`);
+      router.push(`/shop?search=${encodeURIComponent(query)}`);
       onClose();
       setQuery('');
       setSuggestions([]);

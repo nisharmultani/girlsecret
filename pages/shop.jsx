@@ -9,6 +9,8 @@ import { MagnifyingGlassIcon, FunnelIcon } from '@heroicons/react/24/outline';
 
 export default function Shop({ products: initialProducts, categories }) {
   const router = useRouter();
+  const { search: urlSearch } = router.query;
+
   const [products] = useState(initialProducts);
   const [filteredProducts, setFilteredProducts] = useState(initialProducts);
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -17,77 +19,119 @@ export default function Shop({ products: initialProducts, categories }) {
   const [maxPrice, setMaxPrice] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isSearching, setIsSearching] = useState(false);
 
-  // Filter and sort products
+  // Load search query from URL
   useEffect(() => {
-    let filtered = [...products];
-
-    // Filter by category
-    if (selectedCategory !== 'all') {
-      filtered = filtered.filter((p) => p.category === selectedCategory);
+    if (urlSearch) {
+      setSearchQuery(urlSearch);
     }
+  }, [urlSearch]);
 
-    // Filter by price range
-    if (minPrice) {
-      const min = parseFloat(minPrice);
-      if (!isNaN(min)) {
-        filtered = filtered.filter((p) => {
-          const price = p.salePrice || p.price || 0;
-          return price >= min;
-        });
+  // Perform search or filter products
+  useEffect(() => {
+    const performSearch = async () => {
+      // If there's a search query, use the search API
+      if (urlSearch && urlSearch.trim()) {
+        setIsSearching(true);
+        try {
+          const params = new URLSearchParams({
+            q: urlSearch,
+            category: selectedCategory,
+            sort: sortValue,
+            minPrice: minPrice,
+            maxPrice: maxPrice,
+          });
+
+          const response = await fetch(`/api/search?${params}`);
+          const data = await response.json();
+
+          if (data.success) {
+            setFilteredProducts(data.results);
+          } else {
+            setFilteredProducts([]);
+          }
+        } catch (error) {
+          console.error('Search error:', error);
+          setFilteredProducts([]);
+        } finally {
+          setIsSearching(false);
+        }
+        return;
       }
-    }
 
-    if (maxPrice) {
-      const max = parseFloat(maxPrice);
-      if (!isNaN(max)) {
-        filtered = filtered.filter((p) => {
-          const price = p.salePrice || p.price || 0;
-          return price <= max;
-        });
+      // Otherwise, filter products client-side
+      let filtered = [...products];
+
+      // Filter by category
+      if (selectedCategory !== 'all') {
+        filtered = filtered.filter((p) => p.category === selectedCategory);
       }
-    }
 
-    // Sort products
-    switch (sortValue) {
-      case 'price-asc':
-        filtered.sort((a, b) => {
-          const priceA = a.salePrice || a.price || 0;
-          const priceB = b.salePrice || b.price || 0;
-          return priceA - priceB;
-        });
-        break;
-      case 'price-desc':
-        filtered.sort((a, b) => {
-          const priceA = a.salePrice || a.price || 0;
-          const priceB = b.salePrice || b.price || 0;
-          return priceB - priceA;
-        });
-        break;
-      case 'name-asc':
-        filtered.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
-        break;
-      case 'name-desc':
-        filtered.sort((a, b) => (b.name || '').localeCompare(a.name || ''));
-        break;
-      case 'newest':
-        filtered.sort((a, b) => {
-          const dateA = new Date(a.createdTime || 0);
-          const dateB = new Date(b.createdTime || 0);
-          return dateB - dateA;
-        });
-        break;
-      case 'featured':
-      default:
-        filtered.sort((a, b) => {
-          const aFeatured = a.featured ? 1 : 0;
-          const bFeatured = b.featured ? 1 : 0;
-          return bFeatured - aFeatured;
-        });
-    }
+      // Filter by price range
+      if (minPrice) {
+        const min = parseFloat(minPrice);
+        if (!isNaN(min)) {
+          filtered = filtered.filter((p) => {
+            const price = p.salePrice || p.price || 0;
+            return price >= min;
+          });
+        }
+      }
 
-    setFilteredProducts(filtered);
-  }, [selectedCategory, sortValue, minPrice, maxPrice, products]);
+      if (maxPrice) {
+        const max = parseFloat(maxPrice);
+        if (!isNaN(max)) {
+          filtered = filtered.filter((p) => {
+            const price = p.salePrice || p.price || 0;
+            return price <= max;
+          });
+        }
+      }
+
+      // Sort products
+      switch (sortValue) {
+        case 'price-asc':
+          filtered.sort((a, b) => {
+            const priceA = a.salePrice || a.price || 0;
+            const priceB = b.salePrice || b.price || 0;
+            return priceA - priceB;
+          });
+          break;
+        case 'price-desc':
+          filtered.sort((a, b) => {
+            const priceA = a.salePrice || a.price || 0;
+            const priceB = b.salePrice || b.price || 0;
+            return priceB - priceA;
+          });
+          break;
+        case 'name-asc':
+          filtered.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+          break;
+        case 'name-desc':
+          filtered.sort((a, b) => (b.name || '').localeCompare(a.name || ''));
+          break;
+        case 'newest':
+          filtered.sort((a, b) => {
+            const dateA = new Date(a.createdTime || 0);
+            const dateB = new Date(b.createdTime || 0);
+            return dateB - dateA;
+          });
+          break;
+        case 'featured':
+        default:
+          filtered.sort((a, b) => {
+            const aFeatured = a.featured ? 1 : 0;
+            const bFeatured = b.featured ? 1 : 0;
+            return bFeatured - aFeatured;
+          });
+      }
+
+      setFilteredProducts(filtered);
+    };
+
+    performSearch();
+  }, [urlSearch, selectedCategory, sortValue, minPrice, maxPrice, products]);
 
   // Handle price change
   const handlePriceChange = (type, value) => {
@@ -102,8 +146,14 @@ export default function Shop({ products: initialProducts, categories }) {
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      router.push(`/search?q=${encodeURIComponent(searchQuery)}`);
+      router.push(`/shop?search=${encodeURIComponent(searchQuery)}`);
     }
+  };
+
+  // Clear search
+  const clearSearch = () => {
+    setSearchQuery('');
+    router.push('/shop');
   };
 
   return (
@@ -121,11 +171,16 @@ export default function Shop({ products: initialProducts, categories }) {
         <div className="bg-white shadow-sm border-b">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <h1 className="text-3xl md:text-4xl font-serif font-bold text-gray-900 mb-2">
-              Intimate Apparel Collection
+              {urlSearch ? 'Search Results' : 'Intimate Apparel Collection'}
             </h1>
             <p className="text-gray-600 mb-6">
-              Beautiful bras, panties, and lingerie designed for comfort and
-              confidence
+              {urlSearch ? (
+                <>
+                  Showing results for "<span className="font-semibold">{urlSearch}</span>"
+                </>
+              ) : (
+                'Beautiful bras, panties, and lingerie designed for comfort and confidence'
+              )}
             </p>
 
             {/* Search Bar */}
@@ -147,6 +202,18 @@ export default function Shop({ products: initialProducts, categories }) {
                 </button>
               </div>
             </form>
+
+            {/* Clear Search Link */}
+            {urlSearch && (
+              <div className="mt-3">
+                <button
+                  onClick={clearSearch}
+                  className="text-sm text-rose-600 hover:text-rose-700 font-medium"
+                >
+                  ✕ Clear search and show all products
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
@@ -186,31 +253,33 @@ export default function Shop({ products: initialProducts, categories }) {
               </div>
 
               {/* Products */}
-              {filteredProducts.length > 0 ? (
+              {isSearching ? (
+                <div className="flex items-center justify-center py-20">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rose-500"></div>
+                </div>
+              ) : filteredProducts.length > 0 ? (
                 <ProductGrid products={filteredProducts} />
               ) : (
                 <div className="text-center py-16">
                   <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 mb-4">
-                    <svg
-                      className="w-8 h-8 text-gray-400"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
-                      />
-                    </svg>
+                    <MagnifyingGlassIcon className="w-8 h-8 text-gray-400" />
                   </div>
                   <h3 className="text-lg font-medium text-gray-900 mb-1">
                     No products found
                   </h3>
-                  <p className="text-gray-500">
-                    Try adjusting your filters to find what you're looking for.
+                  <p className="text-gray-500 mb-4">
+                    {urlSearch
+                      ? 'Try a different search term or adjust your filters.'
+                      : 'Try adjusting your filters to find what you\'re looking for.'}
                   </p>
+                  {urlSearch && (
+                    <button
+                      onClick={clearSearch}
+                      className="inline-flex items-center px-4 py-2 bg-rose-500 hover:bg-rose-600 text-white rounded-lg font-medium transition-colors"
+                    >
+                      View all products
+                    </button>
+                  )}
                 </div>
               )}
             </div>
