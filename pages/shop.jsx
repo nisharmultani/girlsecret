@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import { getAllProducts } from '../lib/airtable';
-import Layout from '../components/layout/Layout';
 import ProductGrid from '../components/product/ProductGrid';
 import FilterSidebar from '../components/product/FilterSidebar';
 import { MagnifyingGlassIcon, FunnelIcon } from '@heroicons/react/24/outline';
@@ -191,7 +190,7 @@ export default function Shop({ products: initialProducts, categories }) {
   };
 
   return (
-    <Layout>
+    <>
       <Head>
         <title>Shop Intimate Apparel - GirlSecret</title>
         <meta
@@ -339,7 +338,7 @@ export default function Shop({ products: initialProducts, categories }) {
           </div>
         </div>
       </div>
-    </Layout>
+    </>
   );
 }
 
