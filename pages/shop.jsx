@@ -9,7 +9,7 @@ import { MagnifyingGlassIcon, FunnelIcon } from '@heroicons/react/24/outline';
 
 export default function Shop({ products: initialProducts, categories }) {
   const router = useRouter();
-  const { search: urlSearch } = router.query;
+  const { search: urlSearch, category: urlCategory } = router.query;
 
   const [products] = useState(initialProducts);
   const [filteredProducts, setFilteredProducts] = useState(initialProducts);
@@ -21,12 +21,35 @@ export default function Shop({ products: initialProducts, categories }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
 
-  // Load search query from URL
+  // Load search query and category from URL
   useEffect(() => {
-    if (urlSearch) {
+    // Handle URL category parameter
+    if (urlCategory && categories.includes(urlCategory)) {
+      setSelectedCategory(urlCategory);
+    } else if (urlSearch) {
       setSearchQuery(urlSearch);
+
+      // Auto-detect category from search query if not explicitly set
+      if (!urlCategory) {
+        const query = urlSearch.toLowerCase();
+        if (query.includes('bra')) {
+          setSelectedCategory('Bras');
+        } else if (query.includes('panty') || query.includes('panties') || query.includes('underwear')) {
+          setSelectedCategory('Panties');
+        } else if (query.includes('lingerie')) {
+          setSelectedCategory('Lingerie');
+        } else if (query.includes('sleep') || query.includes('nightwear')) {
+          setSelectedCategory('Sleepwear');
+        } else {
+          setSelectedCategory('all');
+        }
+      }
+    } else {
+      // Reset to defaults when no URL parameters
+      setSelectedCategory('all');
+      setSearchQuery('');
     }
-  }, [urlSearch]);
+  }, [urlSearch, urlCategory, categories]);
 
   // Perform search or filter products
   useEffect(() => {
@@ -156,6 +179,17 @@ export default function Shop({ products: initialProducts, categories }) {
     router.push('/shop');
   };
 
+  // Handle category change - if searching, clear search and filter by category
+  const handleCategoryChange = (category) => {
+    setSelectedCategory(category);
+
+    // If user is actively searching and changes category, clear the search
+    // This prevents "no results" when search query doesn't match new category
+    if (urlSearch) {
+      router.push(category === 'all' ? '/shop' : `/shop?category=${category}`);
+    }
+  };
+
   return (
     <Layout>
       <Head>
@@ -171,13 +205,22 @@ export default function Shop({ products: initialProducts, categories }) {
         <div className="bg-white shadow-sm border-b">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <h1 className="text-3xl md:text-4xl font-serif font-bold text-gray-900 mb-2">
-              {urlSearch ? 'Search Results' : 'Intimate Apparel Collection'}
+              {urlSearch
+                ? 'Search Results'
+                : selectedCategory !== 'all'
+                ? `${selectedCategory} Collection`
+                : 'Intimate Apparel Collection'}
             </h1>
             <p className="text-gray-600 mb-6">
               {urlSearch ? (
                 <>
                   Showing results for "<span className="font-semibold">{urlSearch}</span>"
+                  {selectedCategory !== 'all' && (
+                    <> in <span className="font-semibold">{selectedCategory}</span></>
+                  )}
                 </>
+              ) : selectedCategory !== 'all' ? (
+                <>Shop our complete collection of {selectedCategory.toLowerCase()}</>
               ) : (
                 'Beautiful bras, panties, and lingerie designed for comfort and confidence'
               )}
@@ -203,15 +246,25 @@ export default function Shop({ products: initialProducts, categories }) {
               </div>
             </form>
 
-            {/* Clear Search Link */}
-            {urlSearch && (
-              <div className="mt-3">
-                <button
-                  onClick={clearSearch}
-                  className="text-sm text-rose-600 hover:text-rose-700 font-medium"
-                >
-                  ✕ Clear search and show all products
-                </button>
+            {/* Clear Search/Filter Links */}
+            {(urlSearch || (urlCategory && selectedCategory !== 'all')) && (
+              <div className="mt-3 flex gap-4">
+                {urlSearch && (
+                  <button
+                    onClick={clearSearch}
+                    className="text-sm text-rose-600 hover:text-rose-700 font-medium"
+                  >
+                    ✕ Clear search
+                  </button>
+                )}
+                {urlCategory && selectedCategory !== 'all' && !urlSearch && (
+                  <button
+                    onClick={() => router.push('/shop')}
+                    className="text-sm text-rose-600 hover:text-rose-700 font-medium"
+                  >
+                    ✕ Show all categories
+                  </button>
+                )}
               </div>
             )}
           </div>
@@ -223,7 +276,7 @@ export default function Shop({ products: initialProducts, categories }) {
             <FilterSidebar
               categories={categories}
               selectedCategory={selectedCategory}
-              onCategoryChange={setSelectedCategory}
+              onCategoryChange={handleCategoryChange}
               minPrice={minPrice}
               maxPrice={maxPrice}
               onPriceChange={handlePriceChange}
