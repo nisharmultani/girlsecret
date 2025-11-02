@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { useState } from 'react';
 import { getAllProducts } from '../lib/airtable';
 import ProductGrid from '../components/product/ProductGrid';
 import HeroCarousel from '../components/home/HeroCarousel';
@@ -7,6 +8,48 @@ import TestimonialsCarousel from '../components/home/TestimonialsCarousel';
 import { ArrowRightIcon, SparklesIcon, TruckIcon, ShieldCheckIcon, HeartIcon } from '@heroicons/react/24/outline';
 
 export default function Home({ featuredProducts, newArrivals, bestSellers }) {
+  const [email, setEmail] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [message, setMessage] = useState({ type: '', text: '' });
+
+  const handleNewsletterSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setMessage({ type: '', text: '' });
+
+    try {
+      const response = await fetch('/api/newsletter', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, source: 'homepage' }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setMessage({
+          type: 'success',
+          text: data.alreadySubscribed
+            ? 'You are already subscribed!'
+            : 'Thank you for subscribing! Check your email for a welcome message.',
+        });
+        setEmail('');
+      } else {
+        setMessage({
+          type: 'error',
+          text: data.error || 'Failed to subscribe. Please try again.',
+        });
+      }
+    } catch (error) {
+      setMessage({
+        type: 'error',
+        text: 'An error occurred. Please try again later.',
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <>
       {/* Hero Carousel */}
@@ -156,17 +199,33 @@ export default function Home({ featuredProducts, newArrivals, bestSellers }) {
           <p className="text-base md:text-lg text-gray-600 mb-8">
             Get exclusive access to new collections, size guides, fit tips, and special offers.
           </p>
-          <form className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+          <form onSubmit={handleNewsletterSubmit} className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
             <input
               type="email"
               placeholder="Enter your email"
               className="input-field flex-1"
               required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              disabled={isSubmitting}
             />
-            <button type="submit" className="btn-blush">
-              Subscribe
+            <button
+              type="submit"
+              className="btn-blush disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? 'Subscribing...' : 'Subscribe'}
             </button>
           </form>
+          {message.text && (
+            <p
+              className={`mt-4 text-sm font-medium ${
+                message.type === 'success' ? 'text-green-600' : 'text-red-600'
+              }`}
+            >
+              {message.text}
+            </p>
+          )}
           <p className="text-xs text-gray-500 mt-4">
             By subscribing, you agree to receive marketing emails. Unsubscribe anytime.
           </p>

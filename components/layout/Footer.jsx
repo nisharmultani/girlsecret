@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { useState } from 'react';
 
 const footerNavigation = {
   shop: [
@@ -68,6 +69,48 @@ const footerNavigation = {
 };
 
 export default function Footer() {
+  const [email, setEmail] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [message, setMessage] = useState({ type: '', text: '' });
+
+  const handleNewsletterSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setMessage({ type: '', text: '' });
+
+    try {
+      const response = await fetch('/api/newsletter', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setMessage({
+          type: 'success',
+          text: data.alreadySubscribed
+            ? 'You are already subscribed!'
+            : 'Thank you for subscribing!',
+        });
+        setEmail('');
+      } else {
+        setMessage({
+          type: 'error',
+          text: data.error || 'Failed to subscribe. Please try again.',
+        });
+      }
+    } catch (error) {
+      setMessage({
+        type: 'error',
+        text: 'An error occurred. Please try again later.',
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <footer className="bg-gray-900" aria-labelledby="footer-heading">
       <h2 id="footer-heading" className="sr-only">
@@ -151,7 +194,7 @@ export default function Footer() {
                 <p className="mt-2 text-sm leading-6 text-gray-300">
                   Get the latest updates on new products and special offers.
                 </p>
-                <form className="mt-6 sm:flex sm:max-w-md">
+                <form onSubmit={handleNewsletterSubmit} className="mt-6 sm:flex sm:max-w-md">
                   <label htmlFor="email-address" className="sr-only">
                     Email address
                   </label>
@@ -161,18 +204,31 @@ export default function Footer() {
                     id="email-address"
                     autoComplete="email"
                     required
-                    className="w-full min-w-0 appearance-none rounded-md border-0 bg-white/5 px-3 py-1.5 text-base text-white shadow-sm ring-1 ring-inset ring-white/10 placeholder:text-gray-500 focus:ring-2 focus:ring-inset focus:ring-gold-500 sm:w-56 sm:text-sm sm:leading-6"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    disabled={isSubmitting}
+                    className="w-full min-w-0 appearance-none rounded-md border-0 bg-white/5 px-3 py-1.5 text-base text-white shadow-sm ring-1 ring-inset ring-white/10 placeholder:text-gray-500 focus:ring-2 focus:ring-inset focus:ring-gold-500 sm:w-56 sm:text-sm sm:leading-6 disabled:opacity-50"
                     placeholder="Enter your email"
                   />
                   <div className="mt-4 sm:ml-4 sm:mt-0 sm:flex-shrink-0">
                     <button
                       type="submit"
-                      className="flex w-full items-center justify-center rounded-md bg-gold-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gold-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-600"
+                      disabled={isSubmitting}
+                      className="flex w-full items-center justify-center rounded-md bg-gold-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gold-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-600 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      Subscribe
+                      {isSubmitting ? 'Subscribing...' : 'Subscribe'}
                     </button>
                   </div>
                 </form>
+                {message.text && (
+                  <p
+                    className={`mt-2 text-sm ${
+                      message.type === 'success' ? 'text-green-400' : 'text-red-400'
+                    }`}
+                  >
+                    {message.text}
+                  </p>
+                )}
               </div>
             </div>
           </div>
