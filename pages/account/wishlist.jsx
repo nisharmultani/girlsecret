@@ -228,7 +228,7 @@ export default function WishlistPage() {
                       <button
                         onClick={() => handleAddToCart(product)}
                         disabled={addingToCartId === product.id || !product.inStock}
-                        className="w-full btn-primary disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                        className="mt-auto w-full btn-primary disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                       >
                         {addingToCartId === product.id ? (
                           <>
