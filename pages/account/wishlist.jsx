@@ -153,12 +153,12 @@ export default function WishlistPage() {
                 const hasDiscount = product.salePrice && product.salePrice < product.price;
 
                 return (
-                  <div key={product.id} className="card group relative">
+                  <div key={product.id} className="card group relative flex flex-col">
                     {/* Remove Button */}
                     <button
                       onClick={() => handleRemoveFromWishlist(product.id)}
                       disabled={removingId === product.id}
-                      className="absolute top-4 right-4 z-10 bg-white p-2 rounded-full shadow-md hover:bg-red-50 transition-colors disabled:opacity-50"
+                      className="absolute top-2 right-2 z-10 bg-white p-2 rounded-full shadow-md hover:bg-red-50 transition-colors disabled:opacity-50"
                       aria-label="Remove from wishlist"
                     >
                       {removingId === product.id ? (
@@ -169,20 +169,20 @@ export default function WishlistPage() {
                     </button>
 
                     {/* Product Image */}
-                    <Link href={`/products/${product.slug}`}>
-                      <div className="relative aspect-square overflow-hidden bg-gray-100 rounded-lg mb-4">
+                    <Link href={`/products/${product.slug}`} className="block">
+                      <div className="relative aspect-square overflow-hidden bg-gray-100 rounded-lg">
                         <Image
                           src={imageUrl}
                           alt={product.name}
                           fill
-                          className="object-cover group-hover:scale-110 transition-transform duration-500"
+                          className="object-cover group-hover:scale-105 transition-transform duration-300"
                           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         />
 
                         {/* Out of Stock Overlay */}
                         {!product.inStock && (
                           <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                            <span className="bg-white px-4 py-2 rounded-lg font-semibold text-gray-900">
+                            <span className="bg-white px-4 py-2 rounded-lg font-semibold text-gray-900 text-sm">
                               Out of Stock
                             </span>
                           </div>
@@ -191,34 +191,34 @@ export default function WishlistPage() {
                     </Link>
 
                     {/* Product Info */}
-                    <div className="flex flex-col flex-grow">
+                    <div className="flex flex-col flex-grow pt-4">
                       {/* Category */}
                       {product.category && (
-                        <p className="text-xs text-gray-500 uppercase tracking-wide mb-2">
+                        <p className="text-xs text-rose-600 uppercase tracking-wide mb-1 font-semibold">
                           {product.category}
                         </p>
                       )}
 
                       {/* Name */}
                       <Link href={`/products/${product.slug}`}>
-                        <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2 hover:text-rose-600 transition-colors">
+                        <h3 className="text-base font-semibold text-gray-900 mb-2 line-clamp-2 hover:text-rose-600 transition-colors min-h-[3rem]">
                           {product.name}
                         </h3>
                       </Link>
 
                       {/* Price */}
-                      <div className="mb-4 flex items-center gap-2">
+                      <div className="flex items-baseline gap-2 mb-4">
                         {hasDiscount ? (
                           <>
-                            <span className="text-xl font-bold text-rose-600">
+                            <span className="text-lg font-bold text-rose-600">
                               {formatPrice(product.salePrice)}
                             </span>
-                            <span className="text-sm text-gray-500 line-through">
+                            <span className="text-sm text-gray-400 line-through">
                               {formatPrice(product.price)}
                             </span>
                           </>
                         ) : (
-                          <span className="text-xl font-bold text-gray-900">
+                          <span className="text-lg font-bold text-gray-900">
                             {formatPrice(product.price)}
                           </span>
                         )}
@@ -228,17 +228,17 @@ export default function WishlistPage() {
                       <button
                         onClick={() => handleAddToCart(product)}
                         disabled={addingToCartId === product.id || !product.inStock}
-                        className="mt-auto w-full btn-primary disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                        className="mt-auto w-full py-2.5 px-4 rounded-lg font-semibold transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed bg-rose-600 hover:bg-rose-700 text-white shadow-sm hover:shadow-md"
                       >
                         {addingToCartId === product.id ? (
                           <>
                             <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></div>
-                            Added!
+                            <span>Added!</span>
                           </>
                         ) : (
                           <>
-                            <ShoppingBagIcon className="h-4 w-4" />
-                            {product.inStock ? 'Add to Cart' : 'Out of Stock'}
+                            <ShoppingBagIcon className="h-5 w-5" />
+                            <span>{product.inStock ? 'Add to Cart' : 'Out of Stock'}</span>
                           </>
                         )}
                       </button>
