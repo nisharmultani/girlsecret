@@ -4,6 +4,7 @@ import Head from 'next/head';
 import { getAllProducts } from '../lib/airtable';
 import ProductGrid from '../components/product/ProductGrid';
 import FilterSidebar from '../components/product/FilterSidebar';
+import { ProductGridSkeleton } from '../components/ui/SkeletonLoader';
 import { MagnifyingGlassIcon, FunnelIcon } from '@heroicons/react/24/outline';
 
 export default function Shop({ products: initialProducts, categories }) {
@@ -306,9 +307,7 @@ export default function Shop({ products: initialProducts, categories }) {
 
               {/* Products */}
               {isSearching ? (
-                <div className="flex items-center justify-center py-20">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rose-500"></div>
-                </div>
+                <ProductGridSkeleton count={8} />
               ) : filteredProducts.length > 0 ? (
                 <ProductGrid products={filteredProducts} />
               ) : (
