@@ -42,7 +42,6 @@ async function handleSubscribe(req, res) {
       email: email.toLowerCase().trim(),
       firstName: firstName || '',
       source,
-      subscribedAt: new Date().toISOString(),
       isActive: true,
     });
 
