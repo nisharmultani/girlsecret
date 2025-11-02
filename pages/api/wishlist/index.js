@@ -15,6 +15,7 @@ export default async function handler(req, res) {
     // Check if only IDs are requested (for quick checks)
     if (idsOnly === 'true') {
       const productIds = await getWishlistProductIds(userId);
+      console.log('API: Fetched wishlist IDs for user', userId, ':', productIds);
       return res.status(200).json({ success: true, productIds });
     }
 
