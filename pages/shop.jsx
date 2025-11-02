@@ -224,7 +224,7 @@ export default function Shop({ products: initialProducts, categories }) {
             <p className="text-gray-600 mb-6">
               {urlSearch ? (
                 <>
-                  Showing results for &apos;<span className="font-semibold">{urlSearch}</span>&apos;
+                  Showing results for &quot;<span className="font-semibold">{urlSearch}</span>&quot;
                   {selectedCategory !== 'all' && (
                     <> in <span className="font-semibold">{selectedCategory}</span></>
                   )}
