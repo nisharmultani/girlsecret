@@ -211,7 +211,7 @@ export default function SearchModal({ isOpen, onClose }) {
                           onClick={handleSearch}
                           className="w-full mt-2 px-4 py-3 text-sm font-medium text-rose-600 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition-colors"
                         >
-                          View all results for &quot;{query}&quot;
+                          View all results for &apos;{query}&apos;
                         </button>
                       )}
                     </div>

@@ -1,98 +1,22 @@
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { getAllProducts } from '../lib/airtable';
 import ProductGrid from '../components/product/ProductGrid';
-import { ArrowRightIcon, SparklesIcon, TruckIcon, ShieldCheckIcon } from '@heroicons/react/24/outline';
-import coverImage from "../images/coverImage.avif"
+import HeroCarousel from '../components/home/HeroCarousel';
+import ShopByCategory from '../components/home/ShopByCategory';
+import TestimonialsCarousel from '../components/home/TestimonialsCarousel';
+import { ArrowRightIcon, SparklesIcon, TruckIcon, ShieldCheckIcon, HeartIcon } from '@heroicons/react/24/outline';
 
-export default function Home({ featuredProducts }) {
+export default function Home({ featuredProducts, newArrivals, bestSellers }) {
   return (
     <>
-      {/* Hero Section */}
-      <section className="relative min-h-[600px] lg:min-h-[700px] flex items-center intimate-gradient">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="animate-fade-in">
-              <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif font-bold text-gray-900 mb-6">
-                Feel Beautiful
-                <span className="block text-gradient">From Within</span>
-              </h1>
-              <p className="text-xl md:text-2xl text-gray-600 mb-8">
-                Discover intimate apparel designed for comfort, confidence, and your unique beauty.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Link href="/shop" className="btn-blush text-center">
-                  Shop Now
-                  <ArrowRightIcon className="inline-block w-5 h-5 ml-2" />
-                </Link>
-                <Link href="/about" className="btn-secondary text-center">
-                  Find Your Fit
-                </Link>
-              </div>
+      {/* Hero Carousel */}
+      <HeroCarousel />
 
-              {/* Trust Badges */}
-              <div className="mt-8 flex flex-wrap gap-4 text-sm text-gray-600">
-                <div className="flex items-center gap-2">
-                  <ShieldCheckIcon className="w-5 h-5 text-rose-500" />
-                  <span>Discreet Packaging</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <TruckIcon className="w-5 h-5 text-rose-500" />
-                  <span>Free Shipping £50+</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="relative h-[400px] lg:h-[500px] animate-slide-up">
-              <div className="absolute inset-0 bg-gradient-to-br from-rose-200/50 to-blush-200/50 rounded-3xl transform rotate-3"></div>
-              <div className="relative h-full bg-white rounded-3xl shadow-2xl overflow-hidden">
-                <Image
-                  src={coverImage}
-                  alt="Beautiful Intimate Apparel"
-                  fill
-                  className="object-cover"
-                  priority
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section className="py-16 bg-white">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="text-center p-6">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-rose-100 mb-4">
-                <SparklesIcon className="w-8 h-8 text-rose-600" />
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Perfect Fit Guarantee</h3>
-              <p className="text-gray-600">Free exchanges and expert fit guidance to ensure your comfort.</p>
-            </div>
-
-            <div className="text-center p-6">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-rose-100 mb-4">
-                <TruckIcon className="w-8 h-8 text-rose-600" />
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Discreet Delivery</h3>
-              <p className="text-gray-600">Free shipping over £50 in plain, unmarked packaging for your privacy.</p>
-            </div>
-
-            <div className="text-center p-6">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-rose-100 mb-4">
-                <ShieldCheckIcon className="w-8 h-8 text-rose-600" />
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Premium Quality</h3>
-              <p className="text-gray-600">Soft fabrics, delicate lace, and exceptional craftsmanship.</p>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Shop by Category */}
+      <ShopByCategory />
 
       {/* Featured Products Section */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-16 md:py-20 bg-gray-50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="section-title">Featured Products</h2>
@@ -101,7 +25,7 @@ export default function Home({ featuredProducts }) {
             </p>
           </div>
 
-          <ProductGrid products={featuredProducts} />
+          <ProductGrid products={featuredProducts} columns="three" />
 
           <div className="text-center mt-12">
             <Link href="/shop" className="btn-primary inline-flex items-center">
@@ -112,13 +36,124 @@ export default function Home({ featuredProducts }) {
         </div>
       </section>
 
+      {/* New Arrivals Section */}
+      {newArrivals.length > 0 && (
+        <section className="py-16 md:py-20 bg-white">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between mb-12">
+              <div>
+                <h2 className="section-title text-left">New Arrivals</h2>
+                <p className="section-subtitle text-left">
+                  Fresh styles just added
+                </p>
+              </div>
+              <Link
+                href="/shop?sort=newest"
+                className="hidden sm:inline-flex items-center text-rose-600 hover:text-rose-700 font-semibold transition-colors"
+              >
+                View All
+                <ArrowRightIcon className="w-4 h-4 ml-1" />
+              </Link>
+            </div>
+
+            <ProductGrid products={newArrivals} columns="three" />
+
+            <div className="text-center mt-8 sm:hidden">
+              <Link href="/shop?sort=newest" className="btn-secondary inline-flex items-center">
+                View All New Arrivals
+                <ArrowRightIcon className="w-5 h-5 ml-2" />
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Value Proposition / Why Choose Us */}
+      <section className="py-16 md:py-20 bg-gradient-to-br from-rose-50 to-pink-50">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="section-title">Why Choose GirlSecret?</h2>
+            <p className="section-subtitle">We&apos;re committed to your comfort and confidence</p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+            <div className="bg-white rounded-2xl p-6 md:p-8 text-center shadow-sm hover:shadow-lg transition-shadow">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-rose-100 mb-4">
+                <SparklesIcon className="w-8 h-8 text-rose-600" />
+              </div>
+              <h3 className="text-lg md:text-xl font-semibold mb-2">Perfect Fit Guarantee</h3>
+              <p className="text-gray-600 text-sm md:text-base">Free exchanges and expert fit guidance to ensure your comfort</p>
+            </div>
+
+            <div className="bg-white rounded-2xl p-6 md:p-8 text-center shadow-sm hover:shadow-lg transition-shadow">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-rose-100 mb-4">
+                <TruckIcon className="w-8 h-8 text-rose-600" />
+              </div>
+              <h3 className="text-lg md:text-xl font-semibold mb-2">Discreet Delivery</h3>
+              <p className="text-gray-600 text-sm md:text-base">Free shipping over £50 in plain, unmarked packaging</p>
+            </div>
+
+            <div className="bg-white rounded-2xl p-6 md:p-8 text-center shadow-sm hover:shadow-lg transition-shadow">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-rose-100 mb-4">
+                <ShieldCheckIcon className="w-8 h-8 text-rose-600" />
+              </div>
+              <h3 className="text-lg md:text-xl font-semibold mb-2">Premium Quality</h3>
+              <p className="text-gray-600 text-sm md:text-base">Soft fabrics, delicate lace, and exceptional craftsmanship</p>
+            </div>
+
+            <div className="bg-white rounded-2xl p-6 md:p-8 text-center shadow-sm hover:shadow-lg transition-shadow">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-rose-100 mb-4">
+                <HeartIcon className="w-8 h-8 text-rose-600" />
+              </div>
+              <h3 className="text-lg md:text-xl font-semibold mb-2">Made with Love</h3>
+              <p className="text-gray-600 text-sm md:text-base">Every piece designed to make you feel beautiful</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Best Sellers Section */}
+      {bestSellers.length > 0 && (
+        <section className="py-16 md:py-20 bg-white">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between mb-12">
+              <div>
+                <h2 className="section-title text-left">Best Sellers</h2>
+                <p className="section-subtitle text-left">
+                  Customer favorites you&apos;ll love
+                </p>
+              </div>
+              <Link
+                href="/shop"
+                className="hidden sm:inline-flex items-center text-rose-600 hover:text-rose-700 font-semibold transition-colors"
+              >
+                View All
+                <ArrowRightIcon className="w-4 h-4 ml-1" />
+              </Link>
+            </div>
+
+            <ProductGrid products={bestSellers} columns="three" />
+
+            <div className="text-center mt-8 sm:hidden">
+              <Link href="/shop" className="btn-secondary inline-flex items-center">
+                View All Products
+                <ArrowRightIcon className="w-5 h-5 ml-2" />
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Customer Testimonials */}
+      <TestimonialsCarousel />
+
       {/* Newsletter Section */}
-      <section className="py-20 intimate-gradient">
+      <section className="py-16 md:py-20 bg-gradient-to-br from-purple-50 via-rose-50 to-pink-50">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl md:text-4xl font-serif font-bold text-gray-900 mb-4">
             Join Our Inner Circle
           </h2>
-          <p className="text-lg text-gray-600 mb-8">
+          <p className="text-base md:text-lg text-gray-600 mb-8">
             Get exclusive access to new collections, size guides, fit tips, and special offers.
           </p>
           <form className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
@@ -132,6 +167,9 @@ export default function Home({ featuredProducts }) {
               Subscribe
             </button>
           </form>
+          <p className="text-xs text-gray-500 mt-4">
+            By subscribing, you agree to receive marketing emails. Unsubscribe anytime.
+          </p>
         </div>
       </section>
     </>
@@ -141,11 +179,37 @@ export default function Home({ featuredProducts }) {
 export async function getStaticProps() {
   try {
     const allProducts = await getAllProducts();
-    const featuredProducts = allProducts.filter(p => p.featured).slice(0, 8);
+
+    // Featured Products - Show 6 for 3-column grid
+    const featuredProducts = allProducts.filter(p => p.featured).slice(0, 6);
+
+    // New Arrivals - Most recent products (3 for cleaner grid)
+    const newArrivals = allProducts
+      .sort((a, b) => {
+        const dateA = new Date(a.createdTime || 0);
+        const dateB = new Date(b.createdTime || 0);
+        return dateB - dateA;
+      })
+      .slice(0, 3);
+
+    // Best Sellers - Featured products that aren't in featuredProducts (3 for cleaner grid)
+    const bestSellers = allProducts
+      .filter(p => p.featured && !featuredProducts.includes(p))
+      .slice(0, 3);
+
+    // If not enough best sellers, fill with random products
+    if (bestSellers.length < 3) {
+      const additionalProducts = allProducts
+        .filter(p => !featuredProducts.includes(p) && !bestSellers.includes(p))
+        .slice(0, 3 - bestSellers.length);
+      bestSellers.push(...additionalProducts);
+    }
 
     return {
       props: {
         featuredProducts,
+        newArrivals,
+        bestSellers,
         seo: {
           title: 'Home',
           description: 'Discover beautiful intimate apparel, bras, panties, and lingerie designed for comfort and confidence at GirlSecret.',
@@ -153,13 +217,15 @@ export async function getStaticProps() {
           path: '/',
         },
       },
-      revalidate: 60, // Revalidate every 60 seconds
+      revalidate: 60,
     };
   } catch (error) {
     console.error('Error fetching products:', error);
     return {
       props: {
         featuredProducts: [],
+        newArrivals: [],
+        bestSellers: [],
         seo: {
           title: 'Home',
           path: '/',
