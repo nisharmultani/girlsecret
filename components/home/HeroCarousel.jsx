@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import image1 from "../../images/Image1.jpg"
-import image2 from "../../images/Image2.jpg"
-import image3 from "../../images/Image3.jpg"
-import image4 from "../../images/Image4.jpg"
+import image1 from "../../public/images/Image1.jpg"
+import image2 from "../../public/images/Image2.jpg"
+import image3 from "../../public/images/Image3.jpg"
+import image4 from "../../public/images/Image4.jpg"
 
 
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
