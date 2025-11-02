@@ -4,15 +4,20 @@ import { HeartIcon, ShoppingBagIcon } from '@heroicons/react/24/outline';
 import { HeartIcon as HeartSolidIcon } from '@heroicons/react/24/solid';
 import { formatPrice, formatDiscount } from '../../utils/format';
 import { addToCart } from '../../lib/cart';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useWishlist } from '../../context/WishlistContext';
 
 export default function ProductCard({ product }) {
-  const [isWishlisted, setIsWishlisted] = useState(false);
+  const { isInWishlist, toggleWishlist: toggleWishlistContext } = useWishlist();
   const [isAdding, setIsAdding] = useState(false);
+  const [isTogglingWishlist, setIsTogglingWishlist] = useState(false);
 
   const imageUrl = product.images[0]?.thumbnails?.large?.url || product.images[0]?.url;
   const hasDiscount = product.salePrice && product.salePrice < product.price;
   const discountPercent = hasDiscount ? formatDiscount(product.price, product.salePrice) : 0;
+
+  // Check if product is in wishlist
+  const inWishlist = isInWishlist(product.id);
 
   // Parse sizes and colors from product data
   const sizes = product.sizes || [];
@@ -34,9 +39,11 @@ export default function ProductCard({ product }) {
     setTimeout(() => setIsAdding(false), 1000);
   };
 
-  const toggleWishlist = (e) => {
+  const toggleWishlist = async (e) => {
     e.preventDefault();
-    setIsWishlisted(!isWishlisted);
+    setIsTogglingWishlist(true);
+    await toggleWishlistContext(product.id);
+    setIsTogglingWishlist(false);
   };
 
   return (
@@ -63,10 +70,11 @@ export default function ProductCard({ product }) {
           <div className="absolute top-4 right-4 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
             <button
               onClick={toggleWishlist}
-              className="bg-white p-2 rounded-full shadow-md hover:bg-rose-50 transition-colors"
-              aria-label="Add to wishlist"
+              disabled={isTogglingWishlist}
+              className="bg-white p-2 rounded-full shadow-md hover:bg-rose-50 transition-colors disabled:opacity-50"
+              aria-label={inWishlist ? "Remove from wishlist" : "Add to wishlist"}
             >
-              {isWishlisted ? (
+              {inWishlist ? (
                 <HeartSolidIcon className="h-5 w-5 text-rose-500" />
               ) : (
                 <HeartIcon className="h-5 w-5 text-gray-700" />

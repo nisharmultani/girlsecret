@@ -3,6 +3,7 @@ import Layout from '../components/layout/Layout';
 import SEO from '../components/SEO';
 import GoogleAnalytics, { trackPageView } from '../components/GoogleAnalytics';
 import { AuthProvider } from '../context/AuthContext';
+import { WishlistProvider } from '../context/WishlistContext';
 import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 
@@ -35,13 +36,15 @@ export default function App({ Component, pageProps }) {
 
   return (
     <AuthProvider>
-      <GoogleAnalytics />
-      {getLayout(
-        <>
-          <SEO page={pageProps.seo} />
-          <Component {...pageProps} />
-        </>
-      )}
+      <WishlistProvider>
+        <GoogleAnalytics />
+        {getLayout(
+          <>
+            <SEO page={pageProps.seo} />
+            <Component {...pageProps} />
+          </>
+        )}
+      </WishlistProvider>
     </AuthProvider>
   );
 }
