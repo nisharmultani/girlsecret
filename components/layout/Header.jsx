@@ -12,6 +12,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { getCartCount } from '../../lib/cart';
 import { useAuth } from '../../context/AuthContext';
+import { useWishlist } from '../../context/WishlistContext';
 import SearchModal from '../SearchModal';
 
 const navigation = [
@@ -29,6 +30,7 @@ export default function Header() {
   const [cartCount, setCartCount] = useState(0);
   const [scrolled, setScrolled] = useState(false);
   const { user, isAuthenticated, logout } = useAuth();
+  const { wishlistCount, getWishlistCount } = useWishlist();
 
   useEffect(() => {
     // Update cart count
@@ -129,13 +131,18 @@ export default function Header() {
               <MagnifyingGlassIcon className="h-6 w-6" />
             </button>
 
-            <button
-              type="button"
-              className="text-gray-700 hover:text-rose-600 transition-colors"
+            <Link
+              href="/account/wishlist"
+              className="relative text-gray-700 hover:text-rose-600 transition-colors"
               aria-label="Wishlist"
             >
               <HeartIcon className="h-6 w-6" />
-            </button>
+              {wishlistCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-rose-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                  {wishlistCount}
+                </span>
+              )}
+            </Link>
 
             <Link
               href="/cart"
@@ -190,6 +197,23 @@ export default function Header() {
                             } block px-4 py-2 text-sm text-gray-700`}
                           >
                             My Orders
+                          </Link>
+                        )}
+                      </Menu.Item>
+                      <Menu.Item>
+                        {({ active }) => (
+                          <Link
+                            href="/account/wishlist"
+                            className={`${
+                              active ? 'bg-gray-100' : ''
+                            } flex items-center justify-between px-4 py-2 text-sm text-gray-700`}
+                          >
+                            <span>Wishlist</span>
+                            {wishlistCount > 0 && (
+                              <span className="bg-rose-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                                {wishlistCount}
+                              </span>
+                            )}
                           </Link>
                         )}
                       </Menu.Item>
@@ -318,14 +342,19 @@ export default function Header() {
                     </Link>
 
                     <Link
-                      href="/wishlist"
+                      href="/account/wishlist"
                       className="flex items-center gap-x-3 rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-rose-50 transition-colors"
                       onClick={() => setMobileMenuOpen(false)}
                     >
                       <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-rose-100 text-rose-600">
                         <HeartIcon className="h-5 w-5" />
                       </div>
-                      <span>Wishlist</span>
+                      <span className="flex-1">Wishlist</span>
+                      {wishlistCount > 0 && (
+                        <span className="bg-rose-500 text-white text-xs font-bold rounded-full h-6 w-6 flex items-center justify-center">
+                          {wishlistCount}
+                        </span>
+                      )}
                     </Link>
                   </div>
 
@@ -369,6 +398,18 @@ export default function Header() {
                             onClick={() => setMobileMenuOpen(false)}
                           >
                             My Orders
+                          </Link>
+                          <Link
+                            href="/account/wishlist"
+                            className="-mx-3 flex items-center justify-between rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                            onClick={() => setMobileMenuOpen(false)}
+                          >
+                            <span>Wishlist</span>
+                            {wishlistCount > 0 && (
+                              <span className="bg-rose-500 text-white text-xs font-bold rounded-full h-6 w-6 flex items-center justify-center">
+                                {wishlistCount}
+                              </span>
+                            )}
                           </Link>
                           <Link
                             href="/account/addresses"
