@@ -4,6 +4,8 @@ import Head from 'next/head';
 import { getAllProducts } from '../lib/airtable';
 import ProductGrid from '../components/product/ProductGrid';
 import FilterSidebar from '../components/product/FilterSidebar';
+import MobileFilterDrawer from '../components/product/MobileFilterDrawer';
+import { ProductGridSkeleton } from '../components/ui/SkeletonLoader';
 import { MagnifyingGlassIcon, FunnelIcon } from '@heroicons/react/24/outline';
 
 export default function Shop({ products: initialProducts, categories }) {
@@ -189,6 +191,15 @@ export default function Shop({ products: initialProducts, categories }) {
     }
   };
 
+  // Clear all filters
+  const handleClearFilters = () => {
+    setSelectedCategory('all');
+    setMinPrice('');
+    setMaxPrice('');
+    setSortValue('featured');
+    router.push('/shop');
+  };
+
   return (
     <>
       <Head>
@@ -296,19 +307,17 @@ export default function Shop({ products: initialProducts, categories }) {
                 </p>
 
                 <button
-                  onClick={() => setShowFilters(!showFilters)}
-                  className="lg:hidden inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors"
+                  onClick={() => setShowFilters(true)}
+                  className="lg:hidden inline-flex items-center px-4 py-3 border-2 border-gray-300 rounded-lg text-sm font-semibold text-gray-700 bg-white hover:bg-gray-50 transition-colors shadow-sm"
                 >
                   <FunnelIcon className="w-5 h-5 mr-2" />
-                  Filters
+                  Filters & Sort
                 </button>
               </div>
 
               {/* Products */}
               {isSearching ? (
-                <div className="flex items-center justify-center py-20">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rose-500"></div>
-                </div>
+                <ProductGridSkeleton count={8} />
               ) : filteredProducts.length > 0 ? (
                 <ProductGrid products={filteredProducts} />
               ) : (
@@ -337,6 +346,21 @@ export default function Shop({ products: initialProducts, categories }) {
             </div>
           </div>
         </div>
+
+        {/* Mobile Filter Drawer */}
+        <MobileFilterDrawer
+          isOpen={showFilters}
+          onClose={() => setShowFilters(false)}
+          categories={categories}
+          selectedCategory={selectedCategory}
+          onCategoryChange={handleCategoryChange}
+          minPrice={minPrice}
+          maxPrice={maxPrice}
+          onPriceChange={handlePriceChange}
+          sortValue={sortValue}
+          onSortChange={setSortValue}
+          onClearFilters={handleClearFilters}
+        />
       </div>
     </>
   );

@@ -8,6 +8,9 @@ import { formatPrice, formatDiscount } from '../../utils/format';
 import { generateProductSchema, generateBreadcrumbSchema } from '../../lib/seo';
 import SocialShare from '../../components/ui/SocialShare';
 import ReviewForm from '../../components/product/ReviewForm';
+import SizeGuideModal from '../../components/product/SizeGuideModal';
+import ImageZoom from '../../components/product/ImageZoom';
+import ProductRecommendations from '../../components/product/ProductRecommendations';
 import { StarIcon } from '@heroicons/react/24/solid';
 import { StarIcon as StarOutlineIcon } from '@heroicons/react/24/outline';
 import { ShoppingBagIcon, HeartIcon, TruckIcon, ShieldCheckIcon } from '@heroicons/react/24/outline';
@@ -185,7 +188,7 @@ export default function ProductDetail({ product, reviews = [] }) {
         />
       </Head>
 
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-white pb-24 lg:pb-0">
         {/* Breadcrumb */}
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6">
           <nav className="flex text-sm">
@@ -201,20 +204,17 @@ export default function ProductDetail({ product, reviews = [] }) {
           <div className="grid lg:grid-cols-2 gap-12">
             {/* Images */}
             <div>
-              <div className="relative aspect-square bg-gray-100 rounded-lg overflow-hidden mb-4">
-                <Image
-                  src={images[selectedImage]?.url || images[selectedImage]?.thumbnails?.large?.url}
-                  alt={product.name}
-                  fill
-                  className="object-cover"
-                  priority
-                />
+              <ImageZoom
+                src={images[selectedImage]?.url || images[selectedImage]?.thumbnails?.large?.url}
+                alt={product.name}
+                priority
+              >
                 {hasDiscount && (
                   <div className="absolute top-4 left-4 bg-rose-500 text-white px-4 py-2 rounded-full text-lg font-bold">
                     -{discountPercent}%
                   </div>
                 )}
-              </div>
+              </ImageZoom>
 
               {/* Thumbnails */}
               {images.length > 1 && (
@@ -579,176 +579,64 @@ export default function ProductDetail({ product, reviews = [] }) {
               </div>
             )}
           </div>
+
+          {/* Product Recommendations */}
+          <ProductRecommendations currentProduct={product} maxItems={4} />
         </div>
 
         {/* Size Guide Modal */}
-        {showSizeGuide && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-              <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-                <h3 className="text-2xl font-serif font-bold text-gray-900">Size Guide</h3>
-                <button
-                  onClick={() => setShowSizeGuide(false)}
-                  className="text-gray-400 hover:text-gray-600 p-1"
-                  type="button"
-                >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
+        <SizeGuideModal
+          isOpen={showSizeGuide}
+          onClose={() => setShowSizeGuide(false)}
+          category={product.category}
+        />
+
+        {/* Mobile Sticky Add to Cart Bar */}
+        <div className="fixed bottom-0 left-0 right-0 z-40 lg:hidden bg-white border-t border-gray-200 shadow-lg">
+          <div className="px-4 py-3">
+            <div className="flex items-center gap-3">
+              {/* Price */}
+              <div className="flex-shrink-0">
+                <div className="flex items-center gap-2">
+                  {hasDiscount ? (
+                    <>
+                      <span className="text-xl font-bold text-rose-600">
+                        {formatPrice(product.salePrice)}
+                      </span>
+                      <span className="text-sm text-gray-500 line-through">
+                        {formatPrice(product.price)}
+                      </span>
+                    </>
+                  ) : (
+                    <span className="text-xl font-bold text-gray-900">
+                      {formatPrice(product.price)}
+                    </span>
+                  )}
+                </div>
+                {quantity > 1 && (
+                  <p className="text-xs text-gray-600">
+                    {quantity} items • {formatPrice(totalPrice)} total
+                  </p>
+                )}
               </div>
 
-              <div className="p-6">
-                {/* Bra Sizes */}
-                <div className="mb-8">
-                  <h4 className="text-lg font-semibold text-gray-900 mb-4">Bra Sizes</h4>
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-sm border-collapse">
-                      <thead>
-                        <tr className="bg-rose-50">
-                          <th className="border border-gray-300 px-4 py-2 text-left">UK Size</th>
-                          <th className="border border-gray-300 px-4 py-2 text-left">EU Size</th>
-                          <th className="border border-gray-300 px-4 py-2 text-left">US Size</th>
-                          <th className="border border-gray-300 px-4 py-2 text-left">Band (inches)</th>
-                          <th className="border border-gray-300 px-4 py-2 text-left">Cup</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td className="border border-gray-300 px-4 py-2">30A</td>
-                          <td className="border border-gray-300 px-4 py-2">65A</td>
-                          <td className="border border-gray-300 px-4 py-2">30A</td>
-                          <td className="border border-gray-300 px-4 py-2">28-30</td>
-                          <td className="border border-gray-300 px-4 py-2">A</td>
-                        </tr>
-                        <tr className="bg-gray-50">
-                          <td className="border border-gray-300 px-4 py-2">32B</td>
-                          <td className="border border-gray-300 px-4 py-2">70B</td>
-                          <td className="border border-gray-300 px-4 py-2">32B</td>
-                          <td className="border border-gray-300 px-4 py-2">30-32</td>
-                          <td className="border border-gray-300 px-4 py-2">B</td>
-                        </tr>
-                        <tr>
-                          <td className="border border-gray-300 px-4 py-2">34C</td>
-                          <td className="border border-gray-300 px-4 py-2">75C</td>
-                          <td className="border border-gray-300 px-4 py-2">34C</td>
-                          <td className="border border-gray-300 px-4 py-2">32-34</td>
-                          <td className="border border-gray-300 px-4 py-2">C</td>
-                        </tr>
-                        <tr className="bg-gray-50">
-                          <td className="border border-gray-300 px-4 py-2">36D</td>
-                          <td className="border border-gray-300 px-4 py-2">80D</td>
-                          <td className="border border-gray-300 px-4 py-2">36D</td>
-                          <td className="border border-gray-300 px-4 py-2">34-36</td>
-                          <td className="border border-gray-300 px-4 py-2">D</td>
-                        </tr>
-                        <tr>
-                          <td className="border border-gray-300 px-4 py-2">38DD</td>
-                          <td className="border border-gray-300 px-4 py-2">85E</td>
-                          <td className="border border-gray-300 px-4 py-2">38DD/E</td>
-                          <td className="border border-gray-300 px-4 py-2">36-38</td>
-                          <td className="border border-gray-300 px-4 py-2">DD/E</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
+              {/* Add to Cart Button */}
+              <button
+                onClick={handleAddToCart}
+                disabled={!product.inStock || isAdding}
+                className="flex-1 bg-rose-500 hover:bg-rose-600 text-white font-semibold py-3 px-4 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm flex items-center justify-center gap-2"
+              >
+                <ShoppingBagIcon className="w-5 h-5" />
+                {isAdding ? 'Adding...' : product.inStock ? 'Add to Cart' : 'Out of Stock'}
+              </button>
 
-                {/* Clothing Sizes */}
-                <div className="mb-8">
-                  <h4 className="text-lg font-semibold text-gray-900 mb-4">Clothing Sizes</h4>
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-sm border-collapse">
-                      <thead>
-                        <tr className="bg-rose-50">
-                          <th className="border border-gray-300 px-4 py-2 text-left">UK Size</th>
-                          <th className="border border-gray-300 px-4 py-2 text-left">EU Size</th>
-                          <th className="border border-gray-300 px-4 py-2 text-left">US Size</th>
-                          <th className="border border-gray-300 px-4 py-2 text-left">Bust (inches)</th>
-                          <th className="border border-gray-300 px-4 py-2 text-left">Waist (inches)</th>
-                          <th className="border border-gray-300 px-4 py-2 text-left">Hips (inches)</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td className="border border-gray-300 px-4 py-2">XS (6-8)</td>
-                          <td className="border border-gray-300 px-4 py-2">34-36</td>
-                          <td className="border border-gray-300 px-4 py-2">2-4</td>
-                          <td className="border border-gray-300 px-4 py-2">32-34</td>
-                          <td className="border border-gray-300 px-4 py-2">24-26</td>
-                          <td className="border border-gray-300 px-4 py-2">34-36</td>
-                        </tr>
-                        <tr className="bg-gray-50">
-                          <td className="border border-gray-300 px-4 py-2">S (8-10)</td>
-                          <td className="border border-gray-300 px-4 py-2">36-38</td>
-                          <td className="border border-gray-300 px-4 py-2">4-6</td>
-                          <td className="border border-gray-300 px-4 py-2">34-36</td>
-                          <td className="border border-gray-300 px-4 py-2">26-28</td>
-                          <td className="border border-gray-300 px-4 py-2">36-38</td>
-                        </tr>
-                        <tr>
-                          <td className="border border-gray-300 px-4 py-2">M (10-12)</td>
-                          <td className="border border-gray-300 px-4 py-2">38-40</td>
-                          <td className="border border-gray-300 px-4 py-2">6-8</td>
-                          <td className="border border-gray-300 px-4 py-2">36-38</td>
-                          <td className="border border-gray-300 px-4 py-2">28-30</td>
-                          <td className="border border-gray-300 px-4 py-2">38-40</td>
-                        </tr>
-                        <tr className="bg-gray-50">
-                          <td className="border border-gray-300 px-4 py-2">L (12-14)</td>
-                          <td className="border border-gray-300 px-4 py-2">40-42</td>
-                          <td className="border border-gray-300 px-4 py-2">8-10</td>
-                          <td className="border border-gray-300 px-4 py-2">38-40</td>
-                          <td className="border border-gray-300 px-4 py-2">30-32</td>
-                          <td className="border border-gray-300 px-4 py-2">40-42</td>
-                        </tr>
-                        <tr>
-                          <td className="border border-gray-300 px-4 py-2">XL (14-16)</td>
-                          <td className="border border-gray-300 px-4 py-2">42-44</td>
-                          <td className="border border-gray-300 px-4 py-2">10-12</td>
-                          <td className="border border-gray-300 px-4 py-2">40-42</td>
-                          <td className="border border-gray-300 px-4 py-2">32-34</td>
-                          <td className="border border-gray-300 px-4 py-2">42-44</td>
-                        </tr>
-                        <tr className="bg-gray-50">
-                          <td className="border border-gray-300 px-4 py-2">XXL (16-18)</td>
-                          <td className="border border-gray-300 px-4 py-2">44-46</td>
-                          <td className="border border-gray-300 px-4 py-2">12-14</td>
-                          <td className="border border-gray-300 px-4 py-2">42-44</td>
-                          <td className="border border-gray-300 px-4 py-2">34-36</td>
-                          <td className="border border-gray-300 px-4 py-2">44-46</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-
-                {/* Measurement Tips */}
-                <div className="bg-rose-50 rounded-lg p-4">
-                  <h4 className="text-lg font-semibold text-gray-900 mb-3">How to Measure</h4>
-                  <ul className="space-y-2 text-sm text-gray-700">
-                    <li className="flex items-start gap-2">
-                      <span className="text-rose-600 font-bold">•</span>
-                      <span><strong>Bust:</strong> Measure around the fullest part of your bust</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-rose-600 font-bold">•</span>
-                      <span><strong>Waist:</strong> Measure around the narrowest part of your waist</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-rose-600 font-bold">•</span>
-                      <span><strong>Hips:</strong> Measure around the fullest part of your hips</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-rose-600 font-bold">•</span>
-                      <span><strong>Band Size:</strong> Measure directly under your bust, keeping the tape snug but not tight</span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
+              {/* Wishlist Button */}
+              <button className="flex-shrink-0 p-3 border-2 border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                <HeartIcon className="w-6 h-6 text-gray-700" />
+              </button>
             </div>
           </div>
-        )}
+        </div>
       </div>
     </>
   );
