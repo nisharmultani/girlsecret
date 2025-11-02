@@ -71,8 +71,30 @@ export default function Header() {
             </Link>
           </div>
 
-          {/* Mobile menu button */}
-          <div className="flex lg:hidden">
+          {/* Mobile menu button and icons */}
+          <div className="flex items-center gap-4 lg:hidden">
+            <button
+              type="button"
+              onClick={() => setSearchOpen(true)}
+              className="text-gray-700 hover:text-rose-600 transition-colors"
+              aria-label="Search"
+            >
+              <MagnifyingGlassIcon className="h-6 w-6" />
+            </button>
+
+            <Link
+              href="/cart"
+              className="relative text-gray-700 hover:text-rose-600 transition-colors"
+              aria-label="Shopping cart"
+            >
+              <ShoppingBagIcon className="h-6 w-6" />
+              {cartCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-rose-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                  {cartCount}
+                </span>
+              )}
+            </Link>
+
             <button
               type="button"
               className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700"
@@ -274,12 +296,49 @@ export default function Header() {
 
               <div className="mt-6 flow-root">
                 <div className="-my-6 divide-y divide-gray-500/10">
-                  <div className="space-y-2 py-6">
+                  {/* Quick Actions */}
+                  <div className="space-y-1 py-4">
+                    <p className="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">
+                      Quick Actions
+                    </p>
+                    <Link
+                      href="/cart"
+                      className="flex items-center gap-x-3 rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-rose-50 transition-colors"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-rose-100 text-rose-600">
+                        <ShoppingBagIcon className="h-5 w-5" />
+                      </div>
+                      <span className="flex-1">Shopping Cart</span>
+                      {cartCount > 0 && (
+                        <span className="bg-rose-500 text-white text-xs font-bold rounded-full h-6 w-6 flex items-center justify-center">
+                          {cartCount}
+                        </span>
+                      )}
+                    </Link>
+
+                    <Link
+                      href="/wishlist"
+                      className="flex items-center gap-x-3 rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-rose-50 transition-colors"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-rose-100 text-rose-600">
+                        <HeartIcon className="h-5 w-5" />
+                      </div>
+                      <span>Wishlist</span>
+                    </Link>
+                  </div>
+
+                  {/* Navigation */}
+                  <div className="space-y-1 py-4">
+                    <p className="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">
+                      Shop
+                    </p>
                     {navigation.map((item) => (
                       <Link
                         key={item.name}
                         href={item.href}
-                        className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                        className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-rose-50 transition-colors"
                         onClick={() => setMobileMenuOpen(false)}
                       >
                         {item.name}
@@ -287,31 +346,7 @@ export default function Header() {
                     ))}
                   </div>
 
-                  <div className="py-6 space-y-4">
-                    <button
-                      onClick={() => {
-                        setSearchOpen(true);
-                        setMobileMenuOpen(false);
-                      }}
-                      className="w-full flex items-center gap-x-3 rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                    >
-                      <MagnifyingGlassIcon className="h-6 w-6" />
-                      Search
-                    </button>
-
-                    <Link
-                      href="/cart"
-                      className="flex items-center gap-x-3 rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      <ShoppingBagIcon className="h-6 w-6" />
-                      Cart
-                      {cartCount > 0 && (
-                        <span className="ml-auto bg-rose-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-                          {cartCount}
-                        </span>
-                      )}
-                    </Link>
+                  <div className="py-4 space-y-1">
 
                     {/* Mobile Auth Links */}
                     {isAuthenticated ? (

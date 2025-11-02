@@ -188,7 +188,7 @@ export default function ProductDetail({ product, reviews = [] }) {
         />
       </Head>
 
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-white pb-24 lg:pb-0">
         {/* Breadcrumb */}
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6">
           <nav className="flex text-sm">
@@ -590,6 +590,53 @@ export default function ProductDetail({ product, reviews = [] }) {
           onClose={() => setShowSizeGuide(false)}
           category={product.category}
         />
+
+        {/* Mobile Sticky Add to Cart Bar */}
+        <div className="fixed bottom-0 left-0 right-0 z-40 lg:hidden bg-white border-t border-gray-200 shadow-lg">
+          <div className="px-4 py-3">
+            <div className="flex items-center gap-3">
+              {/* Price */}
+              <div className="flex-shrink-0">
+                <div className="flex items-center gap-2">
+                  {hasDiscount ? (
+                    <>
+                      <span className="text-xl font-bold text-rose-600">
+                        {formatPrice(product.salePrice)}
+                      </span>
+                      <span className="text-sm text-gray-500 line-through">
+                        {formatPrice(product.price)}
+                      </span>
+                    </>
+                  ) : (
+                    <span className="text-xl font-bold text-gray-900">
+                      {formatPrice(product.price)}
+                    </span>
+                  )}
+                </div>
+                {quantity > 1 && (
+                  <p className="text-xs text-gray-600">
+                    {quantity} items • {formatPrice(totalPrice)} total
+                  </p>
+                )}
+              </div>
+
+              {/* Add to Cart Button */}
+              <button
+                onClick={handleAddToCart}
+                disabled={!product.inStock || isAdding}
+                className="flex-1 bg-rose-500 hover:bg-rose-600 text-white font-semibold py-3 px-4 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm flex items-center justify-center gap-2"
+              >
+                <ShoppingBagIcon className="w-5 h-5" />
+                {isAdding ? 'Adding...' : product.inStock ? 'Add to Cart' : 'Out of Stock'}
+              </button>
+
+              {/* Wishlist Button */}
+              <button className="flex-shrink-0 p-3 border-2 border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                <HeartIcon className="w-6 h-6 text-gray-700" />
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </>
   );
