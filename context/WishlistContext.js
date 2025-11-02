@@ -23,7 +23,7 @@ export function WishlistProvider({ children }) {
       setLoading(true);
       if (isAuthenticated && user) {
         // Load from Airtable for authenticated users
-        const response = await fetch(`/api/wishlist?userId=${user.id}&idsOnly=true`);
+        const response = await fetch(`/api/wishlist?userId=${user.email}&idsOnly=true`);
 
         if (response.ok) {
           const data = await response.json();
