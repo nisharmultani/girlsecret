@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { useAuth } from './AuthContext';
 import {
   getLocalWishlist,
@@ -18,6 +18,69 @@ export function WishlistProvider({ children }) {
   const [wishlistCount, setWishlistCount] = useState(0);
   const [loading, setLoading] = useState(true);
 
+  const loadWishlist = useCallback(async () => {
+    try {
+      setLoading(true);
+      if (isAuthenticated && user) {
+        // Load from Airtable for authenticated users
+        const response = await fetch(`/api/wishlist?userId=${user.id}&idsOnly=true`);
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log('Loaded wishlist from Airtable:', data.productIds);
+          setWishlistItems(data.productIds || []);
+          setWishlistCount(data.productIds?.length || 0);
+        }
+      } else {
+        // Load from localStorage for guests
+        const localWishlist = getLocalWishlist();
+        console.log('Loaded wishlist from localStorage:', localWishlist);
+        setWishlistItems(localWishlist);
+        setWishlistCount(localWishlist.length);
+      }
+    } catch (error) {
+      console.error('Error loading wishlist:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, [isAuthenticated, user]);
+
+  const mergeGuestWishlist = useCallback(async () => {
+    // Merge localStorage wishlist into Airtable when user logs in
+    if (!isAuthenticated || !user) return;
+
+    const localWishlist = getLocalWishlist();
+    if (localWishlist.length === 0) return;
+
+    console.log('Merging guest wishlist:', localWishlist);
+
+    try {
+      setLoading(true);
+      // Add each item from local wishlist to Airtable
+      const mergePromises = localWishlist.map(productId =>
+        fetch('/api/wishlist/add', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ userId: user.id, productId }),
+        })
+      );
+
+      await Promise.all(mergePromises);
+      console.log('Guest wishlist merged successfully');
+
+      // Clear local wishlist after merge
+      clearLocalWishlist();
+
+      // Reload wishlist from Airtable
+      await loadWishlist();
+    } catch (error) {
+      console.error('Error merging wishlist:', error);
+      setLoading(false);
+    }
+  }, [isAuthenticated, user, loadWishlist]);
+
   // Load wishlist on mount and when auth changes
   useEffect(() => {
     const initializeWishlist = async () => {
@@ -25,6 +88,7 @@ export function WishlistProvider({ children }) {
       if (isAuthenticated && user) {
         const localWishlist = getLocalWishlist();
         if (localWishlist.length > 0) {
+          console.log('User logged in with guest wishlist, merging...');
           await mergeGuestWishlist();
         } else {
           await loadWishlist();
@@ -43,31 +107,7 @@ export function WishlistProvider({ children }) {
 
     window.addEventListener('wishlistUpdated', handleWishlistChange);
     return () => window.removeEventListener('wishlistUpdated', handleWishlistChange);
-  }, [isAuthenticated, user]);
-
-  const loadWishlist = async () => {
-    try {
-      if (isAuthenticated && user) {
-        // Load from Airtable for authenticated users
-        const response = await fetch(`/api/wishlist?userId=${user.id}&idsOnly=true`);
-
-        if (response.ok) {
-          const data = await response.json();
-          setWishlistItems(data.productIds || []);
-          setWishlistCount(data.productIds?.length || 0);
-        }
-      } else {
-        // Load from localStorage for guests
-        const localWishlist = getLocalWishlist();
-        setWishlistItems(localWishlist);
-        setWishlistCount(localWishlist.length);
-      }
-    } catch (error) {
-      console.error('Error loading wishlist:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [isAuthenticated, user, loadWishlist, mergeGuestWishlist]);
 
   const addToWishlist = async (productId) => {
     try {
