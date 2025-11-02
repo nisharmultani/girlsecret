@@ -31,7 +31,7 @@ const slides = [
     ctaLink: '/shop?category=Lingerie',
     secondaryCta: null,
     secondaryCtaLink: null,
-    image:"/images/Image2.jpg" ,
+    image:"/images/image2.jpg" ,
     bgGradient: 'from-purple-50 to-pink-50',
   },
   {
@@ -43,7 +43,7 @@ const slides = [
     ctaLink: '/shop?category=Bras',
     secondaryCta: 'Size Guide',
     secondaryCtaLink: '/size-guide',
-    image:"/images/Image3.jpg",
+    image:"/images/image3.jpg",
     bgGradient: 'from-blue-50 to-rose-50',
   },
   {
@@ -55,7 +55,7 @@ const slides = [
     ctaLink: '/shop?category=Panties',
     secondaryCta: null,
     secondaryCtaLink: null,
-    image: "/images/Image4.jpg",
+    image: "/images/image4.jpg",
     bgGradient: 'from-amber-50 to-rose-50',
   },
 ];
