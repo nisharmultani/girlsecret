@@ -193,35 +193,6 @@ export function WishlistProvider({ children }) {
     return wishlistCount;
   };
 
-  const mergeGuestWishlist = async () => {
-    // Merge localStorage wishlist into Airtable when user logs in
-    if (!isAuthenticated || !user) return;
-
-    const localWishlist = getLocalWishlist();
-    if (localWishlist.length === 0) return;
-
-    try {
-      // Add each item from local wishlist to Airtable
-      for (const productId of localWishlist) {
-        await fetch('/api/wishlist/add', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ userId: user.id, productId }),
-        });
-      }
-
-      // Clear local wishlist after merge
-      clearLocalWishlist();
-
-      // Reload wishlist from Airtable
-      await loadWishlist();
-    } catch (error) {
-      console.error('Error merging wishlist:', error);
-    }
-  };
-
   const value = {
     wishlistItems,
     wishlistCount,
