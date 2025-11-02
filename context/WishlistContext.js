@@ -57,23 +57,39 @@ export function WishlistProvider({ children }) {
     try {
       setLoading(true);
       // Add each item from local wishlist to Airtable
-      const mergePromises = localWishlist.map(productId =>
-        fetch('/api/wishlist/add', {
+      const mergePromises = localWishlist.map(async (productId) => {
+        console.log(`Merging item ${productId} for user ${user.id}`);
+        const response = await fetch('/api/wishlist/add', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({ userId: user.id, productId }),
-        })
-      );
+        });
 
-      await Promise.all(mergePromises);
-      console.log('Guest wishlist merged successfully');
+        const data = await response.json();
+        console.log(`Merge response for ${productId}:`, response.status, data);
+
+        if (!response.ok) {
+          console.error(`Failed to merge ${productId}:`, data);
+          throw new Error(data.error || 'Failed to add to wishlist');
+        }
+
+        return data;
+      });
+
+      const results = await Promise.all(mergePromises);
+      console.log('Guest wishlist merged successfully. Results:', results);
 
       // Clear local wishlist after merge
       clearLocalWishlist();
 
+      // Wait a moment for Airtable to commit the data
+      console.log('Waiting 500ms for Airtable to commit...');
+      await new Promise(resolve => setTimeout(resolve, 500));
+
       // Reload wishlist from Airtable
+      console.log('Now reloading wishlist from Airtable...');
       await loadWishlist();
     } catch (error) {
       console.error('Error merging wishlist:', error);
