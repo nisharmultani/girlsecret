@@ -1,6 +1,12 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import image1 from "../../images/Image1.jpg"
+import image2 from "../../images/Image2.jpg"
+import image3 from "../../images/Image3.jpg"
+import image4 from "../../images/Image4.jpg"
+
+
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 
 const slides = [
@@ -13,7 +19,7 @@ const slides = [
     ctaLink: '/shop',
     secondaryCta: 'Find Your Fit',
     secondaryCtaLink: '/about',
-    image: '/images/hero-1.jpg',
+    image: image1,
     bgGradient: 'from-rose-50 to-blush-50',
   },
   {
@@ -25,7 +31,7 @@ const slides = [
     ctaLink: '/shop?category=Lingerie',
     secondaryCta: null,
     secondaryCtaLink: null,
-    image: '/images/hero-2.jpg',
+    image:image2 ,
     bgGradient: 'from-purple-50 to-pink-50',
   },
   {
@@ -37,7 +43,7 @@ const slides = [
     ctaLink: '/shop?category=Bras',
     secondaryCta: 'Size Guide',
     secondaryCtaLink: '/size-guide',
-    image: '/images/hero-3.jpg',
+    image: image3,
     bgGradient: 'from-blue-50 to-rose-50',
   },
   {
@@ -49,7 +55,7 @@ const slides = [
     ctaLink: '/shop?category=Panties',
     secondaryCta: null,
     secondaryCtaLink: null,
-    image: '/images/hero-4.jpg',
+    image: image4,
     bgGradient: 'from-amber-50 to-rose-50',
   },
 ];
@@ -129,9 +135,11 @@ export default function HeroCarousel() {
 
                 {/* Image - Placeholder for now */}
                 <div className="relative h-[300px] md:h-[400px] lg:h-[500px] hidden lg:block">
-                  <div className="absolute inset-0 bg-white/50 backdrop-blur-sm rounded-3xl flex items-center justify-center">
-                    <p className="text-gray-400 text-sm">Product Image {s.id}</p>
-                  </div>
+                  {/* <div className="absolute inset-0 bg-white/50 backdrop-blur-sm rounded-3xl flex items-center justify-center"> */}
+                    {/* <p className="text-gray-400 text-sm">Product Image {s.id}</p> */}
+                                    <Image src={s.image}  alt={s.id} height={300} width={500}  className="object-cover rounded"/>
+
+                  {/* </div> */}
                 </div>
               </div>
             </div>

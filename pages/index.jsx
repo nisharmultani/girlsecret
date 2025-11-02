@@ -1,6 +1,4 @@
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { getAllProducts } from '../lib/airtable';
 import ProductGrid from '../components/product/ProductGrid';
 import HeroCarousel from '../components/home/HeroCarousel';
@@ -75,7 +73,7 @@ export default function Home({ featuredProducts, newArrivals, bestSellers }) {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="section-title">Why Choose GirlSecret?</h2>
-            <p className="section-subtitle">We're committed to your comfort and confidence</p>
+            <p className="section-subtitle">We&apos;re committed to your comfort and confidence</p>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
@@ -122,7 +120,7 @@ export default function Home({ featuredProducts, newArrivals, bestSellers }) {
               <div>
                 <h2 className="section-title text-left">Best Sellers</h2>
                 <p className="section-subtitle text-left">
-                  Customer favorites you'll love
+                  Customer favorites you&apos;ll love
                 </p>
               </div>
               <Link
