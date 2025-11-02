@@ -27,7 +27,7 @@ export default function Home({ featuredProducts, newArrivals, bestSellers }) {
             </p>
           </div>
 
-          <ProductGrid products={featuredProducts} />
+          <ProductGrid products={featuredProducts} columns="three" />
 
           <div className="text-center mt-12">
             <Link href="/shop" className="btn-primary inline-flex items-center">
@@ -58,7 +58,7 @@ export default function Home({ featuredProducts, newArrivals, bestSellers }) {
               </Link>
             </div>
 
-            <ProductGrid products={newArrivals} />
+            <ProductGrid products={newArrivals} columns="three" />
 
             <div className="text-center mt-8 sm:hidden">
               <Link href="/shop?sort=newest" className="btn-secondary inline-flex items-center">
@@ -134,7 +134,7 @@ export default function Home({ featuredProducts, newArrivals, bestSellers }) {
               </Link>
             </div>
 
-            <ProductGrid products={bestSellers} />
+            <ProductGrid products={bestSellers} columns="three" />
 
             <div className="text-center mt-8 sm:hidden">
               <Link href="/shop" className="btn-secondary inline-flex items-center">
@@ -182,28 +182,28 @@ export async function getStaticProps() {
   try {
     const allProducts = await getAllProducts();
 
-    // Featured Products
-    const featuredProducts = allProducts.filter(p => p.featured).slice(0, 8);
+    // Featured Products - Show 6 for 3-column grid
+    const featuredProducts = allProducts.filter(p => p.featured).slice(0, 6);
 
-    // New Arrivals - Most recent products
+    // New Arrivals - Most recent products (3 for cleaner grid)
     const newArrivals = allProducts
       .sort((a, b) => {
         const dateA = new Date(a.createdTime || 0);
         const dateB = new Date(b.createdTime || 0);
         return dateB - dateA;
       })
-      .slice(0, 4);
+      .slice(0, 3);
 
-    // Best Sellers - Featured products that aren't in featuredProducts
+    // Best Sellers - Featured products that aren't in featuredProducts (3 for cleaner grid)
     const bestSellers = allProducts
       .filter(p => p.featured && !featuredProducts.includes(p))
-      .slice(0, 4);
+      .slice(0, 3);
 
     // If not enough best sellers, fill with random products
-    if (bestSellers.length < 4) {
+    if (bestSellers.length < 3) {
       const additionalProducts = allProducts
         .filter(p => !featuredProducts.includes(p) && !bestSellers.includes(p))
-        .slice(0, 4 - bestSellers.length);
+        .slice(0, 3 - bestSellers.length);
       bestSellers.push(...additionalProducts);
     }
 
