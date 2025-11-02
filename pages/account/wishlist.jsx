@@ -147,70 +147,75 @@ export default function WishlistPage() {
             </div>
 
             {/* Wishlist Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
               {wishlistProducts.map((product) => {
                 const imageUrl = product.images[0]?.thumbnails?.large?.url || product.images[0]?.url;
                 const hasDiscount = product.salePrice && product.salePrice < product.price;
 
                 return (
-                  <div key={product.id} className="card group relative flex flex-col">
-                    {/* Remove Button */}
-                    <button
-                      onClick={() => handleRemoveFromWishlist(product.id)}
-                      disabled={removingId === product.id}
-                      className="absolute top-2 right-2 z-10 bg-white p-2 rounded-full shadow-md hover:bg-red-50 transition-colors disabled:opacity-50"
-                      aria-label="Remove from wishlist"
-                    >
-                      {removingId === product.id ? (
-                        <div className="animate-spin h-5 w-5 border-2 border-rose-500 border-t-transparent rounded-full"></div>
-                      ) : (
-                        <XMarkIcon className="h-5 w-5 text-gray-700 hover:text-red-500" />
-                      )}
-                    </button>
-
+                  <div
+                    key={product.id}
+                    className="bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col h-full border border-gray-100"
+                  >
                     {/* Product Image */}
-                    <Link href={`/products/${product.slug}`} className="block">
-                      <div className="relative aspect-square overflow-hidden bg-gray-100 rounded-lg">
-                        <Image
-                          src={imageUrl}
-                          alt={product.name}
-                          fill
-                          className="object-cover group-hover:scale-105 transition-transform duration-300"
-                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                        />
-
-                        {/* Out of Stock Overlay */}
-                        {!product.inStock && (
-                          <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                            <span className="bg-white px-4 py-2 rounded-lg font-semibold text-gray-900 text-sm">
-                              Out of Stock
-                            </span>
-                          </div>
+                    <div className="relative">
+                      {/* Remove Button */}
+                      <button
+                        onClick={() => handleRemoveFromWishlist(product.id)}
+                        disabled={removingId === product.id}
+                        className="absolute top-3 right-3 z-10 bg-white/90 backdrop-blur-sm p-2.5 rounded-full shadow-lg hover:bg-red-50 hover:scale-110 transition-all disabled:opacity-50"
+                        aria-label="Remove from wishlist"
+                      >
+                        {removingId === product.id ? (
+                          <div className="animate-spin h-4 w-4 border-2 border-rose-500 border-t-transparent rounded-full"></div>
+                        ) : (
+                          <XMarkIcon className="h-4 w-4 text-gray-700 hover:text-red-500 transition-colors" />
                         )}
-                      </div>
-                    </Link>
+                      </button>
+
+                      <Link href={`/products/${product.slug}`}>
+                        <div className="relative aspect-square overflow-hidden bg-gray-100">
+                          <Image
+                            src={imageUrl}
+                            alt={product.name}
+                            fill
+                            className="object-cover hover:scale-110 transition-transform duration-500"
+                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                          />
+
+                          {/* Out of Stock Overlay */}
+                          {!product.inStock && (
+                            <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                              <span className="bg-white px-5 py-2.5 rounded-full font-bold text-gray-900 text-sm shadow-lg">
+                                Out of Stock
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      </Link>
+                    </div>
 
                     {/* Product Info */}
-                    <div className="flex flex-col flex-grow pt-4">
+                    <div className="p-5 flex flex-col flex-grow">
                       {/* Category */}
                       {product.category && (
-                        <p className="text-xs text-rose-600 uppercase tracking-wide mb-1 font-semibold">
+                        <span className="inline-block text-xs font-bold text-rose-600 uppercase tracking-wider mb-2">
                           {product.category}
-                        </p>
+                        </span>
                       )}
 
                       {/* Name */}
                       <Link href={`/products/${product.slug}`}>
-                        <h3 className="text-base font-semibold text-gray-900 mb-2 line-clamp-2 hover:text-rose-600 transition-colors min-h-[3rem]">
+                        <h3 className="text-base font-bold text-gray-900 mb-3 line-clamp-2 hover:text-rose-600 transition-colors leading-snug">
                           {product.name}
                         </h3>
                       </Link>
 
                       {/* Price */}
-                      <div className="flex items-baseline gap-2 mb-4">
+                      <div className="flex items-center gap-2.5 mb-5">
                         {hasDiscount ? (
                           <>
-                            <span className="text-lg font-bold text-rose-600">
+                            <span className="text-2xl font-bold text-rose-600">
                               {formatPrice(product.salePrice)}
                             </span>
                             <span className="text-sm text-gray-400 line-through">
@@ -218,7 +223,7 @@ export default function WishlistPage() {
                             </span>
                           </>
                         ) : (
-                          <span className="text-lg font-bold text-gray-900">
+                          <span className="text-2xl font-bold text-gray-900">
                             {formatPrice(product.price)}
                           </span>
                         )}
@@ -228,12 +233,12 @@ export default function WishlistPage() {
                       <button
                         onClick={() => handleAddToCart(product)}
                         disabled={addingToCartId === product.id || !product.inStock}
-                        className="mt-auto w-full py-2.5 px-4 rounded-lg font-semibold transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed bg-rose-600 hover:bg-rose-700 text-white shadow-sm hover:shadow-md"
+                        className="mt-auto w-full py-3.5 px-6 rounded-xl font-bold text-base transition-all duration-200 flex items-center justify-center gap-2.5 disabled:opacity-60 disabled:cursor-not-allowed bg-gradient-to-r from-rose-500 to-rose-600 hover:from-rose-600 hover:to-rose-700 text-white shadow-md hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]"
                       >
                         {addingToCartId === product.id ? (
                           <>
-                            <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></div>
-                            <span>Added!</span>
+                            <div className="animate-spin h-5 w-5 border-3 border-white border-t-transparent rounded-full"></div>
+                            <span>Added to Cart!</span>
                           </>
                         ) : (
                           <>
