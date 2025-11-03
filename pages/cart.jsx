@@ -226,18 +226,20 @@ export default function Cart() {
 
               <div className="flex justify-between text-lg font-bold mb-6">
                 <span>Total</span>
-                <span className="text-luxury-600">{formatPrice(total)}</span>
+                <span className="text-rose-600">{formatPrice(total)}</span>
               </div>
 
               <button
                 onClick={() => router.push('/checkout')}
-                className="w-full btn-gold"
+                className="w-full btn-primary mb-3"
               >
                 Proceed to Checkout
               </button>
 
-              <Link href="/shop" className="block text-center text-gray-600 hover:text-gray-900 mt-4">
-                Continue Shopping
+              <Link href="/shop" className="block w-full">
+                <button className="w-full btn-secondary">
+                  Continue Shopping
+                </button>
               </Link>
             </div>
           </div>

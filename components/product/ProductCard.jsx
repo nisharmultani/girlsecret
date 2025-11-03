@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { HeartIcon, ShoppingBagIcon } from '@heroicons/react/24/outline';
-import { HeartIcon as HeartSolidIcon } from '@heroicons/react/24/solid';
+import { HeartIcon as HeartSolidIcon, StarIcon } from '@heroicons/react/24/solid';
 import { formatPrice, formatDiscount } from '../../utils/format';
 import { addToCart } from '../../lib/cart';
 import { useState } from 'react';
@@ -107,37 +107,66 @@ export default function ProductCard({ product }) {
             {product.name}
           </h3>
 
-          {/* Sizes */}
+          {/* Rating and Sold Count */}
+          <div className="flex items-center gap-3 mb-2">
+            {/* Star Rating */}
+            <div className="flex items-center gap-1">
+              <div className="flex">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <StarIcon
+                    key={star}
+                    className={`h-4 w-4 ${
+                      star <= Math.round(product.averageRating || 0)
+                        ? 'text-yellow-400'
+                        : 'text-gray-300'
+                    }`}
+                  />
+                ))}
+              </div>
+              <span className="text-xs text-gray-600">
+                ({product.reviewCount || 0})
+              </span>
+            </div>
+
+            {/* Sold Count */}
+            {product.soldCount > 0 && (
+              <span className="text-xs text-gray-500">
+                {product.soldCount} sold
+              </span>
+            )}
+          </div>
+
+          {/* Sizes - More compact */}
           {displaySizes.length > 0 && (
             <div className="mb-2">
               <div className="flex flex-wrap gap-1">
-                {displaySizes.map((size, idx) => (
+                {displaySizes.slice(0, 3).map((size, idx) => (
                   <span
                     key={idx}
-                    className="px-2 py-1 text-xs border border-gray-300 rounded text-gray-600"
+                    className="px-1.5 py-0.5 text-xs border border-gray-300 rounded text-gray-600"
                   >
                     {size}
                   </span>
                 ))}
-                {sizes.length > 5 && (
-                  <span className="px-2 py-1 text-xs text-gray-500">
-                    +{sizes.length - 5}
+                {sizes.length > 3 && (
+                  <span className="px-1.5 py-0.5 text-xs text-gray-500">
+                    +{sizes.length - 3}
                   </span>
                 )}
               </div>
             </div>
           )}
 
-          {/* Colors */}
+          {/* Colors - More compact */}
           {displayColors.length > 0 && (
             <div className="mb-2">
-              <div className="flex gap-1.5">
-                {displayColors.map((color, idx) => (
+              <div className="flex gap-1">
+                {displayColors.slice(0, 5).map((color, idx) => (
                   <div
                     key={idx}
-                    className="w-5 h-5 rounded-full border border-gray-300"
+                    className="w-4 h-4 rounded-full border border-gray-300"
                     style={{ backgroundColor: color.hex  }}
-                    title={color}
+                    title={color.name}
                   />
                 ))}
                 {colors.length > 5 && (
