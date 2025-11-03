@@ -33,8 +33,6 @@ export default function ProductDetail({ product, reviews = [] }) {
   const [showSizeGuide, setShowSizeGuide] = useState(false);
   const [selectedVariants, setSelectedVariants] = useState([]); // Store multiple variant selections
 
-  const inWishlist = isInWishlist(product.id);
-
   if (router.isFallback) {
     return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
   }
@@ -42,6 +40,9 @@ export default function ProductDetail({ product, reviews = [] }) {
   if (!product) {
     return <div className="min-h-screen flex items-center justify-center">Product not found</div>;
   }
+
+  // Check wishlist after product validation
+  const inWishlist = isInWishlist(product.id);
 
   // Parse sizes and colors from product data (from Airtable)
   const sizes = product.sizes || [];
