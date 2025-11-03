@@ -43,10 +43,6 @@ export default function ReviewForm({ productId, onSubmitSuccess }) {
       alert('Please select a rating');
       return;
     }
-
-    console.log('ProductId being submitted:', productId);
-    console.log('ProductId type:', typeof productId);
-
     setIsSubmitting(true);
 
     try {
