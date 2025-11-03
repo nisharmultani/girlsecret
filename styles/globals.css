@@ -57,6 +57,15 @@
     @apply bg-gradient-to-r from-rose-500 to-blush-500 bg-clip-text text-transparent;
   }
 
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
   .animate-shimmer {
     animation: shimmer 2s linear infinite;
   }
