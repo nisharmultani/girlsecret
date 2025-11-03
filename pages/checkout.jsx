@@ -7,15 +7,19 @@ import { useAuth } from '../context/AuthContext';
 import { CheckCircleIcon, MapPinIcon } from '@heroicons/react/24/outline';
 import Image from 'next/image';
 import PostcodeAutocomplete from '../components/PostcodeAutocomplete';
+import { getActiveReferralCode } from '../lib/referral-tracking';
+import { useReferral } from '../hooks/useReferral';
 
 export default function Checkout() {
   const router = useRouter();
   const { user, isAuthenticated } = useAuth();
+  const { influencerName, referralCode: activeReferralCode } = useReferral();
   const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm();
   const [cart, setCart] = useState([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [orderComplete, setOrderComplete] = useState(false);
   const [orderNumber, setOrderNumber] = useState('');
+  const [createAccount, setCreateAccount] = useState(false); // For guest account creation
 
   // User addresses
   const [savedAddresses, setSavedAddresses] = useState([]);
@@ -108,6 +112,9 @@ export default function Checkout() {
     setIsProcessing(true);
 
     try {
+      // Get active referral code if any
+      const referralCode = getActiveReferralCode();
+
       // Prepare order data
       const orderData = {
         items: cart,
@@ -136,8 +143,14 @@ export default function Checkout() {
         },
       };
 
-      // If user is logged in, save order to their account
+      // Add referral code if present
+      if (referralCode) {
+        orderData.referralCode = referralCode;
+      }
+
+      // Handle order creation for both logged-in and guest users
       if (isAuthenticated && user) {
+        // Logged-in user checkout
         const response = await fetch('/api/user/orders', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -175,8 +188,48 @@ export default function Checkout() {
           }
         }
       } else {
-        // Guest checkout - just generate order number
-        setOrderNumber(`ORD-${Date.now()}-${Math.floor(Math.random() * 1000)}`);
+        // Guest checkout - create order with guest email as userId
+        const guestUserId = `guest_${data.email}`;
+
+        const response = await fetch('/api/user/orders', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId: guestUserId,
+            orderData: orderData,
+          }),
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          setOrderNumber(result.order.orderNumber);
+
+          // If guest wants to create an account, do it now
+          if (createAccount && data.password) {
+            try {
+              const registerResponse = await fetch('/api/auth/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  email: data.email,
+                  password: data.password,
+                  firstName: data.firstName,
+                  lastName: data.lastName,
+                  phone: data.phone || '',
+                }),
+              });
+
+              if (registerResponse.ok) {
+                // Account created - they can log in later
+                console.log('Account created successfully');
+              }
+            } catch (error) {
+              console.error('Failed to create account:', error);
+              // Don't fail the order if account creation fails
+            }
+          }
+        }
       }
 
       // Simulate payment processing
@@ -221,11 +274,25 @@ export default function Checkout() {
             </div>
           )}
           <p className="text-sm text-gray-600 mb-4">
-            You will receive an order confirmation email at {user?.email || 'your email'} shortly.
+            You will receive an order confirmation email shortly.
           </p>
+          {createAccount && !isAuthenticated && (
+            <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-4">
+              <p className="text-sm text-green-800 font-medium">
+                ✅ Account created successfully!
+              </p>
+              <p className="text-xs text-green-700 mt-1">
+                You can now log in to track your order
+              </p>
+            </div>
+          )}
           {isAuthenticated ? (
             <Link href="/account/orders" className="btn-primary inline-block">
               View My Orders
+            </Link>
+          ) : createAccount ? (
+            <Link href="/login" className="btn-primary inline-block">
+              Log In to Track Order
             </Link>
           ) : (
             <p className="text-sm text-gray-500">Redirecting to homepage...</p>
@@ -250,6 +317,18 @@ export default function Checkout() {
             </p>
           )}
         </div>
+
+        {/* Referral Banner for Guest Users */}
+        {!isAuthenticated && influencerName && activeReferralCode && (
+          <div className="bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 rounded-lg p-4 mb-6">
+            <p className="text-sm font-medium text-purple-900">
+              🎉 You&apos;re shopping through {influencerName}&apos;s link!
+            </p>
+            <p className="text-xs text-purple-700 mt-1">
+              Create an account to track your order and never miss exclusive offers from your favorite influencers
+            </p>
+          </div>
+        )}
 
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="grid lg:grid-cols-3 gap-8">
@@ -324,6 +403,54 @@ export default function Checkout() {
                       <p className="mt-1 text-sm text-red-600">{errors.phone.message}</p>
                     )}
                   </div>
+
+                  {/* Create Account Option for Guests */}
+                  {!isAuthenticated && (
+                    <div className="pt-4 border-t border-gray-200">
+                      <div className="bg-luxury-50 rounded-lg p-4">
+                        <div className="flex items-start">
+                          <input
+                            id="createAccount"
+                            type="checkbox"
+                            checked={createAccount}
+                            onChange={(e) => setCreateAccount(e.target.checked)}
+                            className="w-4 h-4 mt-1 border border-gray-300 rounded bg-white focus:ring-3 focus:ring-luxury-300"
+                          />
+                          <label htmlFor="createAccount" className="ml-3">
+                            <span className="text-sm font-medium text-gray-900">
+                              Create an account to track your order
+                            </span>
+                            <p className="text-xs text-gray-600 mt-1">
+                              Get order updates, faster checkout next time, and exclusive offers
+                            </p>
+                          </label>
+                        </div>
+
+                        {createAccount && (
+                          <div className="mt-4">
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              Create Password *
+                            </label>
+                            <input
+                              type="password"
+                              {...register('password', {
+                                required: createAccount ? 'Password is required' : false,
+                                minLength: {
+                                  value: 6,
+                                  message: 'Password must be at least 6 characters',
+                                },
+                              })}
+                              className="input-field"
+                              placeholder="Minimum 6 characters"
+                            />
+                            {errors.password && (
+                              <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
 
