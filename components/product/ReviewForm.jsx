@@ -85,8 +85,30 @@ export default function ReviewForm({ productId, onSubmitSuccess }) {
         setRating(0);
         setImageFiles([]);
         setImagePreviews([]);
-        if (onSubmitSuccess) onSubmitSuccess();
-        alert('Thank you for your review! It will be published after approval.');
+
+        // Show a nice success message
+        const successDiv = document.createElement('div');
+        successDiv.className = 'fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50';
+        successDiv.innerHTML = `
+          <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-md mx-4 animate-fade-in">
+            <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg class="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+            </div>
+            <h3 class="text-2xl font-bold text-gray-900 text-center mb-2">Thank You!</h3>
+            <p class="text-gray-600 text-center mb-6">Your review has been submitted successfully and will be published after approval.</p>
+            <button onclick="this.parentElement.parentElement.remove()" class="w-full bg-rose-500 hover:bg-rose-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors">
+              Close
+            </button>
+          </div>
+        `;
+        document.body.appendChild(successDiv);
+
+        setTimeout(() => {
+          successDiv.remove();
+          if (onSubmitSuccess) onSubmitSuccess();
+        }, 3000);
       } else {
         alert('Failed to submit review. Please try again.');
       }
@@ -141,23 +163,24 @@ export default function ReviewForm({ productId, onSubmitSuccess }) {
 
       <div>
         <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-          Your Email *
+          Your Email <span className="text-gray-500 text-xs">(Optional - for follow-up only)</span>
         </label>
         <input
           type="email"
           id="email"
           {...register('email', {
-            required: 'Email is required',
             pattern: {
               value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
               message: 'Invalid email address',
             },
           })}
           className="input-field"
+          placeholder="your@email.com (optional)"
         />
         {errors.email && (
           <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
         )}
+        <p className="text-xs text-gray-500 mt-1">We only use this to contact you about your review if needed</p>
       </div>
 
       <div>

@@ -15,19 +15,25 @@ import ProductRecommendations from '../../components/product/ProductRecommendati
 import { StarIcon } from '@heroicons/react/24/solid';
 import { StarIcon as StarOutlineIcon } from '@heroicons/react/24/outline';
 import { ShoppingBagIcon, HeartIcon, TruckIcon, ShieldCheckIcon } from '@heroicons/react/24/outline';
+import { HeartIcon as HeartSolidIcon } from '@heroicons/react/24/solid';
+import { useWishlist } from '../../context/WishlistContext';
 import Head from 'next/head';
 
 export default function ProductDetail({ product, reviews = [] }) {
   const router = useRouter();
+  const { isInWishlist, toggleWishlist } = useWishlist();
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [isAdding, setIsAdding] = useState(false);
+  const [isTogglingWishlist, setIsTogglingWishlist] = useState(false);
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [showAllReviews, setShowAllReviews] = useState(false);
   const [selectedSize, setSelectedSize] = useState('');
   const [selectedColor, setSelectedColor] = useState('');
   const [showSizeGuide, setShowSizeGuide] = useState(false);
   const [selectedVariants, setSelectedVariants] = useState([]); // Store multiple variant selections
+
+  const inWishlist = isInWishlist(product.id);
 
   if (router.isFallback) {
     return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
@@ -162,7 +168,8 @@ export default function ProductDetail({ product, reviews = [] }) {
     }
   };
 
-  const productUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/products/${product.slug}`;
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || (typeof window !== 'undefined' ? window.location.origin : 'https://girlsecret.com');
+  const productUrl = `${baseUrl}/products/${product.slug}`;
   const productImage = images[0]?.url || images[0]?.thumbnails?.large?.url || '';
 
   return (
@@ -181,8 +188,8 @@ export default function ProductDetail({ product, reviews = [] }) {
           dangerouslySetInnerHTML={{
             __html: JSON.stringify(
               generateBreadcrumbSchema([
-                { name: 'Home', url: process.env.NEXT_PUBLIC_SITE_URL },
-                { name: 'Shop', url: `${process.env.NEXT_PUBLIC_SITE_URL}/shop` },
+                { name: 'Home', url: baseUrl },
+                { name: 'Shop', url: `${baseUrl}/shop` },
                 { name: product.name, url: productUrl },
               ])
             ),
@@ -193,12 +200,12 @@ export default function ProductDetail({ product, reviews = [] }) {
       <div className="min-h-screen bg-white pb-24 lg:pb-0">
         {/* Breadcrumb */}
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6">
-          <nav className="flex text-sm">
-            <Link href="/" className="text-gray-500 hover:text-gray-700">Home</Link>
-            <span className="mx-2 text-gray-400">/</span>
-            <Link href="/shop" className="text-gray-500 hover:text-gray-700">Shop</Link>
-            <span className="mx-2 text-gray-400">/</span>
-            <span className="text-gray-900">{product.name}</span>
+          <nav className="flex text-sm overflow-hidden">
+            <Link href="/" className="text-gray-500 hover:text-gray-700 flex-shrink-0">Home</Link>
+            <span className="mx-2 text-gray-400 flex-shrink-0">/</span>
+            <Link href="/shop" className="text-gray-500 hover:text-gray-700 flex-shrink-0">Shop</Link>
+            <span className="mx-2 text-gray-400 flex-shrink-0">/</span>
+            <span className="text-gray-900 truncate" title={product.name}>{product.name}</span>
           </nav>
         </div>
 
@@ -249,7 +256,7 @@ export default function ProductDetail({ product, reviews = [] }) {
                 </p>
               )}
 
-              <h1 className="text-4xl font-serif font-bold text-gray-900 mb-4">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-serif font-bold text-gray-900 mb-4 leading-tight">
                 {product.name}
               </h1>
 
@@ -354,8 +361,7 @@ export default function ProductDetail({ product, reviews = [] }) {
                 <div className="mb-6">
                   <div className="flex items-center justify-between mb-3">
                     <label className="text-sm font-semibold text-gray-900">
-                      Size {selectedSize && <span className="text-rose-600">- {selectedSize}</span>}
-                      <span className="text-gray-500 font-normal ml-2">({sizes.length} sizes available)</span>
+                      Select Size {selectedSize && <span className="text-rose-600">: {selectedSize}</span>}
                     </label>
                     <button
                       onClick={() => setShowSizeGuide(true)}
@@ -383,35 +389,38 @@ export default function ProductDetail({ product, reviews = [] }) {
                 </div>
               )}
 
-              {/* Color Selector */}
+              {/* Color Selector - AliExpress Style */}
               {colors.length > 0 && (
                 <div className="mb-6">
                   <label className="text-sm font-semibold text-gray-900 mb-3 block">
-                    Color {selectedColor && <span className="text-rose-600">- {selectedColor}</span>}
+                    Color {selectedColor && <span className="text-rose-600">: {selectedColor}</span>}
                   </label>
-                  <div className="flex flex-wrap gap-3">
+                  <div className="flex flex-wrap gap-2">
                     {colors.map((color, index) => (
                       <button
                         key={index}
                         onClick={() => setSelectedColor(color.name)}
-                        className={`relative w-12 h-12 rounded-full border-2 transition-all ${
+                        className={`group relative flex items-center gap-2 px-3 py-2 rounded-lg border-2 transition-all ${
                           selectedColor === color.name
-                            ? 'border-rose-500 ring-4 ring-rose-200 shadow-lg'
-                            : 'border-gray-300 hover:border-rose-300 hover:shadow-md'
+                            ? 'border-rose-500 bg-rose-50 shadow-md'
+                            : 'border-gray-300 hover:border-rose-300 bg-white'
                         }`}
                         title={color.name}
                         type="button"
                       >
                         <div
-                          className="w-full h-full rounded-full"
+                          className="w-6 h-6 rounded-full border border-gray-300"
                           style={{ backgroundColor: color.hex }}
                         />
+                        <span className={`text-sm font-medium ${
+                          selectedColor === color.name ? 'text-rose-700' : 'text-gray-700'
+                        }`}>
+                          {color.name}
+                        </span>
                         {selectedColor === color.name && (
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            <svg className="w-6 h-6 text-white drop-shadow-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                            </svg>
-                          </div>
+                          <svg className="w-4 h-4 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                          </svg>
                         )}
                       </button>
                     ))}
@@ -517,16 +526,32 @@ export default function ProductDetail({ product, reviews = [] }) {
                   {isAdding ? 'Adding...' : product.inStock ? 'Add to Cart' : 'Out of Stock'}
                 </button>
 
-                <button className="btn-secondary px-4">
-                  <HeartIcon className="w-6 h-6" />
+                <button
+                  onClick={async () => {
+                    setIsTogglingWishlist(true);
+                    await toggleWishlist(product.id);
+                    setIsTogglingWishlist(false);
+                  }}
+                  disabled={isTogglingWishlist}
+                  className="btn-secondary px-4 disabled:opacity-50"
+                  title={inWishlist ? "Remove from wishlist" : "Add to wishlist"}
+                >
+                  {inWishlist ? (
+                    <HeartSolidIcon className="w-6 h-6 text-rose-500" />
+                  ) : (
+                    <HeartIcon className="w-6 h-6" />
+                  )}
                 </button>
               </div>
 
               {/* Features */}
               <div className="space-y-3 mb-6 border-t border-b border-gray-200 py-6">
-                <div className="flex items-center gap-3 text-gray-700">
-                  <TruckIcon className="w-6 h-6 text-rose-500" />
-                  <span>Free shipping on orders over £50 in discreet packaging</span>
+                <div className="flex items-start gap-3 text-gray-700">
+                  <TruckIcon className="w-6 h-6 text-rose-500 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <div className="font-medium">Free shipping on orders over £50</div>
+                    <div className="text-sm text-gray-600">Ships in plain, unmarked packaging for your privacy</div>
+                  </div>
                 </div>
                 <div className="flex items-center gap-3 text-gray-700">
                   <ShieldCheckIcon className="w-6 h-6 text-rose-500" />
@@ -599,13 +624,14 @@ export default function ProductDetail({ product, reviews = [] }) {
 
                       {/* Review Images */}
                       {review.images && review.images.length > 0 && (
-                        <div className="grid grid-cols-4 gap-2 mb-3">
+                        <div className="grid grid-cols-6 sm:grid-cols-8 gap-2 mb-3">
                           {review.images.slice(0, 4).map((image, index) => (
-                            <div key={index} className="relative aspect-square rounded-lg overflow-hidden bg-gray-200">
+                            <div key={index} className="relative aspect-square rounded-lg overflow-hidden bg-gray-200 shadow-sm">
                               <Image
                                 src={image.url || image.thumbnails?.large?.url}
                                 alt={`Review image ${index + 1}`}
                                 fill
+                                sizes="(max-width: 640px) 16vw, 12vw"
                                 className="object-cover hover:scale-110 transition-transform duration-300 cursor-pointer"
                                 onClick={() => window.open(image.url, '_blank')}
                               />
@@ -713,8 +739,21 @@ export default function ProductDetail({ product, reviews = [] }) {
               </button>
 
               {/* Wishlist Button */}
-              <button className="flex-shrink-0 p-3 border-2 border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-                <HeartIcon className="w-6 h-6 text-gray-700" />
+              <button
+                onClick={async () => {
+                  setIsTogglingWishlist(true);
+                  await toggleWishlist(product.id);
+                  setIsTogglingWishlist(false);
+                }}
+                disabled={isTogglingWishlist}
+                className="flex-shrink-0 p-3 border-2 border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
+                title={inWishlist ? "Remove from wishlist" : "Add to wishlist"}
+              >
+                {inWishlist ? (
+                  <HeartSolidIcon className="w-6 h-6 text-rose-500" />
+                ) : (
+                  <HeartIcon className="w-6 h-6 text-gray-700" />
+                )}
               </button>
             </div>
           </div>
