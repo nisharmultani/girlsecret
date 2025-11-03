@@ -1,6 +1,13 @@
 import formidable from 'formidable';
-import fs from 'fs/promises';
-import path from 'path';
+import { v2 as cloudinary } from 'cloudinary';
+import fs from 'fs';
+
+// Configure Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 export const config = {
   api: {
@@ -14,14 +21,8 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Create uploads directory if it doesn't exist
-    const uploadsDir = path.join(process.cwd(), 'public', 'uploads', 'reviews');
-    await fs.mkdir(uploadsDir, { recursive: true });
-
     // Parse the form data
     const form = formidable({
-      uploadDir: uploadsDir,
-      keepExtensions: true,
       maxFileSize: 5 * 1024 * 1024, // 5MB
       maxFiles: 4,
       filter: function ({ mimetype }) {
@@ -37,25 +38,40 @@ export default async function handler(req, res) {
       });
     });
 
-    // Process uploaded files
+    // Process uploaded files and upload to Cloudinary
     const imageUrls = [];
     const uploadedFiles = Array.isArray(files.images) ? files.images : [files.images].filter(Boolean);
 
     for (const file of uploadedFiles) {
       if (file) {
-        // Generate unique filename
-        const timestamp = Date.now();
-        const randomStr = Math.random().toString(36).substring(7);
-        const extension = path.extname(file.originalFilename || '.jpg');
-        const newFilename = `review-${timestamp}-${randomStr}${extension}`;
-        const newPath = path.join(uploadsDir, newFilename);
+        try {
+          // Upload to Cloudinary
+          const result = await cloudinary.uploader.upload(file.filepath, {
+            folder: 'girlsecret/reviews',
+            resource_type: 'auto',
+            transformation: [
+              { width: 1000, height: 1000, crop: 'limit' },
+              { quality: 'auto:good' },
+            ],
+          });
 
-        // Rename file to new filename
-        await fs.rename(file.filepath, newPath);
+          // Store the Cloudinary URL
+          imageUrls.push(result.secure_url);
 
-        // Store the public URL
-        imageUrls.push(`/uploads/reviews/${newFilename}`);
+          // Delete the temporary file
+          fs.unlinkSync(file.filepath);
+        } catch (uploadError) {
+          console.error('Error uploading to Cloudinary:', uploadError);
+          // Continue with other files even if one fails
+        }
       }
+    }
+
+    if (imageUrls.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'No images were uploaded successfully',
+      });
     }
 
     return res.status(200).json({
