@@ -427,16 +427,16 @@ export default function ProductDetail({ product, reviews = [] }) {
               {colorOptions.length > 0 && (
                 <div className="mb-6">
                   <label className="text-sm font-semibold text-gray-900 mb-3 block">
-                    Color {selectedColor && <span className="text-rose-600">: {selectedColor.name}</span>}
+                    Available Colors
                   </label>
-                  <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
+                  <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-3">
                     {colorOptions.map((color, index) => (
                       <button
                         key={index}
                         onClick={() => handleColorSelect(color)}
-                        className={`relative group overflow-hidden rounded-lg border-2 transition-all ${
+                        className={`relative group overflow-hidden rounded-lg border-2 transition-all hover:scale-105 ${
                           selectedColor?.name === color.name
-                            ? 'border-rose-500 ring-2 ring-rose-200 shadow-lg'
+                            ? 'border-rose-500 ring-2 ring-rose-200 shadow-lg scale-105'
                             : 'border-gray-300 hover:border-rose-300'
                         }`}
                         type="button"
@@ -449,7 +449,7 @@ export default function ProductDetail({ product, reviews = [] }) {
                               src={color.imageUrl}
                               alt={color.name}
                               fill
-                              sizes="(max-width: 640px) 33vw, (max-width: 1024px) 25vw, 20vw"
+                              sizes="(max-width: 640px) 25vw, (max-width: 1024px) 20vw, 16vw"
                               className="object-cover"
                             />
                             {/* Selected Checkmark */}
@@ -463,22 +463,13 @@ export default function ProductDetail({ product, reviews = [] }) {
                           </div>
                         ) : (
                           /* Fallback: Color swatch if no image */
-                          <div className="aspect-square flex items-center justify-center p-4">
+                          <div className="relative aspect-square flex items-center justify-center p-2">
                             <div
-                              className="w-full h-full rounded-lg"
+                              className="w-full h-full rounded"
                               style={{ backgroundColor: color.hex }}
                             />
                           </div>
                         )}
-
-                        {/* Color Name Label */}
-                        <div className={`px-2 py-1.5 text-xs font-medium text-center ${
-                          selectedColor?.name === color.name
-                            ? 'bg-rose-50 text-rose-700'
-                            : 'bg-gray-50 text-gray-700'
-                        }`}>
-                          {color.name}
-                        </div>
                       </button>
                     ))}
                   </div>
