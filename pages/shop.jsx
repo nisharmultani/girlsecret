@@ -3,10 +3,10 @@ import { useRouter } from 'next/router';
 import Head from 'next/head';
 import { getAllProducts, getAllReviewStats } from '../lib/airtable';
 import ProductGrid from '../components/product/ProductGrid';
-import FilterSidebar from '../components/product/FilterSidebar';
+import FilterBar from '../components/product/FilterBar';
 import MobileFilterDrawer from '../components/product/MobileFilterDrawer';
 import { ProductGridSkeleton } from '../components/ui/SkeletonLoader';
-import { MagnifyingGlassIcon, FunnelIcon } from '@heroicons/react/24/outline';
+import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 
 export default function Shop({ products: initialProducts, categories }) {
   const router = useRouter();
@@ -213,15 +213,15 @@ export default function Shop({ products: initialProducts, categories }) {
       <div className="min-h-screen bg-gray-50">
         {/* Header */}
         <div className="bg-white shadow-sm border-b">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <h1 className="text-3xl md:text-4xl font-serif font-bold text-gray-900 mb-2">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
+            <h1 className="text-2xl md:text-3xl font-serif font-bold text-gray-900 mb-2">
               {urlSearch
                 ? 'Search Results'
                 : selectedCategory !== 'all'
                 ? `${selectedCategory} Collection`
-                : 'Intimate Apparel Collection'}
+                : 'Shop Collection'}
             </h1>
-            <p className="text-gray-600 mb-6">
+            <p className="text-sm md:text-base text-gray-600 mb-6">
               {urlSearch ? (
                 <>
                   Showing results for &quot;<span className="font-semibold">{urlSearch}</span>&quot;
@@ -244,12 +244,12 @@ export default function Shop({ products: initialProducts, categories }) {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search products..."
-                  className="w-full px-4 py-3 pl-12 border-2 border-gray-300 rounded-lg focus:border-rose-500 focus:ring-2 focus:ring-rose-200 outline-none transition-all"
+                  className="w-full px-4 py-2.5 pl-11 border-2 border-gray-300 rounded-lg focus:border-rose-500 focus:ring-2 focus:ring-rose-200 outline-none transition-all text-sm md:text-base"
                 />
-                <MagnifyingGlassIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                <MagnifyingGlassIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                 <button
                   type="submit"
-                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-rose-500 hover:bg-rose-600 text-white px-6 py-2 rounded-lg font-semibold transition-colors text-sm"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-rose-500 hover:bg-rose-600 text-white px-4 md:px-6 py-1.5 md:py-2 rounded-lg font-semibold transition-colors text-sm"
                 >
                   Search
                 </button>
@@ -280,71 +280,78 @@ export default function Shop({ products: initialProducts, categories }) {
           </div>
         </div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex flex-col lg:flex-row gap-8">
-            {/* Filter Sidebar */}
-            <FilterSidebar
-              categories={categories}
-              selectedCategory={selectedCategory}
-              onCategoryChange={handleCategoryChange}
-              minPrice={minPrice}
-              maxPrice={maxPrice}
-              onPriceChange={handlePriceChange}
-              sortValue={sortValue}
-              onSortChange={setSortValue}
-              showFilters={showFilters}
-              onToggleFilters={() => setShowFilters(!showFilters)}
-              productCount={products.length}
-            />
-
-            {/* Products Grid */}
-            <div className="flex-1">
-              {/* Toolbar */}
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-                <p className="text-gray-600">
-                  Showing <span className="font-semibold">{filteredProducts.length}</span> of{' '}
-                  <span className="font-semibold">{products.length}</span> products
-                </p>
-
+        {/* Category Tabs */}
+        <div className="bg-white border-b border-gray-200">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide py-4">
+              <button
+                onClick={() => handleCategoryChange('all')}
+                className={`px-4 md:px-6 py-2 md:py-2.5 rounded-full text-sm md:text-base font-semibold whitespace-nowrap transition-all ${
+                  selectedCategory === 'all'
+                    ? 'bg-rose-500 text-white shadow-md'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                All Products
+              </button>
+              {categories.map((category) => (
                 <button
-                  onClick={() => setShowFilters(true)}
-                  className="lg:hidden inline-flex items-center px-4 py-3 border-2 border-gray-300 rounded-lg text-sm font-semibold text-gray-700 bg-white hover:bg-gray-50 transition-colors shadow-sm"
+                  key={category}
+                  onClick={() => handleCategoryChange(category)}
+                  className={`px-4 md:px-6 py-2 md:py-2.5 rounded-full text-sm md:text-base font-semibold whitespace-nowrap transition-all ${
+                    selectedCategory === category
+                      ? 'bg-rose-500 text-white shadow-md'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
                 >
-                  <FunnelIcon className="w-5 h-5 mr-2" />
-                  Filters & Sort
+                  {category}
                 </button>
-              </div>
-
-              {/* Products */}
-              {isSearching ? (
-                <ProductGridSkeleton count={8} />
-              ) : filteredProducts.length > 0 ? (
-                <ProductGrid products={filteredProducts} />
-              ) : (
-                <div className="text-center py-16">
-                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 mb-4">
-                    <MagnifyingGlassIcon className="w-8 h-8 text-gray-400" />
-                  </div>
-                  <h3 className="text-lg font-medium text-gray-900 mb-1">
-                    No products found
-                  </h3>
-                  <p className="text-gray-500 mb-4">
-                    {urlSearch
-                      ? 'Try a different search term or adjust your filters.'
-                      : 'Try adjusting your filters to find what you\'re looking for.'}
-                  </p>
-                  {urlSearch && (
-                    <button
-                      onClick={clearSearch}
-                      className="inline-flex items-center px-4 py-2 bg-rose-500 hover:bg-rose-600 text-white rounded-lg font-medium transition-colors"
-                    >
-                      View all products
-                    </button>
-                  )}
-                </div>
-              )}
+              ))}
             </div>
           </div>
+        </div>
+
+        {/* Filter Bar */}
+        <FilterBar
+          minPrice={minPrice}
+          maxPrice={maxPrice}
+          onPriceChange={handlePriceChange}
+          sortValue={sortValue}
+          onSortChange={setSortValue}
+          onOpenFilters={() => setShowFilters(true)}
+          resultCount={filteredProducts.length}
+          totalCount={products.length}
+        />
+
+        {/* Products Grid - Full Width */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          {isSearching ? (
+            <ProductGridSkeleton count={8} />
+          ) : filteredProducts.length > 0 ? (
+            <ProductGrid products={filteredProducts} />
+          ) : (
+            <div className="text-center py-16">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 mb-4">
+                <MagnifyingGlassIcon className="w-8 h-8 text-gray-400" />
+              </div>
+              <h3 className="text-lg font-medium text-gray-900 mb-1">
+                No products found
+              </h3>
+              <p className="text-gray-500 mb-4">
+                {urlSearch
+                  ? 'Try a different search term or adjust your filters.'
+                  : 'Try adjusting your filters to find what you\'re looking for.'}
+              </p>
+              {urlSearch && (
+                <button
+                  onClick={clearSearch}
+                  className="inline-flex items-center px-4 py-2 bg-rose-500 hover:bg-rose-600 text-white rounded-lg font-medium transition-colors"
+                >
+                  View all products
+                </button>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Mobile Filter Drawer */}
