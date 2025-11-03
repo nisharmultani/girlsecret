@@ -7,6 +7,7 @@ import { useAuth } from '../context/AuthContext';
 import { CheckCircleIcon, MapPinIcon } from '@heroicons/react/24/outline';
 import Image from 'next/image';
 import PostcodeAutocomplete from '../components/PostcodeAutocomplete';
+import { getActiveReferralCode } from '../lib/referral-tracking';
 
 export default function Checkout() {
   const router = useRouter();
@@ -108,6 +109,9 @@ export default function Checkout() {
     setIsProcessing(true);
 
     try {
+      // Get active referral code if any
+      const referralCode = getActiveReferralCode();
+
       // Prepare order data
       const orderData = {
         items: cart,
@@ -135,6 +139,11 @@ export default function Checkout() {
           country: data.country || 'United Kingdom',
         },
       };
+
+      // Add referral code if present
+      if (referralCode) {
+        orderData.referralCode = referralCode;
+      }
 
       // If user is logged in, save order to their account
       if (isAuthenticated && user) {
