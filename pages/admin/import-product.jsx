@@ -430,7 +430,7 @@ AliExpress URL: ${formatted.aliexpressUrl}
                   <li>Right-click product images and copy image URLs</li>
                   <li>Paste image URLs (one per line)</li>
                   <li>Review the preview</li>
-                  <li>Click "Copy as JSON" or "Copy for Airtable"</li>
+                  <li>Click &quot;Copy as JSON&quot; or &quot;Copy for Airtable&quot;</li>
                   <li>Paste into your database/Airtable</li>
                 </ol>
               </div>
