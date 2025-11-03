@@ -19,18 +19,9 @@ export default function ProductCard({ product }) {
   // Check if product is in wishlist
   const inWishlist = isInWishlist(product.id);
 
-  // Parse sizes and colors from product data
+  // Parse sizes from product data
   const sizes = product.sizes || [];
-  const colors = product.colors || [];
   const displaySizes = sizes.slice(0, 5); // Show first 5 sizes
-  const displayColors = colors.slice(0, 8).map(color => {
-    if (color.includes('-')) {
-      const [name, hex] = color.split('-');
-      return { name: name.trim(), hex: hex.trim() };
-    }
-    // If only hex code, try to guess name or use hex
-    return { name: color, hex: color };
-  });
 
   const handleAddToCart = (e) => {
     e.preventDefault();
@@ -170,26 +161,8 @@ export default function ProductCard({ product }) {
             </div>
           )}
 
-          {/* Colors - More compact */}
-          {displayColors.length > 0 && (
-            <div className="mb-2">
-              <div className="flex gap-1">
-                {displayColors.slice(0, 5).map((color, idx) => (
-                  <div
-                    key={idx}
-                    className="w-4 h-4 rounded-full border border-gray-300"
-                    style={{ backgroundColor: color.hex  }}
-                    title={color.name}
-                  />
-                ))}
-                {colors.length > 5 && (
-                  <span className="text-xs text-gray-500 self-center">
-                    +{colors.length - 5}
-                  </span>
-                )}
-              </div>
-            </div>
-          )}
+          {/* Colors - REMOVED */}
+          {/* Customers order based on product images */}
 
           {/* Price */}
           <div className="mt-auto flex items-center gap-2">

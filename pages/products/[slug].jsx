@@ -29,9 +29,8 @@ export default function ProductDetail({ product, reviews = [] }) {
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [showAllReviews, setShowAllReviews] = useState(false);
   const [selectedSize, setSelectedSize] = useState('');
-  const [selectedColor, setSelectedColor] = useState('');
   const [showSizeGuide, setShowSizeGuide] = useState(false);
-  const [selectedVariants, setSelectedVariants] = useState([]); // Store multiple variant selections
+  const [selectedVariants, setSelectedVariants] = useState([]); // Store multiple size selections
 
   if (router.isFallback) {
     return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
@@ -44,19 +43,8 @@ export default function ProductDetail({ product, reviews = [] }) {
   // Check wishlist after product validation
   const inWishlist = isInWishlist(product.id);
 
-  // Parse sizes and colors from product data (from Airtable)
+  // Parse sizes from product data (from Airtable)
   const sizes = product.sizes || [];
-  const rawColors = product.colors || [];
-
-  // Parse colors - supports formats: "ColorName-#HexCode" or just "#HexCode"
-  const colors = rawColors.map(color => {
-    if (color.includes('-')) {
-      const [name, hex] = color.split('-');
-      return { name: name.trim(), hex: hex.trim() };
-    }
-    // If only hex code, try to guess name or use hex
-    return { name: color, hex: color };
-  });
 
   const images = product.images || [];
   const hasDiscount = product.salePrice && product.salePrice < product.price;
@@ -94,19 +82,13 @@ export default function ProductDetail({ product, reviews = [] }) {
       return;
     }
 
-    // Validate color selection if colors are available
-    if (colors.length > 0 && !selectedColor) {
-      alert('Please select a color');
-      return;
-    }
-
-    // Check if this variant combination already exists
+    // Check if this size already exists
     const variantExists = selectedVariants.some(
-      v => v.size === selectedSize && v.color === selectedColor
+      v => v.size === selectedSize
     );
 
     if (variantExists) {
-      alert('This size and color combination is already added');
+      alert('This size is already added');
       return;
     }
 
@@ -115,14 +97,12 @@ export default function ProductDetail({ product, reviews = [] }) {
       ...selectedVariants,
       {
         size: selectedSize || null,
-        color: selectedColor || null,
         quantity: 1,
       },
     ]);
 
-    // Reset selections for next variant
+    // Reset selection for next variant
     setSelectedSize('');
-    setSelectedColor('');
   };
 
   // Remove a variant from the list
@@ -145,13 +125,9 @@ export default function ProductDetail({ product, reviews = [] }) {
         alert('Please select a size');
         return;
       }
-      if (colors.length > 0 && !selectedColor) {
-        alert('Please select a color');
-        return;
-      }
 
       setIsAdding(true);
-      addToCart(product, quantity, selectedSize || null, selectedColor || null);
+      addToCart(product, quantity, selectedSize || null, null);
       setTimeout(() => {
         setIsAdding(false);
         router.push('/cart');
@@ -160,7 +136,7 @@ export default function ProductDetail({ product, reviews = [] }) {
       // Add all variants to cart
       setIsAdding(true);
       selectedVariants.forEach(variant => {
-        addToCart(product, variant.quantity, variant.size, variant.color);
+        addToCart(product, variant.quantity, variant.size, null);
       });
       setTimeout(() => {
         setIsAdding(false);
@@ -390,47 +366,11 @@ export default function ProductDetail({ product, reviews = [] }) {
                 </div>
               )}
 
-              {/* Color Selector - AliExpress Style */}
-              {colors.length > 0 && (
-                <div className="mb-6">
-                  <label className="text-sm font-semibold text-gray-900 mb-3 block">
-                    Color {selectedColor && <span className="text-rose-600">: {selectedColor}</span>}
-                  </label>
-                  <div className="flex flex-wrap gap-2">
-                    {colors.map((color, index) => (
-                      <button
-                        key={index}
-                        onClick={() => setSelectedColor(color.name)}
-                        className={`group relative flex items-center gap-2 px-3 py-2 rounded-lg border-2 transition-all ${
-                          selectedColor === color.name
-                            ? 'border-rose-500 bg-rose-50 shadow-md'
-                            : 'border-gray-300 hover:border-rose-300 bg-white'
-                        }`}
-                        title={color.name}
-                        type="button"
-                      >
-                        <div
-                          className="w-6 h-6 rounded-full border border-gray-300"
-                          style={{ backgroundColor: color.hex }}
-                        />
-                        <span className={`text-sm font-medium ${
-                          selectedColor === color.name ? 'text-rose-700' : 'text-gray-700'
-                        }`}>
-                          {color.name}
-                        </span>
-                        {selectedColor === color.name && (
-                          <svg className="w-4 h-4 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                          </svg>
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
+              {/* Color Selector - REMOVED */}
+              {/* Customers order based on product images they see */}
 
-              {/* Add Variant Button (for selecting multiple size/color combinations) */}
-              {(sizes.length > 0 || colors.length > 0) && (
+              {/* Add Variant Button (for selecting multiple sizes) */}
+              {sizes.length > 0 && (
                 <div className="mb-6">
                   <button
                     onClick={handleAddVariant}
@@ -440,7 +380,7 @@ export default function ProductDetail({ product, reviews = [] }) {
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                     </svg>
-                    Add This Variant (to select multiple sizes/colors)
+                    Add This Size (to select multiple sizes)
                   </button>
                 </div>
               )}
@@ -449,7 +389,7 @@ export default function ProductDetail({ product, reviews = [] }) {
               {selectedVariants.length > 0 && (
                 <div className="mb-6 bg-gray-50 rounded-lg p-4">
                   <h4 className="text-sm font-semibold text-gray-900 mb-3">
-                    Selected Variants ({selectedVariants.length})
+                    Selected Sizes ({selectedVariants.length})
                   </h4>
                   <div className="space-y-2">
                     {selectedVariants.map((variant, index) => (
@@ -457,13 +397,8 @@ export default function ProductDetail({ product, reviews = [] }) {
                         <div className="flex items-center gap-3">
                           <div className="text-sm">
                             {variant.size && (
-                              <span className="inline-block bg-gray-100 px-2 py-1 rounded mr-2">
+                              <span className="inline-block bg-gray-100 px-3 py-1.5 rounded font-medium">
                                 Size: <strong>{variant.size}</strong>
-                              </span>
-                            )}
-                            {variant.color && (
-                              <span className="inline-block bg-gray-100 px-2 py-1 rounded">
-                                Color: <strong>{variant.color}</strong>
                               </span>
                             )}
                           </div>
