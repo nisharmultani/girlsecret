@@ -117,7 +117,7 @@ export default function Cart() {
                 Special discount applied! 🎉
               </p>
               <p className="text-sm text-luxury-700">
-                You're using {influencerName}'s link - {formatPrice(discount)} discount applied automatically
+                You&apos;re using {influencerName}&apos;s link - {formatPrice(discount)} discount applied automatically
               </p>
             </div>
           </div>

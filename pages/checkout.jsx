@@ -322,7 +322,7 @@ export default function Checkout() {
         {!isAuthenticated && influencerName && activeReferralCode && (
           <div className="bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 rounded-lg p-4 mb-6">
             <p className="text-sm font-medium text-purple-900">
-              🎉 You're shopping through {influencerName}'s link!
+              🎉 You&apos;re shopping through {influencerName}&apos;s link!
             </p>
             <p className="text-xs text-purple-700 mt-1">
               Create an account to track your order and never miss exclusive offers from your favorite influencers
