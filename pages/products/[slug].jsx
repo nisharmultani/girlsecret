@@ -29,6 +29,7 @@ export default function ProductDetail({ product, reviews = [] }) {
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [showAllReviews, setShowAllReviews] = useState(false);
   const [selectedSize, setSelectedSize] = useState('');
+  const [selectedColor, setSelectedColor] = useState(null); // Store selected color object
   const [showSizeGuide, setShowSizeGuide] = useState(false);
   const [selectedVariants, setSelectedVariants] = useState([]); // Store multiple size selections
 
@@ -46,7 +47,44 @@ export default function ProductDetail({ product, reviews = [] }) {
   // Parse sizes from product data (from Airtable)
   const sizes = product.sizes || [];
 
-  const images = product.images || [];
+  // Parse colors with images from Airtable
+  // Format: "ColorName-HexCode-ImageURL"
+  // Example: "Red-#ff0000-https://cdn.example.com/red.jpg"
+  const rawColors = product.colors || [];
+  const colorOptions = rawColors.map(colorString => {
+    const parts = colorString.split('-');
+    if (parts.length >= 3) {
+      // Format: Name-Hex-ImageURL
+      const name = parts[0].trim();
+      const hex = parts[1].trim();
+      const imageUrl = parts.slice(2).join('-').trim(); // Handle URLs with hyphens
+      return { name, hex, imageUrl };
+    } else if (parts.length === 2) {
+      // Fallback: Name-Hex (no image)
+      const name = parts[0].trim();
+      const hex = parts[1].trim();
+      return { name, hex, imageUrl: null };
+    }
+    return null;
+  }).filter(Boolean);
+
+  // General product images (all angles, lifestyle, etc.)
+  const generalImages = product.images || [];
+
+  // All images including color variant images
+  const allImages = [...generalImages];
+
+  // Add color images to the zoom area if they exist
+  colorOptions.forEach(color => {
+    if (color.imageUrl && !allImages.some(img =>
+      (img.url || img.thumbnails?.large?.url) === color.imageUrl
+    )) {
+      allImages.push({
+        url: color.imageUrl,
+        thumbnails: { large: { url: color.imageUrl } }
+      });
+    }
+  });
   const hasDiscount = product.salePrice && product.salePrice < product.price;
   const discountPercent = hasDiscount
     ? Math.round(((product.price - product.salePrice) / product.price) * 100)
@@ -73,6 +111,21 @@ export default function ProductDetail({ product, reviews = [] }) {
   const averageRating = reviews.length > 0
     ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
     : 0;
+
+  // Handle color selection
+  const handleColorSelect = (color) => {
+    setSelectedColor(color);
+
+    // If color has an image, show it in the main zoom area
+    if (color.imageUrl) {
+      const colorImageIndex = allImages.findIndex(img =>
+        (img.url || img.thumbnails?.large?.url) === color.imageUrl
+      );
+      if (colorImageIndex !== -1) {
+        setSelectedImage(colorImageIndex);
+      }
+    }
+  };
 
   // Add current selection to variants list
   const handleAddVariant = () => {
@@ -125,9 +178,13 @@ export default function ProductDetail({ product, reviews = [] }) {
         alert('Please select a size');
         return;
       }
+      if (colorOptions.length > 0 && !selectedColor) {
+        alert('Please select a color');
+        return;
+      }
 
       setIsAdding(true);
-      addToCart(product, quantity, selectedSize || null, null);
+      addToCart(product, quantity, selectedSize || null, selectedColor?.name || null);
       setTimeout(() => {
         setIsAdding(false);
         router.push('/cart');
@@ -136,7 +193,7 @@ export default function ProductDetail({ product, reviews = [] }) {
       // Add all variants to cart
       setIsAdding(true);
       selectedVariants.forEach(variant => {
-        addToCart(product, variant.quantity, variant.size, null);
+        addToCart(product, variant.quantity, variant.size, selectedColor?.name || null);
       });
       setTimeout(() => {
         setIsAdding(false);
@@ -147,7 +204,7 @@ export default function ProductDetail({ product, reviews = [] }) {
 
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || (typeof window !== 'undefined' ? window.location.origin : 'https://girlsecret.com');
   const productUrl = `${baseUrl}/products/${product.slug}`;
-  const productImage = images[0]?.url || images[0]?.thumbnails?.large?.url || '';
+  const productImage = allImages[0]?.url || allImages[0]?.thumbnails?.large?.url || '';
 
   return (
     <>
@@ -191,7 +248,7 @@ export default function ProductDetail({ product, reviews = [] }) {
             {/* Images */}
             <div>
               <ImageZoom
-                src={images[selectedImage]?.url || images[selectedImage]?.thumbnails?.large?.url}
+                src={allImages[selectedImage]?.url || allImages[selectedImage]?.thumbnails?.large?.url}
                 alt={product.name}
                 priority
               >
@@ -203,9 +260,9 @@ export default function ProductDetail({ product, reviews = [] }) {
               </ImageZoom>
 
               {/* Thumbnails */}
-              {images.length > 1 && (
+              {allImages.length > 1 && (
                 <div className="grid grid-cols-4 gap-4">
-                  {images.map((image, index) => (
+                  {allImages.map((image, index) => (
                     <button
                       key={index}
                       onClick={() => setSelectedImage(index)}
@@ -366,8 +423,67 @@ export default function ProductDetail({ product, reviews = [] }) {
                 </div>
               )}
 
-              {/* Color Selector - REMOVED */}
-              {/* Customers order based on product images they see */}
+              {/* Color Selector with Product Images - AliExpress Style */}
+              {colorOptions.length > 0 && (
+                <div className="mb-6">
+                  <label className="text-sm font-semibold text-gray-900 mb-3 block">
+                    Color {selectedColor && <span className="text-rose-600">: {selectedColor.name}</span>}
+                  </label>
+                  <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
+                    {colorOptions.map((color, index) => (
+                      <button
+                        key={index}
+                        onClick={() => handleColorSelect(color)}
+                        className={`relative group overflow-hidden rounded-lg border-2 transition-all ${
+                          selectedColor?.name === color.name
+                            ? 'border-rose-500 ring-2 ring-rose-200 shadow-lg'
+                            : 'border-gray-300 hover:border-rose-300'
+                        }`}
+                        type="button"
+                        title={color.name}
+                      >
+                        {/* Product Image for this color */}
+                        {color.imageUrl ? (
+                          <div className="relative aspect-square">
+                            <Image
+                              src={color.imageUrl}
+                              alt={color.name}
+                              fill
+                              sizes="(max-width: 640px) 33vw, (max-width: 1024px) 25vw, 20vw"
+                              className="object-cover"
+                            />
+                            {/* Selected Checkmark */}
+                            {selectedColor?.name === color.name && (
+                              <div className="absolute inset-0 bg-rose-500 bg-opacity-20 flex items-center justify-center">
+                                <svg className="w-8 h-8 text-white drop-shadow-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                </svg>
+                              </div>
+                            )}
+                          </div>
+                        ) : (
+                          /* Fallback: Color swatch if no image */
+                          <div className="aspect-square flex items-center justify-center p-4">
+                            <div
+                              className="w-full h-full rounded-lg"
+                              style={{ backgroundColor: color.hex }}
+                            />
+                          </div>
+                        )}
+
+                        {/* Color Name Label */}
+                        <div className={`px-2 py-1.5 text-xs font-medium text-center ${
+                          selectedColor?.name === color.name
+                            ? 'bg-rose-50 text-rose-700'
+                            : 'bg-gray-50 text-gray-700'
+                        }`}>
+                          {color.name}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Add Variant Button (for selecting multiple sizes) */}
               {sizes.length > 0 && (
