@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
-import { getAllProducts } from '../lib/airtable';
+import { getAllProducts, getAllReviewStats } from '../lib/airtable';
 import ProductGrid from '../components/product/ProductGrid';
 import FilterSidebar from '../components/product/FilterSidebar';
 import MobileFilterDrawer from '../components/product/MobileFilterDrawer';
@@ -369,13 +369,22 @@ export default function Shop({ products: initialProducts, categories }) {
 export async function getStaticProps() {
   try {
     const products = await getAllProducts();
+    const reviewStats = await getAllReviewStats();
+
+    // Merge review stats with products
+    const productsWithReviews = products.map(product => ({
+      ...product,
+      averageRating: reviewStats[product.id]?.averageRating || 0,
+      reviewCount: reviewStats[product.id]?.count || 0,
+    }));
+
     const categories = [
       ...new Set(products.map((p) => p.category).filter(Boolean)),
     ];
 
     return {
       props: {
-        products,
+        products: productsWithReviews,
         categories,
       },
       revalidate: 60,

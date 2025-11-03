@@ -108,7 +108,7 @@ export default function ProductCard({ product }) {
           </h3>
 
           {/* Rating and Sold Count */}
-          <div className="flex items-center gap-3 mb-2">
+          <div className="flex items-center justify-between gap-2 mb-2">
             {/* Star Rating */}
             <div className="flex items-center gap-1">
               <div className="flex">
@@ -128,11 +128,16 @@ export default function ProductCard({ product }) {
               </span>
             </div>
 
-            {/* Sold Count */}
+            {/* Sold Count - Prominent Badge */}
             {product.soldCount > 0 && (
-              <span className="text-xs text-gray-500">
-                {product.soldCount} sold
-              </span>
+              <div className="inline-flex items-center gap-1 px-2 py-0.5 bg-rose-50 border border-rose-200 rounded-full">
+                <svg className="w-3 h-3 text-rose-500" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 2a4 4 0 00-4 4v1H5a1 1 0 00-.994.89l-1 9A1 1 0 004 18h12a1 1 0 00.994-1.11l-1-9A1 1 0 0015 7h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4zm-6 3a1 1 0 112 0 1 1 0 01-2 0zm7-1a1 1 0 100 2 1 1 0 000-2z" clipRule="evenodd" />
+                </svg>
+                <span className="text-xs font-semibold text-rose-600">
+                  {product.soldCount}
+                </span>
+              </div>
             )}
           </div>
 
