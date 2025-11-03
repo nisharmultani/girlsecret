@@ -129,11 +129,12 @@ export default function Cart() {
             {cart.map((item, index) => (
               <div key={`${item.id}-${item.size}-${item.color}-${index}`} className="bg-white rounded-lg shadow-md p-6">
                 <div className="flex gap-4">
-                  <div className="relative w-24 h-24 flex-shrink-0">
+                  <div className="relative w-32 h-32 flex-shrink-0 bg-gray-100 rounded-lg">
                     <Image
                       src={item.image}
                       alt={item.name}
                       fill
+                      sizes="128px"
                       className="object-cover rounded-lg"
                     />
                   </div>
