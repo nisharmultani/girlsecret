@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { useState } from 'react';
-import { getAllProducts } from '../lib/airtable';
+import { getAllProducts, getAllReviewStats } from '../lib/airtable';
 import ProductGrid from '../components/product/ProductGrid';
 import HeroCarousel from '../components/home/HeroCarousel';
 import ShopByCategory from '../components/home/ShopByCategory';
@@ -238,12 +238,20 @@ export default function Home({ featuredProducts, newArrivals, bestSellers }) {
 export async function getStaticProps() {
   try {
     const allProducts = await getAllProducts();
+    const reviewStats = await getAllReviewStats();
+
+    // Merge review stats with products
+    const productsWithReviews = allProducts.map(product => ({
+      ...product,
+      averageRating: reviewStats[product.id]?.averageRating || 0,
+      reviewCount: reviewStats[product.id]?.count || 0,
+    }));
 
     // Featured Products - Show 6 for 3-column grid
-    const featuredProducts = allProducts.filter(p => p.featured).slice(0, 6);
+    const featuredProducts = productsWithReviews.filter(p => p.featured).slice(0, 6);
 
     // New Arrivals - Most recent products (3 for cleaner grid)
-    const newArrivals = allProducts
+    const newArrivals = productsWithReviews
       .sort((a, b) => {
         const dateA = new Date(a.createdTime || 0);
         const dateB = new Date(b.createdTime || 0);
@@ -252,13 +260,13 @@ export async function getStaticProps() {
       .slice(0, 3);
 
     // Best Sellers - Featured products that aren't in featuredProducts (3 for cleaner grid)
-    const bestSellers = allProducts
+    const bestSellers = productsWithReviews
       .filter(p => p.featured && !featuredProducts.includes(p))
       .slice(0, 3);
 
     // If not enough best sellers, fill with random products
     if (bestSellers.length < 3) {
-      const additionalProducts = allProducts
+      const additionalProducts = productsWithReviews
         .filter(p => !featuredProducts.includes(p) && !bestSellers.includes(p))
         .slice(0, 3 - bestSellers.length);
       bestSellers.push(...additionalProducts);

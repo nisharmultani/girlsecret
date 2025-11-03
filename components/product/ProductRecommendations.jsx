@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import ProductGrid from './ProductGrid';
-import { getAllProducts } from '../../lib/airtable';
+import { getAllProducts, getAllReviewStats } from '../../lib/airtable';
 
 export default function ProductRecommendations({ currentProduct, maxItems = 4 }) {
   const [recommendations, setRecommendations] = useState([]);
@@ -10,9 +10,17 @@ export default function ProductRecommendations({ currentProduct, maxItems = 4 })
     const fetchRecommendations = async () => {
       try {
         const allProducts = await getAllProducts();
+        const reviewStats = await getAllReviewStats();
+
+        // Merge review stats with products
+        const productsWithReviews = allProducts.map(product => ({
+          ...product,
+          averageRating: reviewStats[product.id]?.averageRating || 0,
+          reviewCount: reviewStats[product.id]?.count || 0,
+        }));
 
         // Filter out current product
-        let relatedProducts = allProducts.filter(
+        let relatedProducts = productsWithReviews.filter(
           (p) => p.id !== currentProduct.id
         );
 

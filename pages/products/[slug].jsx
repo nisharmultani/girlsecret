@@ -8,6 +8,7 @@ import { formatPrice, formatDiscount } from '../../utils/format';
 import { generateProductSchema, generateBreadcrumbSchema } from '../../lib/seo';
 import SocialShare from '../../components/ui/SocialShare';
 import ReviewForm from '../../components/product/ReviewForm';
+import ReviewsModal from '../../components/product/ReviewsModal';
 import SizeGuideModal from '../../components/product/SizeGuideModal';
 import ImageZoom from '../../components/product/ImageZoom';
 import ProductRecommendations from '../../components/product/ProductRecommendations';
@@ -22,6 +23,7 @@ export default function ProductDetail({ product, reviews = [] }) {
   const [quantity, setQuantity] = useState(1);
   const [isAdding, setIsAdding] = useState(false);
   const [showReviewForm, setShowReviewForm] = useState(false);
+  const [showAllReviews, setShowAllReviews] = useState(false);
   const [selectedSize, setSelectedSize] = useState('');
   const [selectedColor, setSelectedColor] = useState('');
   const [showSizeGuide, setShowSizeGuide] = useState(false);
@@ -251,23 +253,38 @@ export default function ProductDetail({ product, reviews = [] }) {
                 {product.name}
               </h1>
 
-              {/* Rating */}
-              {reviews.length > 0 && (
-                <div className="flex items-center gap-2 mb-4">
-                  <div className="flex">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      star <= Math.round(averageRating) ? (
-                        <StarIcon key={star} className="h-5 w-5 text-rose-400" />
-                      ) : (
-                        <StarOutlineIcon key={star} className="h-5 w-5 text-gray-300" />
-                      )
-                    ))}
+              {/* Rating and Sold Count */}
+              <div className="flex items-center gap-4 mb-4 flex-wrap">
+                {/* Star Rating */}
+                {reviews.length > 0 && (
+                  <div className="flex items-center gap-2">
+                    <div className="flex">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        star <= Math.round(averageRating) ? (
+                          <StarIcon key={star} className="h-5 w-5 text-yellow-400" />
+                        ) : (
+                          <StarOutlineIcon key={star} className="h-5 w-5 text-gray-300" />
+                        )
+                      ))}
+                    </div>
+                    <span className="text-sm text-gray-600">
+                      {averageRating.toFixed(1)} ({reviews.length} reviews)
+                    </span>
                   </div>
-                  <span className="text-sm text-gray-600">
-                    {averageRating.toFixed(1)} ({reviews.length} reviews)
-                  </span>
-                </div>
-              )}
+                )}
+
+                {/* Sold Count - Clean Badge */}
+                {product.soldCount > 0 && (
+                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-full">
+                    <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    <span className="text-sm font-semibold text-gray-700">
+                      {product.soldCount.toLocaleString()} sold
+                    </span>
+                  </div>
+                )}
+              </div>
 
               {/* Price */}
               <div className="mb-6">
@@ -529,33 +546,89 @@ export default function ProductDetail({ product, reviews = [] }) {
 
           {/* Reviews Section */}
           <div className="mt-16">
-            <h2 className="text-3xl font-serif font-bold mb-8">Customer Reviews</h2>
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="text-3xl font-serif font-bold">Customer Reviews</h2>
+              {reviews.length > 3 && (
+                <button
+                  onClick={() => setShowAllReviews(true)}
+                  className="text-rose-600 hover:text-rose-700 font-semibold flex items-center gap-2"
+                >
+                  View All {reviews.length} Reviews
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              )}
+            </div>
 
             {reviews.length > 0 ? (
-              <div className="space-y-6 mb-8">
-                {reviews.map((review) => (
-                  <div key={review.id} className="bg-gray-50 rounded-lg p-6">
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        <div className="flex">
-                          {[1, 2, 3, 4, 5].map((star) => (
-                            star <= review.rating ? (
-                              <StarIcon key={star} className="h-5 w-5 text-rose-400" />
-                            ) : (
-                              <StarOutlineIcon key={star} className="h-5 w-5 text-gray-300" />
-                            )
+              <>
+                <div className="space-y-6 mb-8">
+                  {reviews.slice(0, 3).map((review) => (
+                    <div key={review.id} className="bg-gray-50 rounded-lg p-6 hover:bg-gray-100 transition-colors">
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="flex items-center gap-3">
+                          {/* Avatar */}
+                          <div className="w-10 h-10 rounded-full bg-rose-500 flex items-center justify-center text-white font-semibold">
+                            {review.name.charAt(0).toUpperCase()}
+                          </div>
+
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <span className="font-semibold text-gray-900">{review.name}</span>
+                              <span className="text-sm text-gray-500">
+                                {new Date(review.created_At).toLocaleDateString('en-GB', {
+                                  day: 'numeric',
+                                  month: 'short',
+                                  year: 'numeric'
+                                })}
+                              </span>
+                            </div>
+                            <div className="flex mt-1">
+                              {[1, 2, 3, 4, 5].map((star) => (
+                                star <= review.rating ? (
+                                  <StarIcon key={star} className="h-4 w-4 text-yellow-400" />
+                                ) : (
+                                  <StarOutlineIcon key={star} className="h-4 w-4 text-gray-300" />
+                                )
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Review Images */}
+                      {review.images && review.images.length > 0 && (
+                        <div className="grid grid-cols-4 gap-2 mb-3">
+                          {review.images.slice(0, 4).map((image, index) => (
+                            <div key={index} className="relative aspect-square rounded-lg overflow-hidden bg-gray-200">
+                              <Image
+                                src={image.url || image.thumbnails?.large?.url}
+                                alt={`Review image ${index + 1}`}
+                                fill
+                                className="object-cover hover:scale-110 transition-transform duration-300 cursor-pointer"
+                                onClick={() => window.open(image.url, '_blank')}
+                              />
+                            </div>
                           ))}
                         </div>
-                        <span className="font-semibold">{review.name}</span>
-                      </div>
-                      <span className="text-sm text-gray-500">
-                        {new Date(review.created_At).toLocaleDateString()}
-                      </span>
+                      )}
+
+                      {/* Review Comment */}
+                      <p className="text-gray-700 leading-relaxed">{review.comment}</p>
                     </div>
-                    <p className="text-gray-700">{review.comment}</p>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+
+                {reviews.length > 3 && (
+                  <button
+                    onClick={() => setShowAllReviews(true)}
+                    className="w-full btn-secondary mb-6"
+                  >
+                    Show All {reviews.length} Reviews
+                  </button>
+                )}
+              </>
             ) : (
               <p className="text-gray-600 mb-8">No reviews yet. Be the first to review!</p>
             )}
@@ -589,6 +662,15 @@ export default function ProductDetail({ product, reviews = [] }) {
           isOpen={showSizeGuide}
           onClose={() => setShowSizeGuide(false)}
           category={product.category}
+        />
+
+        {/* Reviews Modal */}
+        <ReviewsModal
+          isOpen={showAllReviews}
+          onClose={() => setShowAllReviews(false)}
+          reviews={reviews}
+          averageRating={averageRating}
+          productName={product.name}
         />
 
         {/* Mobile Sticky Add to Cart Bar */}

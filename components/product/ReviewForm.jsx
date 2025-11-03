@@ -1,23 +1,70 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import Image from 'next/image';
 import { StarIcon } from '@heroicons/react/24/solid';
-import { StarIcon as StarOutlineIcon } from '@heroicons/react/24/outline';
+import { StarIcon as StarOutlineIcon, PhotoIcon, XMarkIcon } from '@heroicons/react/24/outline';
 
 export default function ReviewForm({ productId, onSubmitSuccess }) {
   const { register, handleSubmit, reset, formState: { errors } } = useForm();
   const [rating, setRating] = useState(0);
   const [hoveredRating, setHoveredRating] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [imageFiles, setImageFiles] = useState([]);
+  const [imagePreviews, setImagePreviews] = useState([]);
+
+  const handleImageSelect = (e) => {
+    const files = Array.from(e.target.files);
+    const validFiles = files.filter(file => file.type.startsWith('image/'));
+
+    if (validFiles.length + imageFiles.length > 4) {
+      alert('You can only upload up to 4 images');
+      return;
+    }
+
+    // Create previews
+    const newPreviews = validFiles.map(file => URL.createObjectURL(file));
+    setImagePreviews([...imagePreviews, ...newPreviews]);
+    setImageFiles([...imageFiles, ...validFiles]);
+  };
+
+  const removeImage = (index) => {
+    const newFiles = imageFiles.filter((_, i) => i !== index);
+    const newPreviews = imagePreviews.filter((_, i) => i !== index);
+
+    // Revoke object URL to free memory
+    URL.revokeObjectURL(imagePreviews[index]);
+
+    setImageFiles(newFiles);
+    setImagePreviews(newPreviews);
+  };
 
   const onSubmit = async (data) => {
     if (rating === 0) {
       alert('Please select a rating');
       return;
     }
-
     setIsSubmitting(true);
 
     try {
+      // If there are images, we need to upload them first
+      let imageUrls = [];
+      if (imageFiles.length > 0) {
+        const formData = new FormData();
+        imageFiles.forEach((file, index) => {
+          formData.append(`images`, file);
+        });
+
+        const uploadResponse = await fetch('/api/upload-review-images', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (uploadResponse.ok) {
+          const uploadData = await uploadResponse.json();
+          imageUrls = uploadData.urls || [];
+        }
+      }
+
       const response = await fetch('/api/reviews', {
         method: 'POST',
         headers: {
@@ -29,12 +76,15 @@ export default function ReviewForm({ productId, onSubmitSuccess }) {
           email: data.email,
           rating,
           comment: data.comment,
+          images: imageUrls,
         }),
       });
 
       if (response.ok) {
         reset();
         setRating(0);
+        setImageFiles([]);
+        setImagePreviews([]);
         if (onSubmitSuccess) onSubmitSuccess();
         alert('Thank you for your review! It will be published after approval.');
       } else {
@@ -123,6 +173,56 @@ export default function ReviewForm({ productId, onSubmitSuccess }) {
         />
         {errors.comment && (
           <p className="mt-1 text-sm text-red-600">{errors.comment.message}</p>
+        )}
+      </div>
+
+      {/* Image Upload */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Add Photos (Optional)
+        </label>
+        <p className="text-xs text-gray-500 mb-3">
+          Share photos of the product! Maximum 4 images.
+        </p>
+
+        {/* Image Previews */}
+        {imagePreviews.length > 0 && (
+          <div className="grid grid-cols-4 gap-3 mb-3">
+            {imagePreviews.map((preview, index) => (
+              <div key={index} className="relative aspect-square rounded-lg overflow-hidden bg-gray-100">
+                <Image
+                  src={preview}
+                  alt={`Preview ${index + 1}`}
+                  fill
+                  className="object-cover"
+                />
+                <button
+                  type="button"
+                  onClick={() => removeImage(index)}
+                  className="absolute top-1 right-1 bg-red-500 hover:bg-red-600 text-white rounded-full p-1 transition-colors"
+                >
+                  <XMarkIcon className="w-4 h-4" />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Upload Button */}
+        {imagePreviews.length < 4 && (
+          <label className="flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed border-gray-300 rounded-lg hover:border-rose-400 hover:bg-rose-50 transition-colors cursor-pointer">
+            <PhotoIcon className="w-6 h-6 text-gray-400" />
+            <span className="text-sm text-gray-600">
+              {imagePreviews.length === 0 ? 'Upload Images' : `Add More (${4 - imagePreviews.length} left)`}
+            </span>
+            <input
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={handleImageSelect}
+              className="hidden"
+            />
+          </label>
         )}
       </div>
 
