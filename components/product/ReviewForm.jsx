@@ -15,6 +15,9 @@ export default function ReviewForm({ productId, onSubmitSuccess }) {
       return;
     }
 
+    console.log('ProductId being submitted:', productId);
+    console.log('ProductId type:', typeof productId);
+
     setIsSubmitting(true);
 
     try {

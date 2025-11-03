@@ -8,6 +8,9 @@ export default async function handler(req, res) {
   try {
     const { productId, name, email, rating, comment } = req.body;
 
+    console.log('ProductId received in API:', productId);
+    console.log('ProductId type in API:', typeof productId);
+
     if (!productId || !name || !email || !rating || !comment) {
       return res.status(400).json({ message: 'Missing required fields' });
     }

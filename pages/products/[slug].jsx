@@ -669,6 +669,9 @@ export async function getStaticProps({ params }) {
       return { notFound: true };
     }
 
+    console.log('Product ID in getStaticProps:', product.id);
+    console.log('Product Name:', product.name);
+
     const reviews = await getProductReviews(product.id);
 
     // Ensure image URL is a string or empty string to avoid serialization errors
