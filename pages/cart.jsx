@@ -4,7 +4,8 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { getCart, updateCartQuantity, removeFromCart, getCartTotal } from '../lib/cart';
 import { formatPrice } from '../utils/format';
-import { TrashIcon, ShoppingBagIcon } from '@heroicons/react/24/outline';
+import { TrashIcon, ShoppingBagIcon, SparklesIcon } from '@heroicons/react/24/outline';
+import { useReferral } from '../hooks/useReferral';
 
 export default function Cart() {
   const router = useRouter();
@@ -12,12 +13,26 @@ export default function Cart() {
   const [promoCode, setPromoCode] = useState('');
   const [discount, setDiscount] = useState(0);
   const [isValidating, setIsValidating] = useState(false);
+  const [referralApplied, setReferralApplied] = useState(false);
+  const { referralData, promoCode: referralPromoCode, influencerName } = useReferral();
 
   useEffect(() => {
     loadCart();
     window.addEventListener('cartUpdated', loadCart);
     return () => window.removeEventListener('cartUpdated', loadCart);
   }, []);
+
+  // Auto-apply promo code from referral link
+  useEffect(() => {
+    if (referralPromoCode && !promoCode && !referralApplied) {
+      setPromoCode(referralPromoCode);
+      setReferralApplied(true);
+      // Auto-validate the promo code
+      setTimeout(() => {
+        handleApplyPromo(referralPromoCode);
+      }, 500);
+    }
+  }, [referralPromoCode, referralApplied]);
 
   const loadCart = () => {
     setCart(getCart());
@@ -33,28 +48,36 @@ export default function Cart() {
     loadCart();
   };
 
-  const handleApplyPromo = async () => {
-    if (!promoCode.trim()) return;
+  const handleApplyPromo = async (codeToApply = null) => {
+    const code = codeToApply || promoCode;
+    if (!code.trim()) return;
 
     setIsValidating(true);
     try {
       const response = await fetch('/api/validate-promo', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code: promoCode, subtotal }),
+        body: JSON.stringify({ code: code, subtotal }),
       });
 
       const data = await response.json();
 
       if (data.valid) {
         setDiscount(data.discount);
-        alert('Promo code applied successfully!');
+        // Don't show alert for auto-applied referral codes
+        if (!codeToApply) {
+          alert('Promo code applied successfully!');
+        }
       } else {
-        alert(data.message || 'Invalid promo code');
+        if (!codeToApply) {
+          alert(data.message || 'Invalid promo code');
+        }
         setDiscount(0);
       }
     } catch (error) {
-      alert('Failed to validate promo code');
+      if (!codeToApply) {
+        alert('Failed to validate promo code');
+      }
       setDiscount(0);
     } finally {
       setIsValidating(false);
@@ -84,6 +107,21 @@ export default function Cart() {
     <div className="min-h-screen bg-gray-50 py-12">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <h1 className="text-3xl font-serif font-bold text-gray-900 mb-8">Shopping Cart</h1>
+
+        {/* Referral Banner */}
+        {referralApplied && influencerName && discount > 0 && (
+          <div className="bg-gradient-to-r from-luxury-50 to-pink-50 border border-luxury-200 rounded-lg p-4 mb-6 flex items-center gap-3">
+            <SparklesIcon className="w-6 h-6 text-luxury-600 flex-shrink-0" />
+            <div>
+              <p className="font-semibold text-luxury-900">
+                Special discount applied! 🎉
+              </p>
+              <p className="text-sm text-luxury-700">
+                You're using {influencerName}'s link - {formatPrice(discount)} discount applied automatically
+              </p>
+            </div>
+          </div>
+        )}
 
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Cart Items */}
