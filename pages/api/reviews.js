@@ -6,10 +6,11 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { productId, name, email, rating, comment } = req.body;
+    const { productId, name, email, rating, comment, images } = req.body;
 
     console.log('ProductId received in API:', productId);
     console.log('ProductId type in API:', typeof productId);
+    console.log('Images received:', images);
 
     if (!productId || !name || !email || !rating || !comment) {
       return res.status(400).json({ message: 'Missing required fields' });
@@ -19,7 +20,7 @@ export default async function handler(req, res) {
       return res.status(400).json({ message: 'Invalid rating' });
     }
 
-    const result = await submitReview(productId, name, email, rating, comment);
+    const result = await submitReview(productId, name, email, rating, comment, images || []);
 
     if (result.success) {
       return res.status(200).json({
