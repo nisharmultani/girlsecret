@@ -468,58 +468,68 @@ export default function ProductDetail({ product, reviews = [] }) {
                     Selected Variants ({selectedVariants.length})
                   </h4>
                   <div className="space-y-2">
-                    {selectedVariants.map((variant, index) => (
-                      <div key={index} className="flex items-center justify-between bg-white p-3 rounded-lg">
-                        <div className="flex items-center gap-3">
-                          {/* Always show product thumbnail */}
-                          {variant.displayImage && (
-                            <div className="relative w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden border-2 border-rose-200 shadow-sm">
-                              <Image
-                                src={variant.displayImage.url || variant.displayImage.thumbnails?.large?.url}
-                                alt="Selected variant"
-                                fill
-                                sizes="64px"
-                                className="object-cover"
-                              />
-                            </div>
-                          )}
+                    {selectedVariants.map((variant, index) => {
+                      // Get the display image URL with fallbacks
+                      const displayImageUrl = variant.displayImage?.url
+                        || variant.displayImage?.thumbnails?.large?.url
+                        || variant.availableProductImage?.url
+                        || variant.availableProductImage?.thumbnails?.large?.url
+                        || allImages[0]?.url
+                        || allImages[0]?.thumbnails?.large?.url;
 
-                          <div className="text-sm">
-                            {variant.size && (
-                              <span className="inline-block bg-gray-100 px-3 py-1.5 rounded font-medium">
-                                Size: <strong>{variant.size}</strong>
-                              </span>
+                      return (
+                        <div key={index} className="flex items-center justify-between bg-white p-3 rounded-lg">
+                          <div className="flex items-center gap-3">
+                            {/* Always show product thumbnail */}
+                            {displayImageUrl && (
+                              <div className="relative w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden border-2 border-rose-200 shadow-sm">
+                                <Image
+                                  src={displayImageUrl}
+                                  alt="Selected variant"
+                                  fill
+                                  sizes="64px"
+                                  className="object-cover"
+                                />
+                              </div>
                             )}
+
+                            <div className="text-sm">
+                              {variant.size && (
+                                <span className="inline-block bg-gray-100 px-3 py-1.5 rounded font-medium">
+                                  Size: <strong>{variant.size}</strong>
+                                </span>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-1 ml-auto">
+                              <button
+                                onClick={() => handleUpdateVariantQuantity(index, variant.quantity - 1)}
+                                className="w-7 h-7 flex items-center justify-center border border-gray-300 rounded hover:bg-gray-100"
+                                type="button"
+                              >
+                                -
+                              </button>
+                              <span className="w-10 text-center text-sm font-medium">{variant.quantity}</span>
+                              <button
+                                onClick={() => handleUpdateVariantQuantity(index, variant.quantity + 1)}
+                                className="w-7 h-7 flex items-center justify-center border border-gray-300 rounded hover:bg-gray-100"
+                                type="button"
+                              >
+                                +
+                              </button>
+                            </div>
                           </div>
-                          <div className="flex items-center gap-1 ml-auto">
-                            <button
-                              onClick={() => handleUpdateVariantQuantity(index, variant.quantity - 1)}
-                              className="w-7 h-7 flex items-center justify-center border border-gray-300 rounded hover:bg-gray-100"
-                              type="button"
-                            >
-                              -
-                            </button>
-                            <span className="w-10 text-center text-sm font-medium">{variant.quantity}</span>
-                            <button
-                              onClick={() => handleUpdateVariantQuantity(index, variant.quantity + 1)}
-                              className="w-7 h-7 flex items-center justify-center border border-gray-300 rounded hover:bg-gray-100"
-                              type="button"
-                            >
-                              +
-                            </button>
-                          </div>
+                          <button
+                            onClick={() => handleRemoveVariant(index)}
+                            className="text-red-500 hover:text-red-700 p-1"
+                            type="button"
+                          >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </button>
                         </div>
-                        <button
-                          onClick={() => handleRemoveVariant(index)}
-                          className="text-red-500 hover:text-red-700 p-1"
-                          type="button"
-                        >
-                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                          </svg>
-                        </button>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
               )}
