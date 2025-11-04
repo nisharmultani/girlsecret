@@ -99,13 +99,22 @@ export default function ProductDetail({ product, reviews = [] }) {
       return;
     }
 
-    // Check if this size already exists
+    // Determine which available product is currently selected (if any)
+    const currentAvailableProductIndex = selectedImage >= generalImages.length
+      ? selectedImage - generalImages.length
+      : null;
+
+    const selectedAvailableProductImage = currentAvailableProductIndex !== null
+      ? availableProductImages[currentAvailableProductIndex]
+      : null;
+
+    // Check if this exact combination (size + available product) already exists
     const variantExists = selectedVariants.some(
-      v => v.size === selectedSize
+      v => v.size === selectedSize && v.availableProductIndex === currentAvailableProductIndex
     );
 
     if (variantExists) {
-      alert('This size is already added');
+      alert('This exact variant (size + product) is already added');
       return;
     }
 
@@ -115,6 +124,8 @@ export default function ProductDetail({ product, reviews = [] }) {
       {
         size: selectedSize || null,
         quantity: 1,
+        availableProductIndex: currentAvailableProductIndex,
+        availableProductImage: selectedAvailableProductImage,
       },
     ]);
 
@@ -450,12 +461,25 @@ export default function ProductDetail({ product, reviews = [] }) {
               {selectedVariants.length > 0 && (
                 <div className="mb-6 bg-gray-50 rounded-lg p-4">
                   <h4 className="text-sm font-semibold text-gray-900 mb-3">
-                    Selected Sizes ({selectedVariants.length})
+                    Selected Variants ({selectedVariants.length})
                   </h4>
                   <div className="space-y-2">
                     {selectedVariants.map((variant, index) => (
                       <div key={index} className="flex items-center justify-between bg-white p-3 rounded-lg">
                         <div className="flex items-center gap-3">
+                          {/* Show product variant thumbnail if available */}
+                          {variant.availableProductImage && (
+                            <div className="relative w-12 h-12 flex-shrink-0 rounded-lg overflow-hidden border-2 border-rose-200">
+                              <Image
+                                src={variant.availableProductImage.url || variant.availableProductImage.thumbnails?.large?.url}
+                                alt="Selected variant"
+                                fill
+                                sizes="48px"
+                                className="object-cover"
+                              />
+                            </div>
+                          )}
+
                           <div className="text-sm">
                             {variant.size && (
                               <span className="inline-block bg-gray-100 px-3 py-1.5 rounded font-medium">
