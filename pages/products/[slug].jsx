@@ -23,14 +23,13 @@ export default function ProductDetail({ product, reviews = [] }) {
   const router = useRouter();
   const { isInWishlist, toggleWishlist } = useWishlist();
   const [selectedImage, setSelectedImage] = useState(0);
-  const [quantity, setQuantity] = useState(1);
   const [isAdding, setIsAdding] = useState(false);
   const [isTogglingWishlist, setIsTogglingWishlist] = useState(false);
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [showAllReviews, setShowAllReviews] = useState(false);
   const [selectedSize, setSelectedSize] = useState('');
   const [showSizeGuide, setShowSizeGuide] = useState(false);
-  const [selectedVariants, setSelectedVariants] = useState([]); // Store multiple size selections
+  const [selectedVariants, setSelectedVariants] = useState([]); // Store multiple size/variant selections
 
   if (router.isFallback) {
     return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
@@ -62,23 +61,6 @@ export default function ProductDetail({ product, reviews = [] }) {
     ? Math.round(((product.price - product.salePrice) / product.price) * 100)
     : 0;
   const discountAmount = hasDiscount ? product.price - product.salePrice : 0;
-
-  // Quantity-based pricing tiers for upselling
-  const getQuantityPrice = (qty) => {
-    const basePrice = product.salePrice || product.price;
-
-    // Define quantity discount tiers
-    if (qty >= 3) {
-      return basePrice * 0.85; // 15% off for 3+
-    } else if (qty >= 2) {
-      return basePrice * 0.90; // 10% off for 2+
-    }
-    return basePrice;
-  };
-
-  const currentPrice = getQuantityPrice(quantity);
-  const totalPrice = currentPrice * quantity;
-  const savings = ((product.salePrice || product.price) - currentPrice) * quantity;
 
   const averageRating = reviews.length > 0
     ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
@@ -152,29 +134,19 @@ export default function ProductDetail({ product, reviews = [] }) {
   // Add all selected variants to cart
   const handleAddToCart = () => {
     if (selectedVariants.length === 0) {
-      // If no variants selected, add the current selection
-      if (sizes.length > 0 && !selectedSize) {
-        alert('Please select a size');
-        return;
-      }
-
-      setIsAdding(true);
-      addToCart(product, quantity, selectedSize || null, null);
-      setTimeout(() => {
-        setIsAdding(false);
-        router.push('/cart');
-      }, 500);
-    } else {
-      // Add all variants to cart
-      setIsAdding(true);
-      selectedVariants.forEach(variant => {
-        addToCart(product, variant.quantity, variant.size, null);
-      });
-      setTimeout(() => {
-        setIsAdding(false);
-        router.push('/cart');
-      }, 500);
+      alert('Please add at least one variant using the "Add This Variant" button');
+      return;
     }
+
+    // Add all variants to cart
+    setIsAdding(true);
+    selectedVariants.forEach(variant => {
+      addToCart(product, variant.quantity, variant.size, null);
+    });
+    setTimeout(() => {
+      setIsAdding(false);
+      router.push('/cart');
+    }, 500);
   };
 
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || (typeof window !== 'undefined' ? window.location.origin : 'https://girlsecret.com');
@@ -328,36 +300,6 @@ export default function ProductDetail({ product, reviews = [] }) {
                     You save {formatPrice(discountAmount)} on this item!
                   </p>
                 )}
-              </div>
-
-              {/* Quantity-Based Upselling */}
-              <div className="bg-gradient-to-r from-luxury-50 to-rose-50 rounded-xl p-5 mb-6 border border-luxury-200">
-                <h3 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2">
-                  <svg className="w-5 h-5 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  Buy More, Save More!
-                </h3>
-                <div className="space-y-2 text-sm">
-                  <div className="flex items-center justify-between">
-                    <span className="text-gray-700">Buy 1:</span>
-                    <span className="font-semibold text-gray-900">{formatPrice(product.salePrice || product.price)} each</span>
-                  </div>
-                  <div className="flex items-center justify-between bg-white bg-opacity-60 rounded px-2 py-1">
-                    <span className="text-gray-700 flex items-center gap-1">
-                      Buy 2:
-                      <span className="text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded-full font-semibold">10% OFF</span>
-                    </span>
-                    <span className="font-semibold text-green-700">{formatPrice(getQuantityPrice(2))} each</span>
-                  </div>
-                  <div className="flex items-center justify-between bg-white bg-opacity-60 rounded px-2 py-1">
-                    <span className="text-gray-700 flex items-center gap-1">
-                      Buy 3+:
-                      <span className="text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded-full font-semibold">15% OFF</span>
-                    </span>
-                    <span className="font-semibold text-green-700">{formatPrice(getQuantityPrice(3))} each</span>
-                  </div>
-                </div>
               </div>
 
               {/* Description */}
@@ -534,24 +476,8 @@ export default function ProductDetail({ product, reviews = [] }) {
                 </div>
               )}
 
-              {/* Quantity & Add to Cart */}
+              {/* Add to Cart */}
               <div className="flex gap-4 mb-6">
-                <div className="flex items-center border border-gray-300 rounded-lg">
-                  <button
-                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="px-4 py-3 hover:bg-gray-100"
-                  >
-                    -
-                  </button>
-                  <span className="px-6 py-3 border-x border-gray-300">{quantity}</span>
-                  <button
-                    onClick={() => setQuantity(quantity + 1)}
-                    className="px-4 py-3 hover:bg-gray-100"
-                  >
-                    +
-                  </button>
-                </div>
-
                 <button
                   onClick={handleAddToCart}
                   disabled={!product.inStock || isAdding}
@@ -756,9 +682,9 @@ export default function ProductDetail({ product, reviews = [] }) {
                     </span>
                   )}
                 </div>
-                {quantity > 1 && (
+                {selectedVariants.length > 0 && (
                   <p className="text-xs text-gray-600">
-                    {quantity} items • {formatPrice(totalPrice)} total
+                    {selectedVariants.length} variant{selectedVariants.length > 1 ? 's' : ''} selected
                   </p>
                 )}
               </div>
