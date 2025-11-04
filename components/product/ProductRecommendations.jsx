@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import ProductGrid from './ProductGrid';
 import { getAllProducts, getAllReviewStats } from '../../lib/airtable';
 
@@ -113,12 +114,12 @@ export default function ProductRecommendations({ currentProduct, maxItems = 4 })
         <h2 className="text-2xl md:text-3xl font-serif font-bold text-gray-900">
           You May Also Like
         </h2>
-        <a
+        <Link
           href={`/shop?category=${currentProduct.category}`}
           className="text-rose-600 hover:text-rose-700 font-medium text-sm"
         >
           View All {currentProduct.category} →
-        </a>
+        </Link>
       </div>
       <ProductGrid products={recommendations} />
     </div>
