@@ -29,7 +29,6 @@ export default function ProductDetail({ product, reviews = [] }) {
   const [showAllReviews, setShowAllReviews] = useState(false);
   const [selectedSize, setSelectedSize] = useState('');
   const [showSizeGuide, setShowSizeGuide] = useState(false);
-  const [selectedVariants, setSelectedVariants] = useState([]); // Store multiple size/variant selections
 
   if (router.isFallback) {
     return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
@@ -73,76 +72,16 @@ export default function ProductDetail({ product, reviews = [] }) {
     setSelectedImage(imageIndex);
   };
 
-  // Add current selection to variants list
-  const handleAddVariant = () => {
+  // Add to Cart - directly adds current selection
+  const handleAddToCart = () => {
     // Validate size selection if sizes are available
     if (sizes.length > 0 && !selectedSize) {
       alert('Please select a size');
       return;
     }
 
-    // Determine which available product is currently selected (if any)
-    const currentAvailableProductIndex = selectedImage >= generalImages.length
-      ? selectedImage - generalImages.length
-      : null;
-
-    const selectedAvailableProductImage = currentAvailableProductIndex !== null
-      ? availableProductImages[currentAvailableProductIndex]
-      : null;
-
-    // Get the currently displayed image (for thumbnail display)
-    const currentDisplayedImage = allImages[selectedImage];
-
-    // Check if this exact combination (size + available product) already exists
-    const variantExists = selectedVariants.some(
-      v => v.size === selectedSize && v.availableProductIndex === currentAvailableProductIndex
-    );
-
-    if (variantExists) {
-      alert('This exact variant (size + product) is already added');
-      return;
-    }
-
-    // Add to variants list
-    setSelectedVariants([
-      ...selectedVariants,
-      {
-        size: selectedSize || null,
-        quantity: 1,
-        availableProductIndex: currentAvailableProductIndex,
-        availableProductImage: selectedAvailableProductImage,
-        displayImage: currentDisplayedImage, // Store the currently displayed image
-      },
-    ]);
-
-    // Reset selection for next variant
-    setSelectedSize('');
-  };
-
-  // Remove a variant from the list
-  const handleRemoveVariant = (index) => {
-    setSelectedVariants(selectedVariants.filter((_, i) => i !== index));
-  };
-
-  // Update variant quantity
-  const handleUpdateVariantQuantity = (index, newQty) => {
-    const updated = [...selectedVariants];
-    updated[index].quantity = Math.max(1, newQty);
-    setSelectedVariants(updated);
-  };
-
-  // Add all selected variants to cart
-  const handleAddToCart = () => {
-    if (selectedVariants.length === 0) {
-      alert('Please add at least one variant using the "Add This Variant" button');
-      return;
-    }
-
-    // Add all variants to cart
     setIsAdding(true);
-    selectedVariants.forEach(variant => {
-      addToCart(product, variant.quantity, variant.size, null);
-    });
+    addToCart(product, 1, selectedSize || null, null);
     setTimeout(() => {
       setIsAdding(false);
       router.push('/cart');
@@ -387,95 +326,6 @@ export default function ProductDetail({ product, reviews = [] }) {
                 </div>
               )}
 
-              {/* Add Variant Button (for selecting multiple sizes) */}
-              {sizes.length > 0 && (
-                <div className="mb-6">
-                  <button
-                    onClick={handleAddVariant}
-                    type="button"
-                    className="w-full px-4 py-3 border-2 border-rose-300 text-rose-700 rounded-lg hover:bg-rose-50 font-medium transition-colors flex items-center justify-center gap-2"
-                  >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                    </svg>
-                    Add This Variant (to select multiple)
-                  </button>
-                </div>
-              )}
-
-              {/* Selected Variants List */}
-              {selectedVariants.length > 0 && (
-                <div className="mb-6 bg-gray-50 rounded-lg p-4">
-                  <h4 className="text-sm font-semibold text-gray-900 mb-3">
-                    Selected Variants ({selectedVariants.length})
-                  </h4>
-                  <div className="space-y-2">
-                    {selectedVariants.map((variant, index) => {
-                      // Get the display image URL with fallbacks
-                      const displayImageUrl = variant.displayImage?.url
-                        || variant.displayImage?.thumbnails?.large?.url
-                        || variant.availableProductImage?.url
-                        || variant.availableProductImage?.thumbnails?.large?.url
-                        || allImages[0]?.url
-                        || allImages[0]?.thumbnails?.large?.url;
-
-                      return (
-                        <div key={index} className="flex items-center justify-between bg-white p-3 rounded-lg">
-                          <div className="flex items-center gap-3">
-                            {/* Always show product thumbnail */}
-                            {displayImageUrl && (
-                              <div className="relative w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden border-2 border-rose-200 shadow-sm">
-                                <Image
-                                  src={displayImageUrl}
-                                  alt="Selected variant"
-                                  fill
-                                  sizes="64px"
-                                  className="object-cover"
-                                />
-                              </div>
-                            )}
-
-                            <div className="text-sm">
-                              {variant.size && (
-                                <span className="inline-block bg-gray-100 px-3 py-1.5 rounded font-medium">
-                                  Size: <strong>{variant.size}</strong>
-                                </span>
-                              )}
-                            </div>
-                            <div className="flex items-center gap-1 ml-auto">
-                              <button
-                                onClick={() => handleUpdateVariantQuantity(index, variant.quantity - 1)}
-                                className="w-7 h-7 flex items-center justify-center border border-gray-300 rounded hover:bg-gray-100"
-                                type="button"
-                              >
-                                -
-                              </button>
-                              <span className="w-10 text-center text-sm font-medium">{variant.quantity}</span>
-                              <button
-                                onClick={() => handleUpdateVariantQuantity(index, variant.quantity + 1)}
-                                className="w-7 h-7 flex items-center justify-center border border-gray-300 rounded hover:bg-gray-100"
-                                type="button"
-                              >
-                                +
-                              </button>
-                            </div>
-                          </div>
-                          <button
-                            onClick={() => handleRemoveVariant(index)}
-                            className="text-red-500 hover:text-red-700 p-1"
-                            type="button"
-                          >
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                          </button>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-
               {/* Add to Cart */}
               <div className="flex gap-4 mb-6">
                 <button
@@ -682,11 +532,6 @@ export default function ProductDetail({ product, reviews = [] }) {
                     </span>
                   )}
                 </div>
-                {selectedVariants.length > 0 && (
-                  <p className="text-xs text-gray-600">
-                    {selectedVariants.length} variant{selectedVariants.length > 1 ? 's' : ''} selected
-                  </p>
-                )}
               </div>
 
               {/* Add to Cart Button */}
