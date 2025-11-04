@@ -80,8 +80,12 @@ export default function ProductDetail({ product, reviews = [] }) {
       return;
     }
 
+    // Get the currently selected image URL
+    const currentImage = allImages[selectedImage];
+    const selectedImageUrl = currentImage?.url || currentImage?.thumbnails?.large?.url || '';
+
     setIsAdding(true);
-    addToCart(product, 1, selectedSize || null, null);
+    addToCart(product, 1, selectedSize || null, null, selectedImageUrl);
     setTimeout(() => {
       setIsAdding(false);
       router.push('/cart');
