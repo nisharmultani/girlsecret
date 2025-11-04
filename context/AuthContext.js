@@ -31,7 +31,7 @@ export function AuthProvider({ children }) {
     setLoading(false);
   };
 
-  const login = async (email, password) => {
+  const login = async (email, password, remember = false) => {
     try {
       const response = await fetch('/api/auth/login', {
         method: 'POST',
@@ -45,7 +45,7 @@ export function AuthProvider({ children }) {
         throw new Error(data.error || 'Login failed');
       }
 
-      saveSession(data.user, data.token);
+      saveSession(data.user, data.token, remember);
       setUser(data.user);
       return { success: true };
     } catch (error) {
@@ -67,7 +67,8 @@ export function AuthProvider({ children }) {
         throw new Error(data.error || 'Registration failed');
       }
 
-      saveSession(data.user, data.token);
+      // Default to remember=true for new registrations
+      saveSession(data.user, data.token, true);
       setUser(data.user);
       return { success: true };
     } catch (error) {
@@ -99,10 +100,10 @@ export function AuthProvider({ children }) {
         throw new Error(data.error || 'Update failed');
       }
 
-      // Update local user state
+      // Update local user state and preserve remember setting
       const updatedUser = { ...user, ...updates };
       const session = getSession();
-      saveSession(updatedUser, session.token);
+      saveSession(updatedUser, session.token, session.remember || false);
       setUser(updatedUser);
 
       return { success: true };

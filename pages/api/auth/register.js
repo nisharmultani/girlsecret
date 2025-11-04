@@ -1,5 +1,6 @@
 import { createUser, findUserByEmail } from '../../../lib/airtable';
-import { hashPassword, generateToken, isValidEmail, isValidPassword } from '../../../lib/auth';
+import { hashPassword, generateToken, isValidEmail, isValidPassword, generateVerificationToken, getVerificationTokenExpiry } from '../../../lib/auth';
+import { sendVerificationEmail } from '../../../lib/email';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -30,12 +31,23 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Email already registered' });
     }
 
-    // Hash password and create user
+    // Hash password and create user with email verification
     const passwordHash = hashPassword(password);
-    const result = await createUser(email, passwordHash, firstName, lastName, phone);
+    const verificationToken = generateVerificationToken();
+    const verificationExpiry = getVerificationTokenExpiry();
+
+    const result = await createUser(email, passwordHash, firstName, lastName, phone, verificationToken, verificationExpiry);
 
     if (!result.success) {
       return res.status(500).json({ error: result.error || 'Failed to create user' });
+    }
+
+    // Send verification email (don't block registration if email fails)
+    try {
+      await sendVerificationEmail(email, firstName, verificationToken);
+    } catch (emailError) {
+      console.error('Failed to send verification email:', emailError);
+      // Continue with registration even if email fails
     }
 
     // Generate session token
@@ -45,7 +57,7 @@ export default async function handler(req, res) {
       success: true,
       user: result.user,
       token,
-      message: 'Registration successful',
+      message: 'Registration successful. Please check your email to verify your account.',
     });
   } catch (error) {
     console.error('Registration error:', error);
