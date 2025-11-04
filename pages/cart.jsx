@@ -85,6 +85,15 @@ export default function Cart() {
   };
 
   const subtotal = getCartTotal();
+
+  // Calculate total product savings (original price - sale price)
+  const productSavings = cart.reduce((total, item) => {
+    if (item.originalPrice && item.originalPrice > item.price) {
+      return total + ((item.originalPrice - item.price) * item.quantity);
+    }
+    return total;
+  }, 0);
+
   const shipping = subtotal > 50 ? 0 : 10;
   const total = subtotal - discount + shipping;
 
@@ -165,9 +174,27 @@ export default function Cart() {
                             )}
                           </div>
                         )}
-                        <p className="text-luxury-600 font-bold mt-1">
-                          {formatPrice(item.price)}
-                        </p>
+                        <div className="mt-2">
+                          {item.originalPrice && item.originalPrice > item.price ? (
+                            <div className="flex flex-col gap-1">
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <span className="text-luxury-600 font-bold text-lg">
+                                  {formatPrice(item.price)}
+                                </span>
+                                <span className="text-gray-500 line-through text-sm">
+                                  {formatPrice(item.originalPrice)}
+                                </span>
+                                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-800">
+                                  Save {formatPrice(item.originalPrice - item.price)}
+                                </span>
+                              </div>
+                            </div>
+                          ) : (
+                            <p className="text-luxury-600 font-bold text-lg">
+                              {formatPrice(item.price)}
+                            </p>
+                          )}
+                        </div>
                       </div>
 
                       <button
@@ -242,9 +269,21 @@ export default function Cart() {
                   <span className="font-semibold">{formatPrice(subtotal)}</span>
                 </div>
 
+                {productSavings > 0 && (
+                  <div className="flex justify-between text-green-600 bg-green-50 -mx-2 px-2 py-1.5 rounded">
+                    <span className="font-medium flex items-center gap-1">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      Product Savings
+                    </span>
+                    <span className="font-semibold">-{formatPrice(productSavings)}</span>
+                  </div>
+                )}
+
                 {discount > 0 && (
                   <div className="flex justify-between text-green-600">
-                    <span>Discount</span>
+                    <span>Promo Code Discount</span>
                     <span>-{formatPrice(discount)}</span>
                   </div>
                 )}
@@ -262,6 +301,23 @@ export default function Cart() {
                   </p>
                 )}
               </div>
+
+              {/* Total Savings Summary */}
+              {(productSavings > 0 || discount > 0) && (
+                <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg p-3 mb-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-green-800 flex items-center gap-1">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      Total Savings
+                    </span>
+                    <span className="text-lg font-bold text-green-700">
+                      {formatPrice(productSavings + discount)}
+                    </span>
+                  </div>
+                </div>
+              )}
 
               <div className="flex justify-between text-lg font-bold mb-6">
                 <span>Total</span>
