@@ -108,6 +108,9 @@ export default function ProductDetail({ product, reviews = [] }) {
       ? availableProductImages[currentAvailableProductIndex]
       : null;
 
+    // Get the currently displayed image (for thumbnail display)
+    const currentDisplayedImage = allImages[selectedImage];
+
     // Check if this exact combination (size + available product) already exists
     const variantExists = selectedVariants.some(
       v => v.size === selectedSize && v.availableProductIndex === currentAvailableProductIndex
@@ -126,6 +129,7 @@ export default function ProductDetail({ product, reviews = [] }) {
         quantity: 1,
         availableProductIndex: currentAvailableProductIndex,
         availableProductImage: selectedAvailableProductImage,
+        displayImage: currentDisplayedImage, // Store the currently displayed image
       },
     ]);
 
@@ -467,14 +471,14 @@ export default function ProductDetail({ product, reviews = [] }) {
                     {selectedVariants.map((variant, index) => (
                       <div key={index} className="flex items-center justify-between bg-white p-3 rounded-lg">
                         <div className="flex items-center gap-3">
-                          {/* Show product variant thumbnail if available */}
-                          {variant.availableProductImage && (
-                            <div className="relative w-12 h-12 flex-shrink-0 rounded-lg overflow-hidden border-2 border-rose-200">
+                          {/* Always show product thumbnail */}
+                          {variant.displayImage && (
+                            <div className="relative w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden border-2 border-rose-200 shadow-sm">
                               <Image
-                                src={variant.availableProductImage.url || variant.availableProductImage.thumbnails?.large?.url}
+                                src={variant.displayImage.url || variant.displayImage.thumbnails?.large?.url}
                                 alt="Selected variant"
                                 fill
-                                sizes="48px"
+                                sizes="64px"
                                 className="object-cover"
                               />
                             </div>
@@ -487,7 +491,7 @@ export default function ProductDetail({ product, reviews = [] }) {
                               </span>
                             )}
                           </div>
-                          <div className="flex items-center gap-1">
+                          <div className="flex items-center gap-1 ml-auto">
                             <button
                               onClick={() => handleUpdateVariantQuantity(index, variant.quantity - 1)}
                               className="w-7 h-7 flex items-center justify-center border border-gray-300 rounded hover:bg-gray-100"
