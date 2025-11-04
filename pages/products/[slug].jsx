@@ -49,8 +49,8 @@ export default function ProductDetail({ product, reviews = [] }) {
   // General product images (all angles, lifestyle, etc.) from "Images" column
   const generalImages = product.images || [];
 
-  // Available product images from "Available Products" column in Airtable
-  const availableProductImages = product.availableProducts || [];
+  // Available product images from "Available_Products" column in Airtable
+  const availableProductImages = product.Available_Products || [];
 
   // Merge all images for the zoom area (general images first, then available products)
   const allImages = [...generalImages, ...availableProductImages];
