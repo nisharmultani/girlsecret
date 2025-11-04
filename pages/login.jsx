@@ -15,7 +15,7 @@ export default function Login() {
     setIsSubmitting(true);
     setError('');
 
-    const result = await login(data.email, data.password);
+    const result = await login(data.email, data.password, data.remember);
 
     if (result.success) {
       // Redirect to account page or return to previous page
