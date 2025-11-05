@@ -18,6 +18,7 @@ export default function ProductManagement() {
   const [productForm, setProductForm] = useState({
     name: '',
     description: '',
+    specifications: '',
     price: '',
     salePrice: '',
     category: '',
@@ -26,7 +27,8 @@ export default function ProductManagement() {
     featured: false,
     soldCount: '',
     images: [], // Main product images
-    availableProductImages: [] // Available product variant images
+    availableProductImages: [], // Available product variant images
+    videoUrls: '' // Video URLs (one per line)
   });
 
   useEffect(() => {
@@ -52,6 +54,7 @@ export default function ProductManagement() {
     setProductForm({
       name: '',
       description: '',
+      specifications: '',
       price: '',
       salePrice: '',
       category: 'Lingerie',
@@ -60,7 +63,8 @@ export default function ProductManagement() {
       featured: false,
       soldCount: '',
       images: [],
-      availableProductImages: []
+      availableProductImages: [],
+      videoUrls: ''
     });
     setSelectedProduct(null);
     setShowAddModal(true);
@@ -71,6 +75,7 @@ export default function ProductManagement() {
     setProductForm({
       name: product.name || '',
       description: product.description || '',
+      specifications: product.specifications || '',
       price: product.price || '',
       salePrice: product.salePrice || '',
       category: product.category || 'Lingerie',
@@ -79,7 +84,8 @@ export default function ProductManagement() {
       featured: product.featured === true,
       soldCount: product.soldCount || '',
       images: Array.isArray(product.images) ? product.images : [],
-      availableProductImages: Array.isArray(product.Available_Products) ? product.Available_Products : []
+      availableProductImages: Array.isArray(product.Available_Products) ? product.Available_Products : [],
+      videoUrls: Array.isArray(product.videoUrls) ? product.videoUrls.join('\n') : (product.videoUrls || '')
     });
     setShowEditModal(true);
   };
@@ -234,9 +240,15 @@ export default function ProductManagement() {
         ? productForm.sizes.split(',').map(s => s.trim()).filter(s => s)
         : [];
 
+      // Parse video URLs array
+      const videoUrls = productForm.videoUrls
+        ? productForm.videoUrls.split('\n').map(v => v.trim()).filter(v => v)
+        : [];
+
       const productData = {
         name: productForm.name,
         description: productForm.description,
+        specifications: productForm.specifications,
         price: parseFloat(productForm.price),
         salePrice: productForm.salePrice ? parseFloat(productForm.salePrice) : null,
         category: productForm.category,
@@ -246,7 +258,8 @@ export default function ProductManagement() {
         featured: productForm.featured,
         soldCount: productForm.soldCount ? parseInt(productForm.soldCount) : 0,
         images: productForm.images,
-        availableProductImages: productForm.availableProductImages
+        availableProductImages: productForm.availableProductImages,
+        videoUrls
       };
 
       const url = selectedProduct
@@ -552,6 +565,24 @@ export default function ProductManagement() {
                   />
                 </div>
 
+                {/* Specifications */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Product Specifications
+                    <span className="text-gray-500 text-xs ml-2">(Optional - one per line)</span>
+                  </label>
+                  <textarea
+                    value={productForm.specifications}
+                    onChange={(e) => setProductForm({ ...productForm, specifications: e.target.value })}
+                    placeholder="Material: 90% Polyester, 10% Spandex&#10;Care: Hand wash cold&#10;Origin: China&#10;Closure Type: Hook and Eye"
+                    rows="6"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Enter specifications in "Label: Value" format, one per line
+                  </p>
+                </div>
+
                 {/* Price and Sale Price */}
                 <div className="grid grid-cols-2 gap-4">
                   <div>
@@ -761,6 +792,32 @@ export default function ProductManagement() {
                           </button>
                         </div>
                       ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Video URLs */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Product Videos
+                    <span className="text-gray-500 text-xs ml-2">(Optional - YouTube/Vimeo or direct video URLs)</span>
+                  </label>
+                  <textarea
+                    value={productForm.videoUrls}
+                    onChange={(e) => setProductForm({ ...productForm, videoUrls: e.target.value })}
+                    placeholder="https://www.youtube.com/watch?v=...&#10;https://vimeo.com/...&#10;https://example.com/video.mp4"
+                    rows="4"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent font-mono text-sm"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Enter one video URL per line. Supports YouTube, Vimeo, and direct video links (mp4, webm)
+                  </p>
+                  {productForm.videoUrls && productForm.videoUrls.trim() && (
+                    <div className="mt-2 flex items-center gap-2 text-xs text-green-600">
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      {productForm.videoUrls.split('\n').filter(v => v.trim()).length} video(s) added
                     </div>
                   )}
                 </div>
