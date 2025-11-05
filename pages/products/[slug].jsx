@@ -29,6 +29,7 @@ export default function ProductDetail({ product, reviews = [] }) {
   const [showAllReviews, setShowAllReviews] = useState(false);
   const [selectedSize, setSelectedSize] = useState('');
   const [showSizeGuide, setShowSizeGuide] = useState(false);
+  const [showFullDescription, setShowFullDescription] = useState(false);
 
   if (router.isFallback) {
     return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
@@ -50,8 +51,9 @@ export default function ProductDetail({ product, reviews = [] }) {
   // Available product images from "Available_Products" column in Airtable
   const availableProductImages = product.Available_Products || [];
 
-  // Merge all images for the zoom area (general images first, then available products)
-  const allImages = [...generalImages, ...availableProductImages];
+  // Merge all images for the zoom area (available products first, then general images)
+  // This prevents size guide or extra images from showing first
+  const allImages = [...availableProductImages, ...generalImages];
 
   // Count of available product variants
   const availableProductCount = availableProductImages.length;
@@ -67,9 +69,8 @@ export default function ProductDetail({ product, reviews = [] }) {
 
   // Handle available product image selection
   const handleAvailableProductClick = (index) => {
-    // Calculate the index in allImages array (after general images)
-    const imageIndex = generalImages.length + index;
-    setSelectedImage(imageIndex);
+    // Available products are now first in the array
+    setSelectedImage(index);
   };
 
   // Add to Cart - directly adds current selection
@@ -135,29 +136,19 @@ export default function ProductDetail({ product, reviews = [] }) {
 
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-16">
           <div className="grid lg:grid-cols-2 gap-12">
-            {/* Images */}
-            <div>
-              <ImageZoom
-                src={allImages[selectedImage]?.url || allImages[selectedImage]?.thumbnails?.large?.url}
-                alt={product.name}
-                priority
-              >
-                {hasDiscount && (
-                  <div className="absolute top-4 left-4 bg-rose-500 text-white px-4 py-2 rounded-full text-lg font-bold">
-                    -{discountPercent}%
-                  </div>
-                )}
-              </ImageZoom>
-
-              {/* Thumbnails */}
+            {/* Images - AliExpress style with thumbnails on left */}
+            <div className="flex gap-4">
+              {/* Thumbnails - Left Side with scroll */}
               {allImages.length > 1 && (
-                <div className="grid grid-cols-4 gap-4">
+                <div className="flex flex-col gap-3 w-20 flex-shrink-0 max-h-[600px] overflow-y-auto pr-1" style={{scrollbarWidth: 'thin', scrollbarColor: '#d1d5db #f3f4f6'}}>
                   {allImages.map((image, index) => (
                     <button
                       key={index}
                       onClick={() => setSelectedImage(index)}
-                      className={`relative aspect-square rounded-lg overflow-hidden ${
-                        selectedImage === index ? 'ring-2 ring-rose-500' : ''
+                      className={`relative aspect-square rounded-lg overflow-hidden border-2 transition-all flex-shrink-0 ${
+                        selectedImage === index
+                          ? 'ring-2 ring-rose-500 border-rose-500 shadow-lg'
+                          : 'border-gray-200 hover:border-rose-300'
                       }`}
                     >
                       <Image
@@ -170,6 +161,21 @@ export default function ProductDetail({ product, reviews = [] }) {
                   ))}
                 </div>
               )}
+
+              {/* Main Image - Right Side */}
+              <div className="flex-1">
+                <ImageZoom
+                  src={allImages[selectedImage]?.url || allImages[selectedImage]?.thumbnails?.large?.url}
+                  alt={product.name}
+                  priority
+                >
+                  {hasDiscount && (
+                    <div className="absolute top-4 left-4 bg-rose-500 text-white px-4 py-2 rounded-full text-lg font-bold">
+                      -{discountPercent}%
+                    </div>
+                  )}
+                </ImageZoom>
+              </div>
             </div>
 
             {/* Product Info */}
@@ -246,9 +252,33 @@ export default function ProductDetail({ product, reviews = [] }) {
               </div>
 
               {/* Description */}
-              <p className="text-gray-700 mb-6 leading-relaxed">
-                {product.description}
-              </p>
+              <div className="mb-6">
+                <p className={`text-gray-700 leading-relaxed ${!showFullDescription ? 'line-clamp-4' : ''}`}>
+                  {product.description}
+                </p>
+                {product.description && product.description.length > 200 && (
+                  <button
+                    onClick={() => setShowFullDescription(!showFullDescription)}
+                    className="text-rose-600 hover:text-rose-700 font-medium text-sm mt-2 inline-flex items-center gap-1"
+                  >
+                    {showFullDescription ? (
+                      <>
+                        Show Less
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                        </svg>
+                      </>
+                    ) : (
+                      <>
+                        Read More
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </>
+                    )}
+                  </button>
+                )}
+              </div>
 
               {/* Size Selector */}
               {sizes.length > 0 && (
@@ -292,7 +322,7 @@ export default function ProductDetail({ product, reviews = [] }) {
                   <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
                     {availableProductImages.map((image, index) => {
                       const imageUrl = image.url || image.thumbnails?.large?.url;
-                      const isSelected = selectedImage === (generalImages.length + index);
+                      const isSelected = selectedImage === index;
 
                       return (
                         <button

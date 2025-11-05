@@ -12,7 +12,13 @@ export default function ProductCard({ product }) {
   const [isAdding, setIsAdding] = useState(false);
   const [isTogglingWishlist, setIsTogglingWishlist] = useState(false);
 
-  const imageUrl = product.images[0]?.thumbnails?.large?.url || product.images[0]?.url;
+  // Show Available_Products first (variant images), then fall back to main images
+  // This prevents size guides or extra images from showing in card
+  const availableProducts = product.Available_Products || [];
+  const mainImages = product.images || [];
+  const firstImage = availableProducts.length > 0 ? availableProducts[0] : mainImages[0];
+  const imageUrl = firstImage?.thumbnails?.large?.url || firstImage?.url;
+
   const hasDiscount = product.salePrice && product.salePrice < product.price;
   const discountPercent = hasDiscount ? formatDiscount(product.price, product.salePrice) : 0;
 
