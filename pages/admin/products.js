@@ -3,7 +3,6 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 
 export default function ProductManagement() {
-  const router = useRouter();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -579,7 +578,7 @@ export default function ProductManagement() {
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
                   />
                   <p className="text-xs text-gray-500 mt-1">
-                    Enter specifications in "Label: Value" format, one per line
+                    Enter specifications in &ldquo;Label: Value&ldquo; format, one per line
                   </p>
                 </div>
 
