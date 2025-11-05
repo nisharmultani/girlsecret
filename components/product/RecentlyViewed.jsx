@@ -13,8 +13,8 @@ export default function RecentlyViewed({ currentProductId = null, maxItems = 6 }
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Small delay to ensure component is client-side
-    const timer = setTimeout(() => {
+    // Load recently viewed products
+    const loadRecentlyViewed = () => {
       try {
         let viewed = getRecentlyViewed(maxItems + 1); // Get one extra in case we filter current
 
@@ -32,7 +32,10 @@ export default function RecentlyViewed({ currentProductId = null, maxItems = 6 }
       } finally {
         setLoading(false);
       }
-    }, 100);
+    };
+
+    // Small delay to ensure component is client-side
+    const timer = setTimeout(loadRecentlyViewed, 100);
 
     return () => clearTimeout(timer);
   }, [currentProductId, maxItems]);

@@ -21,7 +21,9 @@ export function addToRecentlyViewed(product) {
     // Remove product if it already exists (to move it to front)
     recentlyViewed = recentlyViewed.filter(item => item.id !== product.id);
 
-    // Add product to front of array
+    // Add product to front of array (most recent first)
+    const firstImage = product.Available_Products?.[0] || product.images?.[0] || null;
+
     recentlyViewed.unshift({
       id: product.id,
       name: product.name,
@@ -29,7 +31,9 @@ export function addToRecentlyViewed(product) {
       price: product.price,
       salePrice: product.salePrice,
       category: product.category,
-      image: product.images?.[0] || product.Available_Products?.[0] || null,
+      inStock: product.inStock !== false,
+      images: firstImage ? [firstImage] : [], // ProductCard expects array
+      Available_Products: product.Available_Products || [],
       viewedAt: new Date().toISOString()
     });
 

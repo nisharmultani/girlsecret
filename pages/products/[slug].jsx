@@ -258,7 +258,7 @@ export default function ProductDetail({ product, reviews = [] }) {
               )}
 
               {/* Main Display - Right Side */}
-              <div className="flex-1">
+              <div className="flex-1 space-y-4">
                 {allMedia[selectedImage]?.type === 'video' ? (
                   // Video Player
                   <div className="relative w-full aspect-square rounded-lg overflow-hidden bg-black">
@@ -290,6 +290,34 @@ export default function ProductDetail({ product, reviews = [] }) {
                     )}
                   </ImageZoom>
                 )}
+
+                {/* Trust Badges Below Gallery */}
+                <div className="grid grid-cols-2 gap-3 mt-4">
+                  <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                    <svg className="w-5 h-5 text-green-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span className="text-xs font-medium text-gray-700">Quality Guaranteed</span>
+                  </div>
+                  <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                    <svg className="w-5 h-5 text-blue-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                    <span className="text-xs font-medium text-gray-700">Secure Checkout</span>
+                  </div>
+                  <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                    <svg className="w-5 h-5 text-purple-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                    </svg>
+                    <span className="text-xs font-medium text-gray-700">Easy Returns</span>
+                  </div>
+                  <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                    <svg className="w-5 h-5 text-rose-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                    </svg>
+                    <span className="text-xs font-medium text-gray-700">Discreet Delivery</span>
+                  </div>
+                </div>
               </div>
             </div>
 
