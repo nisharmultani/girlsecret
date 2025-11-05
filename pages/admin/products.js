@@ -24,6 +24,7 @@ export default function ProductManagement() {
     sizes: '',
     inStock: true,
     featured: false,
+    soldCount: '',
     images: [], // Main product images
     availableProductImages: [] // Available product variant images
   });
@@ -57,6 +58,7 @@ export default function ProductManagement() {
       sizes: '',
       inStock: true,
       featured: false,
+      soldCount: '',
       images: [],
       availableProductImages: []
     });
@@ -75,6 +77,7 @@ export default function ProductManagement() {
       sizes: Array.isArray(product.sizes) ? product.sizes.join(', ') : '',
       inStock: product.inStock !== false,
       featured: product.featured === true,
+      soldCount: product.soldCount || '',
       images: Array.isArray(product.images) ? product.images : [],
       availableProductImages: Array.isArray(product.Available_Products) ? product.Available_Products : []
     });
@@ -234,6 +237,7 @@ export default function ProductManagement() {
         sizes,
         inStock: productForm.inStock,
         featured: productForm.featured,
+        soldCount: productForm.soldCount ? parseInt(productForm.soldCount) : 0,
         images: productForm.images,
         availableProductImages: productForm.availableProductImages
       };
@@ -599,6 +603,22 @@ export default function ProductManagement() {
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
                     />
                   </div>
+                </div>
+
+                {/* Sold Count */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Sold Count
+                    <span className="text-gray-500 text-xs ml-2">(Number of units sold)</span>
+                  </label>
+                  <input
+                    type="number"
+                    value={productForm.soldCount}
+                    onChange={(e) => setProductForm({ ...productForm, soldCount: e.target.value })}
+                    placeholder="0"
+                    min="0"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                  />
                 </div>
 
                 {/* Image Upload */}

@@ -23,6 +23,7 @@ export default async function handler(req, res) {
       sizes,
       inStock,
       featured,
+      soldCount,
       images,
       availableProductImages
     } = req.body;
@@ -49,6 +50,7 @@ export default async function handler(req, res) {
     // Add optional fields
     if (salePrice) productData.SalePrice = parseFloat(salePrice);
     if (sizes && sizes.length > 0) productData.Sizes = sizes;
+    if (soldCount !== undefined) productData.SoldCount = parseInt(soldCount) || 0;
 
     // For main images, convert URLs to Airtable attachment format
     if (images && images.length > 0) {
