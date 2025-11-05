@@ -6,7 +6,8 @@ const nextConfig = {
       'dl.airtable.com',
       'v5.airtableusercontent.com',
       'images.unsplash.com',
-      'unsplash.com' // For demo images
+      'unsplash.com',
+      'res.cloudinary.com' // For demo images
     ],
     formats: ['image/avif', 'image/webp'],
   },
