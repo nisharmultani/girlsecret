@@ -1,8 +1,8 @@
 import Airtable from 'airtable';
 import { sendEmail } from '../../../../lib/email';
 
-const base = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY }).base(
-  process.env.AIRTABLE_BASE_ID
+const base = new Airtable({ apiKey: process.env.NEXT_PUBLIC_AIRTABLE_API_KEY }).base(
+  process.env.NEXT_PUBLIC_AIRTABLE_BASE_ID
 );
 
 const ORDERS_TABLE = 'Orders';
