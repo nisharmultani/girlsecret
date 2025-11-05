@@ -29,6 +29,7 @@ export default function ProductDetail({ product, reviews = [] }) {
   const [showAllReviews, setShowAllReviews] = useState(false);
   const [selectedSize, setSelectedSize] = useState('');
   const [showSizeGuide, setShowSizeGuide] = useState(false);
+  const [showFullDescription, setShowFullDescription] = useState(false);
 
   if (router.isFallback) {
     return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
@@ -251,9 +252,33 @@ export default function ProductDetail({ product, reviews = [] }) {
               </div>
 
               {/* Description */}
-              <p className="text-gray-700 mb-6 leading-relaxed">
-                {product.description}
-              </p>
+              <div className="mb-6">
+                <p className={`text-gray-700 leading-relaxed ${!showFullDescription ? 'line-clamp-4' : ''}`}>
+                  {product.description}
+                </p>
+                {product.description && product.description.length > 200 && (
+                  <button
+                    onClick={() => setShowFullDescription(!showFullDescription)}
+                    className="text-rose-600 hover:text-rose-700 font-medium text-sm mt-2 inline-flex items-center gap-1"
+                  >
+                    {showFullDescription ? (
+                      <>
+                        Show Less
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                        </svg>
+                      </>
+                    ) : (
+                      <>
+                        Read More
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </>
+                    )}
+                  </button>
+                )}
+              </div>
 
               {/* Size Selector */}
               {sizes.length > 0 && (
