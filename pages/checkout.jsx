@@ -9,6 +9,10 @@ import Image from 'next/image';
 import PostcodeAutocomplete from '../components/PostcodeAutocomplete';
 import { getActiveReferralCode } from '../lib/referral-tracking';
 import { useReferral } from '../hooks/useReferral';
+import { loadStripe } from '@stripe/stripe-js';
+
+// Initialize Stripe
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
 export default function Checkout() {
   const router = useRouter();
@@ -148,6 +152,68 @@ export default function Checkout() {
         orderData.referralCode = referralCode;
       }
 
+      // Create Stripe PaymentIntent first
+      const paymentResponse = await fetch('/api/payment/create-intent', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          amount: total,
+          currency: 'gbp',
+          metadata: {
+            customerEmail: data.email,
+            customerName: `${data.firstName} ${data.lastName}`,
+          },
+        }),
+      });
+
+      const paymentData = await paymentResponse.json();
+
+      if (!paymentData.success) {
+        throw new Error(paymentData.error || 'Failed to initialize payment');
+      }
+
+      // Initialize Stripe and confirm payment
+      const stripe = await stripePromise;
+
+      // Use Stripe's confirmCardPayment with card details
+      const { error: stripeError, paymentIntent } = await stripe.confirmCardPayment(
+        paymentData.clientSecret,
+        {
+          payment_method: {
+            card: {
+              number: data.cardNumber.replace(/\s/g, ''),
+              exp_month: parseInt(data.expiry.split('/')[0]),
+              exp_year: parseInt('20' + data.expiry.split('/')[1]),
+              cvc: data.cvv,
+            },
+            billing_details: {
+              name: `${data.firstName} ${data.lastName}`,
+              email: data.email,
+              phone: data.phone,
+              address: {
+                line1: data.addressLine1,
+                line2: data.addressLine2 || '',
+                city: data.city,
+                postal_code: data.postcode,
+                country: 'GB',
+              },
+            },
+          },
+        }
+      );
+
+      if (stripeError) {
+        throw new Error(stripeError.message || 'Payment failed');
+      }
+
+      if (paymentIntent.status !== 'succeeded') {
+        throw new Error('Payment was not successful');
+      }
+
+      // Payment successful, now create the order
+      orderData.paymentIntentId = paymentIntent.id;
+      orderData.paymentStatus = 'paid';
+
       // Handle order creation for both logged-in and guest users
       if (isAuthenticated && user) {
         // Logged-in user checkout
@@ -231,9 +297,6 @@ export default function Checkout() {
           }
         }
       }
-
-      // Simulate payment processing
-      await new Promise(resolve => setTimeout(resolve, 2000));
 
       // Clear cart
       clearCart();
@@ -588,9 +651,9 @@ export default function Checkout() {
               {/* Payment Information */}
               <div className="bg-white rounded-xl shadow-sm p-6">
                 <h2 className="text-xl font-semibold mb-4">Payment Information</h2>
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
-                  <p className="text-sm text-blue-800">
-                    <strong>Demo Mode:</strong> This is a demonstration. In production, integrate with Stripe, PayPal, or other secure payment gateways.
+                <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
+                  <p className="text-sm text-green-800">
+                    <strong>🔒 Secure Payment:</strong> Powered by Stripe. Your payment information is encrypted and secure.
                   </p>
                 </div>
 
