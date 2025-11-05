@@ -23,7 +23,8 @@ export default async function handler(req, res) {
       sizes,
       inStock,
       featured,
-      images
+      images,
+      availableProductImages
     } = req.body;
 
     if (!name || !price || !category) {
@@ -49,9 +50,14 @@ export default async function handler(req, res) {
     if (salePrice) productData.SalePrice = parseFloat(salePrice);
     if (sizes && sizes.length > 0) productData.Sizes = sizes;
 
-    // For images, convert URLs to Airtable attachment format
+    // For main images, convert URLs to Airtable attachment format
     if (images && images.length > 0) {
       productData.Images = images.map(url => ({ url }));
+    }
+
+    // For available product images (variants), convert URLs to Airtable attachment format
+    if (availableProductImages && availableProductImages.length > 0) {
+      productData.Available_Products = availableProductImages.map(url => ({ url }));
     }
 
     // Create record in Airtable

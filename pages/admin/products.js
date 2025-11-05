@@ -24,7 +24,8 @@ export default function ProductManagement() {
     sizes: '',
     inStock: true,
     featured: false,
-    images: [] // Array of image URLs
+    images: [], // Main product images
+    availableProductImages: [] // Available product variant images
   });
 
   useEffect(() => {
@@ -56,7 +57,8 @@ export default function ProductManagement() {
       sizes: '',
       inStock: true,
       featured: false,
-      images: []
+      images: [],
+      availableProductImages: []
     });
     setSelectedProduct(null);
     setShowAddModal(true);
@@ -73,7 +75,8 @@ export default function ProductManagement() {
       sizes: Array.isArray(product.sizes) ? product.sizes.join(', ') : '',
       inStock: product.inStock !== false,
       featured: product.featured === true,
-      images: Array.isArray(product.images) ? product.images : []
+      images: Array.isArray(product.images) ? product.images : [],
+      availableProductImages: Array.isArray(product.Available_Products) ? product.Available_Products : []
     });
     setShowEditModal(true);
   };
@@ -113,7 +116,7 @@ export default function ProductManagement() {
       .replace(/-+/g, '-'); // Replace multiple hyphens with single hyphen
   };
 
-  // Handle image upload
+  // Handle main product image upload
   const handleImageUpload = async (e) => {
     const files = Array.from(e.target.files);
     if (files.length === 0) return;
@@ -148,11 +151,54 @@ export default function ProductManagement() {
     }
   };
 
-  // Remove image from list
+  // Handle available product image upload
+  const handleAvailableProductImageUpload = async (e) => {
+    const files = Array.from(e.target.files);
+    if (files.length === 0) return;
+
+    try {
+      setUploadingImages(true);
+      const formData = new FormData();
+      files.forEach(file => {
+        formData.append('images', file);
+      });
+
+      const response = await fetch('/api/admin/upload-product-images', {
+        method: 'POST',
+        body: formData
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setProductForm(prev => ({
+          ...prev,
+          availableProductImages: [...prev.availableProductImages, ...data.urls]
+        }));
+      } else {
+        const error = await response.json();
+        alert(`Upload failed: ${error.message || 'Unknown error'}`);
+      }
+    } catch (error) {
+      console.error('Error uploading images:', error);
+      alert('Failed to upload images');
+    } finally {
+      setUploadingImages(false);
+    }
+  };
+
+  // Remove main image from list
   const removeImage = (index) => {
     setProductForm(prev => ({
       ...prev,
       images: prev.images.filter((_, i) => i !== index)
+    }));
+  };
+
+  // Remove available product image from list
+  const removeAvailableProductImage = (index) => {
+    setProductForm(prev => ({
+      ...prev,
+      availableProductImages: prev.availableProductImages.filter((_, i) => i !== index)
     }));
   };
 
@@ -188,7 +234,8 @@ export default function ProductManagement() {
         sizes,
         inStock: productForm.inStock,
         featured: productForm.featured,
-        images: productForm.images
+        images: productForm.images,
+        availableProductImages: productForm.availableProductImages
       };
 
       const url = selectedProduct
@@ -617,6 +664,71 @@ export default function ProductManagement() {
                               Main
                             </span>
                           )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Available Product Images Upload */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Available Product Images (Variants)
+                    <span className="text-gray-500 text-xs ml-2">(Optional - for product variants/colors)</span>
+                  </label>
+
+                  <div className="mt-2">
+                    <label className="flex justify-center px-6 py-6 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer hover:border-blue-500 transition-colors">
+                      <div className="text-center">
+                        {uploadingImages ? (
+                          <div className="flex flex-col items-center">
+                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mb-2"></div>
+                            <p className="text-sm text-gray-600">Uploading images...</p>
+                          </div>
+                        ) : (
+                          <>
+                            <svg className="mx-auto h-10 w-10 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                              <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
+                            <p className="mt-2 text-sm text-gray-600">
+                              Click to upload available product variant images
+                            </p>
+                            <p className="mt-1 text-xs text-gray-500">
+                              Upload images of different colors/variants
+                            </p>
+                          </>
+                        )}
+                      </div>
+                      <input
+                        type="file"
+                        multiple
+                        accept="image/*"
+                        onChange={handleAvailableProductImageUpload}
+                        disabled={uploadingImages}
+                        className="hidden"
+                      />
+                    </label>
+                  </div>
+
+                  {/* Available Product Image Preview */}
+                  {productForm.availableProductImages.length > 0 && (
+                    <div className="mt-4 grid grid-cols-4 gap-3">
+                      {productForm.availableProductImages.map((url, index) => (
+                        <div key={index} className="relative group">
+                          <img
+                            src={url}
+                            alt={`Variant ${index + 1}`}
+                            className="w-full h-24 object-cover rounded-lg"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => removeAvailableProductImage(index)}
+                            className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                          >
+                            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </button>
                         </div>
                       ))}
                     </div>

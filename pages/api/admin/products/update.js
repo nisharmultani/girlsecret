@@ -24,7 +24,8 @@ export default async function handler(req, res) {
       sizes,
       inStock,
       featured,
-      images
+      images,
+      availableProductImages
     } = req.body;
 
     if (!productId) {
@@ -50,12 +51,21 @@ export default async function handler(req, res) {
     // Handle sizes array
     if (sizes !== undefined) updateData.Sizes = sizes;
 
-    // Handle images - convert URLs to Airtable attachment format
+    // Handle main images - convert URLs to Airtable attachment format
     if (images !== undefined) {
       if (images.length > 0) {
         updateData.Images = images.map(url => ({ url }));
       } else {
         updateData.Images = [];
+      }
+    }
+
+    // Handle available product images (variants) - convert URLs to Airtable attachment format
+    if (availableProductImages !== undefined) {
+      if (availableProductImages.length > 0) {
+        updateData.Available_Products = availableProductImages.map(url => ({ url }));
+      } else {
+        updateData.Available_Products = [];
       }
     }
 
