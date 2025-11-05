@@ -138,14 +138,14 @@ export default function ProductDetail({ product, reviews = [] }) {
           <div className="grid lg:grid-cols-2 gap-12">
             {/* Images - AliExpress style with thumbnails on left */}
             <div className="flex gap-4">
-              {/* Thumbnails - Left Side */}
+              {/* Thumbnails - Left Side with scroll */}
               {allImages.length > 1 && (
-                <div className="flex flex-col gap-3 w-20 flex-shrink-0">
+                <div className="flex flex-col gap-3 w-20 flex-shrink-0 max-h-[600px] overflow-y-auto pr-1" style={{scrollbarWidth: 'thin', scrollbarColor: '#d1d5db #f3f4f6'}}>
                   {allImages.map((image, index) => (
                     <button
                       key={index}
                       onClick={() => setSelectedImage(index)}
-                      className={`relative aspect-square rounded-lg overflow-hidden border-2 transition-all ${
+                      className={`relative aspect-square rounded-lg overflow-hidden border-2 transition-all flex-shrink-0 ${
                         selectedImage === index
                           ? 'ring-2 ring-rose-500 border-rose-500 shadow-lg'
                           : 'border-gray-200 hover:border-rose-300'

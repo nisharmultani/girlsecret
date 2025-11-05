@@ -109,14 +109,21 @@ export default function ProductManagement() {
     }
   };
 
-  // Auto-generate slug from product name
+  // Auto-generate slug from product name - shortened and optimized
   const generateSlug = (name) => {
+    // Common words to remove for shorter, cleaner slugs
+    const stopWords = ['the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by', 'from', 'as', 'is', 'was', 'are'];
+
     return name
       .toLowerCase()
       .trim()
       .replace(/[^\w\s-]/g, '') // Remove special characters
-      .replace(/\s+/g, '-') // Replace spaces with hyphens
-      .replace(/-+/g, '-'); // Replace multiple hyphens with single hyphen
+      .split(/\s+/) // Split into words
+      .filter(word => !stopWords.includes(word)) // Remove common stop words
+      .slice(0, 6) // Take first 6 important words max
+      .join('-') // Join with hyphens
+      .replace(/-+/g, '-') // Replace multiple hyphens with single hyphen
+      .substring(0, 50); // Limit total length to 50 characters
   };
 
   // Handle main product image upload
@@ -549,7 +556,7 @@ export default function ProductManagement() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Price (£) <span className="text-red-500">*</span>
+                      Regular Price (£) <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="number"
@@ -559,19 +566,22 @@ export default function ProductManagement() {
                       placeholder="29.99"
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
                     />
+                    <p className="text-xs text-gray-500 mt-1">Original price always shown</p>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Sale Price (£)
+                      <span className="text-gray-500 text-xs ml-1">(Optional - for discounts)</span>
                     </label>
                     <input
                       type="number"
                       step="0.01"
                       value={productForm.salePrice}
                       onChange={(e) => setProductForm({ ...productForm, salePrice: e.target.value })}
-                      placeholder="24.99"
+                      placeholder="24.99 (leave empty if no sale)"
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
                     />
+                    <p className="text-xs text-gray-500 mt-1">Must be less than regular price</p>
                   </div>
                 </div>
 
