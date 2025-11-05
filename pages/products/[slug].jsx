@@ -405,7 +405,7 @@ export default function ProductDetail({ product, reviews = [] }) {
                       </p>
                       {stockUrgency.level === 'high' && (
                         <p className="text-xs text-gray-600 mt-1">
-                          This item is in high demand. Don't miss out!
+                          This item is in high demand. Don&apos;t miss out!
                         </p>
                       )}
                     </div>
