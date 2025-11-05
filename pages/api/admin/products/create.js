@@ -16,6 +16,7 @@ export default async function handler(req, res) {
     const {
       name,
       description,
+      specifications,
       price,
       salePrice,
       category,
@@ -25,7 +26,8 @@ export default async function handler(req, res) {
       featured,
       soldCount,
       images,
-      availableProductImages
+      availableProductImages,
+      videoUrls
     } = req.body;
 
     if (!name || !price || !category) {
@@ -51,6 +53,8 @@ export default async function handler(req, res) {
     if (salePrice) productData.SalePrice = parseFloat(salePrice);
     if (sizes && sizes.length > 0) productData.Sizes = sizes;
     if (soldCount !== undefined) productData.SoldCount = parseInt(soldCount) || 0;
+    if (specifications) productData.Specifications = specifications;
+    if (videoUrls && videoUrls.length > 0) productData.VideoUrls = videoUrls;
 
     // For main images, convert URLs to Airtable attachment format
     if (images && images.length > 0) {

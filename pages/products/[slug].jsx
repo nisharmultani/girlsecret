@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -6,12 +6,15 @@ import { getAllProducts, getProductBySlug, getProductReviews } from '../../lib/a
 import { addToCart } from '../../lib/cart';
 import { formatPrice, formatDiscount } from '../../utils/format';
 import { generateProductSchema, generateBreadcrumbSchema } from '../../lib/seo';
+import { addToRecentlyViewed } from '../../utils/recentlyViewed';
+import { parseVideoUrl, getVideoThumbnail } from '../../utils/videoHelper';
 import SocialShare from '../../components/ui/SocialShare';
 import ReviewForm from '../../components/product/ReviewForm';
 import ReviewsModal from '../../components/product/ReviewsModal';
 import SizeGuideModal from '../../components/product/SizeGuideModal';
 import ImageZoom from '../../components/product/ImageZoom';
 import ProductRecommendations from '../../components/product/ProductRecommendations';
+import RecentlyViewed from '../../components/product/RecentlyViewed';
 import { StarIcon } from '@heroicons/react/24/solid';
 import { StarIcon as StarOutlineIcon } from '@heroicons/react/24/outline';
 import { ShoppingBagIcon, HeartIcon, TruckIcon, ShieldCheckIcon } from '@heroicons/react/24/outline';
@@ -30,6 +33,13 @@ export default function ProductDetail({ product, reviews = [] }) {
   const [selectedSize, setSelectedSize] = useState('');
   const [showSizeGuide, setShowSizeGuide] = useState(false);
   const [showFullDescription, setShowFullDescription] = useState(false);
+
+  // Track product view in recently viewed
+  useEffect(() => {
+    if (product && product.id) {
+      addToRecentlyViewed(product);
+    }
+  }, [product]);
 
   if (router.isFallback) {
     return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
@@ -51,8 +61,21 @@ export default function ProductDetail({ product, reviews = [] }) {
   // Available product images from "Available_Products" column in Airtable
   const availableProductImages = product.Available_Products || [];
 
-  // Merge all images for the zoom area (available products first, then general images)
-  // This prevents size guide or extra images from showing first
+  // Parse video URLs
+  const videoUrls = product.videoUrls || [];
+  const parsedVideos = videoUrls.map(url => ({
+    type: 'video',
+    ...parseVideoUrl(url)
+  })).filter(v => v.embedUrl);
+
+  // Merge all media (videos first for prominence, then available products, then general images)
+  const allMedia = [
+    ...parsedVideos,
+    ...availableProductImages.map(img => ({ type: 'image', ...img })),
+    ...generalImages.map(img => ({ type: 'image', ...img }))
+  ];
+
+  // Keep legacy allImages for backward compatibility
   const allImages = [...availableProductImages, ...generalImages];
 
   // Count of available product variants
@@ -66,6 +89,54 @@ export default function ProductDetail({ product, reviews = [] }) {
   const averageRating = reviews.length > 0
     ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
     : 0;
+
+  // Determine stock urgency for dropshipping (without showing exact numbers)
+  const getStockUrgency = () => {
+    if (!product.inStock) return null;
+
+    // Different urgency levels based on sold count and product attributes
+    if (product.soldCount > 100) {
+      return {
+        level: 'high',
+        icon: '🔥',
+        message: 'Trending! High Demand - Order Now',
+        bgColor: 'bg-orange-50',
+        textColor: 'text-orange-700',
+        borderColor: 'border-orange-200'
+      };
+    } else if (product.soldCount > 50) {
+      return {
+        level: 'medium',
+        icon: '⚡',
+        message: 'Selling Fast - Limited Availability',
+        bgColor: 'bg-amber-50',
+        textColor: 'text-amber-700',
+        borderColor: 'border-amber-200'
+      };
+    } else if (product.featured || hasDiscount) {
+      return {
+        level: 'medium',
+        icon: '⭐',
+        message: 'Popular Choice - Order Soon',
+        bgColor: 'bg-yellow-50',
+        textColor: 'text-yellow-700',
+        borderColor: 'border-yellow-200'
+      };
+    } else if (product.soldCount > 10) {
+      return {
+        level: 'low',
+        icon: '📦',
+        message: 'In Stock - Ready to Ship',
+        bgColor: 'bg-green-50',
+        textColor: 'text-green-700',
+        borderColor: 'border-green-200'
+      };
+    }
+
+    return null;
+  };
+
+  const stockUrgency = getStockUrgency();
 
   // Handle available product image selection
   const handleAvailableProductClick = (index) => {
@@ -136,12 +207,12 @@ export default function ProductDetail({ product, reviews = [] }) {
 
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-16">
           <div className="grid lg:grid-cols-2 gap-12">
-            {/* Images - AliExpress style with thumbnails on left */}
+            {/* Media Gallery - AliExpress style with thumbnails on left */}
             <div className="flex gap-4">
               {/* Thumbnails - Left Side with scroll */}
-              {allImages.length > 1 && (
+              {allMedia.length > 1 && (
                 <div className="flex flex-col gap-3 w-20 flex-shrink-0 max-h-[600px] overflow-y-auto pr-1" style={{scrollbarWidth: 'thin', scrollbarColor: '#d1d5db #f3f4f6'}}>
-                  {allImages.map((image, index) => (
+                  {allMedia.map((media, index) => (
                     <button
                       key={index}
                       onClick={() => setSelectedImage(index)}
@@ -151,30 +222,74 @@ export default function ProductDetail({ product, reviews = [] }) {
                           : 'border-gray-200 hover:border-rose-300'
                       }`}
                     >
-                      <Image
-                        src={image.thumbnails?.large?.url || image.url}
-                        alt={`${product.name} ${index + 1}`}
-                        fill
-                        className="object-cover"
-                      />
+                      {media.type === 'video' ? (
+                        // Video thumbnail
+                        <div className="w-full h-full bg-black flex items-center justify-center">
+                          {getVideoThumbnail(media) ? (
+                            <Image
+                              src={getVideoThumbnail(media)}
+                              alt={`Video ${index + 1}`}
+                              fill
+                              className="object-cover"
+                            />
+                          ) : (
+                            <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                              <path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" />
+                            </svg>
+                          )}
+                          <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center">
+                            <svg className="w-8 h-8 text-white drop-shadow-lg" fill="currentColor" viewBox="0 0 20 20">
+                              <path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" />
+                            </svg>
+                          </div>
+                        </div>
+                      ) : (
+                        // Image thumbnail
+                        <Image
+                          src={media.thumbnails?.large?.url || media.url}
+                          alt={`${product.name} ${index + 1}`}
+                          fill
+                          className="object-cover"
+                        />
+                      )}
                     </button>
                   ))}
                 </div>
               )}
 
-              {/* Main Image - Right Side */}
+              {/* Main Display - Right Side */}
               <div className="flex-1">
-                <ImageZoom
-                  src={allImages[selectedImage]?.url || allImages[selectedImage]?.thumbnails?.large?.url}
-                  alt={product.name}
-                  priority
-                >
-                  {hasDiscount && (
-                    <div className="absolute top-4 left-4 bg-rose-500 text-white px-4 py-2 rounded-full text-lg font-bold">
-                      -{discountPercent}%
-                    </div>
-                  )}
-                </ImageZoom>
+                {allMedia[selectedImage]?.type === 'video' ? (
+                  // Video Player
+                  <div className="relative w-full aspect-square rounded-lg overflow-hidden bg-black">
+                    <iframe
+                      src={allMedia[selectedImage].embedUrl}
+                      title="Product video"
+                      className="absolute inset-0 w-full h-full"
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                    {hasDiscount && (
+                      <div className="absolute top-4 left-4 bg-rose-500 text-white px-4 py-2 rounded-full text-lg font-bold z-10">
+                        -{discountPercent}%
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  // Image Zoom
+                  <ImageZoom
+                    src={allMedia[selectedImage]?.url || allMedia[selectedImage]?.thumbnails?.large?.url}
+                    alt={product.name}
+                    priority
+                  >
+                    {hasDiscount && (
+                      <div className="absolute top-4 left-4 bg-rose-500 text-white px-4 py-2 rounded-full text-lg font-bold">
+                        -{discountPercent}%
+                      </div>
+                    )}
+                  </ImageZoom>
+                )}
               </div>
             </div>
 
@@ -251,6 +366,28 @@ export default function ProductDetail({ product, reviews = [] }) {
                 )}
               </div>
 
+              {/* Stock Urgency Indicator */}
+              {stockUrgency && (
+                <div className={`mb-6 ${stockUrgency.bgColor} ${stockUrgency.borderColor} border-2 rounded-lg p-4 animate-pulse`}>
+                  <div className="flex items-center gap-3">
+                    <span className="text-2xl flex-shrink-0">{stockUrgency.icon}</span>
+                    <div className="flex-1">
+                      <p className={`${stockUrgency.textColor} font-bold text-base`}>
+                        {stockUrgency.message}
+                      </p>
+                      {stockUrgency.level === 'high' && (
+                        <p className="text-xs text-gray-600 mt-1">
+                          This item is in high demand. Don't miss out!
+                        </p>
+                      )}
+                    </div>
+                    <svg className={`w-5 h-5 ${stockUrgency.textColor} flex-shrink-0`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                  </div>
+                </div>
+              )}
+
               {/* Description */}
               <div className="mb-6">
                 <p className={`text-gray-700 leading-relaxed ${!showFullDescription ? 'line-clamp-4' : ''}`}>
@@ -279,6 +416,40 @@ export default function ProductDetail({ product, reviews = [] }) {
                   </button>
                 )}
               </div>
+
+              {/* Product Specifications */}
+              {product.specifications && (
+                <div className="mb-6 bg-gray-50 rounded-lg p-5 border border-gray-200">
+                  <h3 className="text-base font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                    <svg className="w-5 h-5 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    Product Specifications
+                  </h3>
+                  <div className="space-y-2">
+                    {product.specifications.split('\n').filter(line => line.trim()).map((spec, index) => {
+                      const parts = spec.split(':');
+                      if (parts.length === 2) {
+                        return (
+                          <div key={index} className="flex justify-between items-start py-2 border-b border-gray-200 last:border-0">
+                            <span className="text-sm font-medium text-gray-700 flex-shrink-0 mr-4">
+                              {parts[0].trim()}
+                            </span>
+                            <span className="text-sm text-gray-600 text-right">
+                              {parts[1].trim()}
+                            </span>
+                          </div>
+                        );
+                      }
+                      return (
+                        <div key={index} className="py-1">
+                          <span className="text-sm text-gray-700">{spec}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
 
               {/* Size Selector */}
               {sizes.length > 0 && (
@@ -526,6 +697,9 @@ export default function ProductDetail({ product, reviews = [] }) {
 
           {/* Product Recommendations */}
           <ProductRecommendations currentProduct={product} maxItems={4} />
+
+          {/* Recently Viewed Products */}
+          <RecentlyViewed currentProductId={product.id} maxItems={6} />
         </div>
 
         {/* Size Guide Modal */}
