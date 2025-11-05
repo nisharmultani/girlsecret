@@ -12,6 +12,7 @@ export default function ProductManagement() {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [uploadingImages, setUploadingImages] = useState(false);
 
   // Product form state
   const [productForm, setProductForm] = useState({
@@ -20,13 +21,10 @@ export default function ProductManagement() {
     price: '',
     salePrice: '',
     category: '',
-    slug: '',
     sizes: '',
-    colors: '',
     inStock: true,
     featured: false,
-    keywords: '',
-    images: ''
+    images: [] // Array of image URLs
   });
 
   useEffect(() => {
@@ -55,14 +53,12 @@ export default function ProductManagement() {
       price: '',
       salePrice: '',
       category: 'Lingerie',
-      slug: '',
       sizes: '',
-      colors: '',
       inStock: true,
       featured: false,
-      keywords: '',
-      images: ''
+      images: []
     });
+    setSelectedProduct(null);
     setShowAddModal(true);
   };
 
@@ -74,13 +70,10 @@ export default function ProductManagement() {
       price: product.price || '',
       salePrice: product.salePrice || '',
       category: product.category || 'Lingerie',
-      slug: product.slug || '',
       sizes: Array.isArray(product.sizes) ? product.sizes.join(', ') : '',
-      colors: Array.isArray(product.colors) ? product.colors.join(', ') : '',
       inStock: product.inStock !== false,
       featured: product.featured === true,
-      keywords: Array.isArray(product.keywords) ? product.keywords.join(', ') : product.keywords || '',
-      images: Array.isArray(product.images) ? product.images.join('\n') : ''
+      images: Array.isArray(product.images) ? product.images : []
     });
     setShowEditModal(true);
   };
@@ -110,30 +103,79 @@ export default function ProductManagement() {
     }
   };
 
+  // Auto-generate slug from product name
+  const generateSlug = (name) => {
+    return name
+      .toLowerCase()
+      .trim()
+      .replace(/[^\w\s-]/g, '') // Remove special characters
+      .replace(/\s+/g, '-') // Replace spaces with hyphens
+      .replace(/-+/g, '-'); // Replace multiple hyphens with single hyphen
+  };
+
+  // Handle image upload
+  const handleImageUpload = async (e) => {
+    const files = Array.from(e.target.files);
+    if (files.length === 0) return;
+
+    try {
+      setUploadingImages(true);
+      const formData = new FormData();
+      files.forEach(file => {
+        formData.append('images', file);
+      });
+
+      const response = await fetch('/api/admin/upload-product-images', {
+        method: 'POST',
+        body: formData
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setProductForm(prev => ({
+          ...prev,
+          images: [...prev.images, ...data.urls]
+        }));
+      } else {
+        const error = await response.json();
+        alert(`Upload failed: ${error.message || 'Unknown error'}`);
+      }
+    } catch (error) {
+      console.error('Error uploading images:', error);
+      alert('Failed to upload images');
+    } finally {
+      setUploadingImages(false);
+    }
+  };
+
+  // Remove image from list
+  const removeImage = (index) => {
+    setProductForm(prev => ({
+      ...prev,
+      images: prev.images.filter((_, i) => i !== index)
+    }));
+  };
+
   const submitProduct = async () => {
     if (!productForm.name || !productForm.price || !productForm.category) {
       alert('Please fill in all required fields (Name, Price, Category)');
       return;
     }
 
+    if (productForm.images.length === 0) {
+      alert('Please upload at least one product image');
+      return;
+    }
+
     try {
       setSaving(true);
 
-      // Generate slug if not provided
-      const slug = productForm.slug || productForm.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+      // Generate slug automatically from name
+      const slug = generateSlug(productForm.name);
 
-      // Parse arrays
+      // Parse sizes array
       const sizes = productForm.sizes
         ? productForm.sizes.split(',').map(s => s.trim()).filter(s => s)
-        : [];
-      const colors = productForm.colors
-        ? productForm.colors.split(',').map(c => c.trim()).filter(c => c)
-        : [];
-      const keywords = productForm.keywords
-        ? productForm.keywords.split(',').map(k => k.trim()).filter(k => k)
-        : [];
-      const images = productForm.images
-        ? productForm.images.split('\n').map(i => i.trim()).filter(i => i)
         : [];
 
       const productData = {
@@ -144,11 +186,9 @@ export default function ProductManagement() {
         category: productForm.category,
         slug,
         sizes,
-        colors,
         inStock: productForm.inStock,
         featured: productForm.featured,
-        keywords,
-        images
+        images: productForm.images
       };
 
       const url = selectedProduct
@@ -433,6 +473,11 @@ export default function ProductManagement() {
                     placeholder="e.g., Lace Bralette"
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
                   />
+                  {productForm.name && (
+                    <p className="mt-1 text-sm text-gray-500">
+                      URL: /products/{generateSlug(productForm.name)}
+                    </p>
+                  )}
                 </div>
 
                 {/* Description */}
@@ -479,7 +524,7 @@ export default function ProductManagement() {
                   </div>
                 </div>
 
-                {/* Category and Slug */}
+                {/* Category and Sizes */}
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -497,22 +542,6 @@ export default function ProductManagement() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      URL Slug
-                    </label>
-                    <input
-                      type="text"
-                      value={productForm.slug}
-                      onChange={(e) => setProductForm({ ...productForm, slug: e.target.value })}
-                      placeholder="auto-generated from name"
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
-                    />
-                  </div>
-                </div>
-
-                {/* Sizes and Colors */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
                       Sizes (comma-separated)
                     </label>
                     <input
@@ -523,46 +552,75 @@ export default function ProductManagement() {
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
                     />
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Colors (comma-separated)
+                </div>
+
+                {/* Image Upload */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Product Images <span className="text-red-500">*</span>
+                  </label>
+
+                  <div className="mt-2">
+                    <label className="flex justify-center px-6 py-8 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer hover:border-pink-500 transition-colors">
+                      <div className="text-center">
+                        {uploadingImages ? (
+                          <div className="flex flex-col items-center">
+                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-pink-600 mb-2"></div>
+                            <p className="text-sm text-gray-600">Uploading images...</p>
+                          </div>
+                        ) : (
+                          <>
+                            <svg className="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                              <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
+                            <p className="mt-2 text-sm text-gray-600">
+                              Click to upload product images
+                            </p>
+                            <p className="mt-1 text-xs text-gray-500">
+                              PNG, JPG, WEBP up to 10MB (multiple files allowed)
+                            </p>
+                          </>
+                        )}
+                      </div>
+                      <input
+                        type="file"
+                        multiple
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        disabled={uploadingImages}
+                        className="hidden"
+                      />
                     </label>
-                    <input
-                      type="text"
-                      value={productForm.colors}
-                      onChange={(e) => setProductForm({ ...productForm, colors: e.target.value })}
-                      placeholder="Black, White, Red"
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
-                    />
                   </div>
-                </div>
 
-                {/* Keywords */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Keywords (comma-separated)
-                  </label>
-                  <input
-                    type="text"
-                    value={productForm.keywords}
-                    onChange={(e) => setProductForm({ ...productForm, keywords: e.target.value })}
-                    placeholder="lingerie, sexy, lace"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
-                  />
-                </div>
-
-                {/* Images */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Image URLs (one per line)
-                  </label>
-                  <textarea
-                    value={productForm.images}
-                    onChange={(e) => setProductForm({ ...productForm, images: e.target.value })}
-                    placeholder="https://example.com/image1.jpg&#10;https://example.com/image2.jpg"
-                    rows="4"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
-                  />
+                  {/* Image Preview */}
+                  {productForm.images.length > 0 && (
+                    <div className="mt-4 grid grid-cols-3 gap-4">
+                      {productForm.images.map((url, index) => (
+                        <div key={index} className="relative group">
+                          <img
+                            src={url}
+                            alt={`Product ${index + 1}`}
+                            className="w-full h-32 object-cover rounded-lg"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => removeImage(index)}
+                            className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                          >
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </button>
+                          {index === 0 && (
+                            <span className="absolute bottom-2 left-2 bg-pink-600 text-white text-xs px-2 py-1 rounded">
+                              Main
+                            </span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 {/* Checkboxes */}
@@ -591,7 +649,7 @@ export default function ProductManagement() {
               <div className="flex gap-4 mt-6">
                 <button
                   onClick={submitProduct}
-                  disabled={saving}
+                  disabled={saving || uploadingImages}
                   className="flex-1 bg-pink-600 text-white px-6 py-3 rounded-lg hover:bg-pink-700 disabled:bg-gray-400 disabled:cursor-not-allowed font-medium"
                 >
                   {saving ? 'Saving...' : (selectedProduct ? 'Update Product' : 'Add Product')}
@@ -601,7 +659,7 @@ export default function ProductManagement() {
                     setShowEditModal(false);
                     setShowAddModal(false);
                   }}
-                  disabled={saving}
+                  disabled={saving || uploadingImages}
                   className="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50"
                 >
                   Cancel

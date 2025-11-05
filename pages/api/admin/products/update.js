@@ -22,10 +22,8 @@ export default async function handler(req, res) {
       category,
       slug,
       sizes,
-      colors,
       inStock,
       featured,
-      keywords,
       images
     } = req.body;
 
@@ -49,12 +47,10 @@ export default async function handler(req, res) {
       updateData.SalePrice = salePrice ? parseFloat(salePrice) : null;
     }
 
-    // Handle arrays
+    // Handle sizes array
     if (sizes !== undefined) updateData.Sizes = sizes;
-    if (colors !== undefined) updateData.Colors = colors;
-    if (keywords !== undefined) updateData.Keywords = keywords;
 
-    // Handle images
+    // Handle images - convert URLs to Airtable attachment format
     if (images !== undefined) {
       if (images.length > 0) {
         updateData.Images = images.map(url => ({ url }));

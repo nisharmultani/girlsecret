@@ -21,15 +21,17 @@ export default async function handler(req, res) {
       category,
       slug,
       sizes,
-      colors,
       inStock,
       featured,
-      keywords,
       images
     } = req.body;
 
     if (!name || !price || !category) {
       return res.status(400).json({ error: 'Name, price, and category are required' });
+    }
+
+    if (!images || images.length === 0) {
+      return res.status(400).json({ error: 'At least one product image is required' });
     }
 
     // Prepare product data for Airtable
@@ -46,10 +48,8 @@ export default async function handler(req, res) {
     // Add optional fields
     if (salePrice) productData.SalePrice = parseFloat(salePrice);
     if (sizes && sizes.length > 0) productData.Sizes = sizes;
-    if (colors && colors.length > 0) productData.Colors = colors;
-    if (keywords) productData.Keywords = Array.isArray(keywords) ? keywords : keywords;
 
-    // For images, if they're URLs, we need to convert them to Airtable attachment format
+    // For images, convert URLs to Airtable attachment format
     if (images && images.length > 0) {
       productData.Images = images.map(url => ({ url }));
     }
