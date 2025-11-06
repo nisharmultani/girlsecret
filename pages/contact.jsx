@@ -6,19 +6,36 @@ export default function Contact() {
   const { register, handleSubmit, reset, formState: { errors } } = useForm();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState('');
 
   const onSubmit = async (data) => {
     setIsSubmitting(true);
+    setError('');
 
-    // Simulate form submission
-    // In production, send to your backend or email service
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
 
-    setIsSubmitting(false);
-    setSubmitted(true);
-    reset();
+      const result = await response.json();
 
-    setTimeout(() => setSubmitted(false), 5000);
+      if (response.ok) {
+        setSubmitted(true);
+        reset();
+        setTimeout(() => setSubmitted(false), 5000);
+      } else {
+        setError(result.error || 'Failed to send message. Please try again.');
+      }
+    } catch (err) {
+      console.error('Contact form error:', err);
+      setError('An error occurred. Please try again or email us directly at support@girlsecretuk.com');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -44,6 +61,12 @@ export default function Contact() {
             {submitted && (
               <div className="mb-6 bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg">
                 Thank you for your message! We&apos;ll get back to you soon.
+              </div>
+            )}
+
+            {error && (
+              <div className="mb-6 bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg">
+                {error}
               </div>
             )}
 
