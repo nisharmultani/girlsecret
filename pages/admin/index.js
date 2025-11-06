@@ -1,6 +1,8 @@
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import AdminAuthGuard from '../../components/admin/AdminAuthGuard';
+import AdminNavbar from '../../components/admin/AdminNavbar';
 
 export default function AdminDashboard() {
   const router = useRouter();
@@ -37,35 +39,30 @@ export default function AdminDashboard() {
   ];
 
   return (
-    <>
+    <AdminAuthGuard>
       <Head>
         <title>Admin Dashboard - GirlSecret</title>
       </Head>
 
       <div className="min-h-screen bg-gray-50">
-        {/* Header */}
-        <div className="bg-white shadow-sm border-b border-gray-200">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            <div className="flex justify-between items-center">
-              <div>
-                <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-                <p className="mt-1 text-sm text-gray-600">Manage your e-commerce platform</p>
-              </div>
-              <Link
-                href="/"
-                className="text-pink-600 hover:text-pink-700 font-medium flex items-center"
-              >
-                <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                </svg>
-                Back to Store
-              </Link>
-            </div>
-          </div>
-        </div>
+        {/* Admin Navbar */}
+        <AdminNavbar />
 
         {/* Main Content */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
+            <p className="mt-1 text-sm text-gray-600">Manage your e-commerce platform</p>
+            <Link
+              href="/"
+              className="inline-flex items-center mt-4 text-luxury-600 hover:text-luxury-700 font-medium"
+            >
+              <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+              Back to Store
+            </Link>
+          </div>
           {/* Quick Stats */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
             <div className="bg-white rounded-lg shadow-sm p-6">
@@ -169,6 +166,6 @@ export default function AdminDashboard() {
           </div>
         </div>
       </div>
-    </>
+    </AdminAuthGuard>
   );
 }
