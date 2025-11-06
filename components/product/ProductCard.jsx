@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { HeartIcon, ShoppingBagIcon } from '@heroicons/react/24/outline';
+import { HeartIcon, ShoppingBagIcon, SparklesIcon } from '@heroicons/react/24/outline';
 import { HeartIcon as HeartSolidIcon, StarIcon } from '@heroicons/react/24/solid';
 import { formatPrice, formatDiscount } from '../../utils/format';
 import { addToCart } from '../../lib/cart';
@@ -11,6 +11,7 @@ export default function ProductCard({ product }) {
   const { isInWishlist, toggleWishlist: toggleWishlistContext } = useWishlist();
   const [isAdding, setIsAdding] = useState(false);
   const [isTogglingWishlist, setIsTogglingWishlist] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   // Show Available_Products first (variant images), then fall back to main images
   // This prevents size guides or extra images from showing in card
@@ -45,53 +46,72 @@ export default function ProductCard({ product }) {
 
   return (
     <Link href={`/products/${product.slug}`}>
-      <div className="group card cursor-pointer h-full flex flex-col">
-        {/* Image */}
-        <div className="relative aspect-square overflow-hidden bg-gray-100">
+      <div className="group card cursor-pointer h-full flex flex-col relative overflow-hidden">
+        {/* Image with sophisticated loading animation */}
+        <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-rose-50 via-blush-50 to-lavender-50">
+          {/* Exciting loading state */}
+          {!imageLoaded && (
+            <div className="absolute inset-0 z-10 flex items-center justify-center">
+              <div className="relative">
+                <SparklesIcon className="w-12 h-12 text-rose-300 animate-pulse-soft" />
+                <div className="absolute inset-0 animate-shimmer bg-gradient-to-r from-transparent via-white/60 to-transparent" />
+              </div>
+            </div>
+          )}
+
           <Image
             src={imageUrl}
             alt={product.name}
             fill
-            className="object-cover group-hover:scale-110 transition-transform duration-500"
+            className={`object-cover group-hover:scale-110 transition-all duration-700 ${
+              imageLoaded ? 'opacity-100' : 'opacity-0'
+            }`}
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            onLoadingComplete={() => setImageLoaded(true)}
           />
 
-          {/* Discount Badge */}
+          {/* Sophisticated overlay on hover */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+          {/* Discount Badge with glow effect */}
           {hasDiscount && (
-            <div className="absolute top-4 left-4 bg-rose-500 text-white px-3 py-1 rounded-full text-sm font-bold">
-              -{discountPercent}%
+            <div className="absolute top-4 left-4 bg-gradient-to-r from-rose-500 to-luxury-600 text-white px-3 py-1.5 rounded-full text-sm font-bold shadow-lg animate-pulse-soft">
+              <span className="flex items-center gap-1">
+                <SparklesIcon className="w-4 h-4" />
+                -{discountPercent}%
+              </span>
             </div>
           )}
 
-          {/* Quick Actions */}
-          <div className="absolute top-4 right-4 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+          {/* Enhanced Quick Actions */}
+          <div className="absolute top-4 right-4 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-2 group-hover:translate-x-0">
             <button
               onClick={toggleWishlist}
               disabled={isTogglingWishlist}
-              className="bg-white p-2 rounded-full shadow-md hover:bg-rose-50 transition-colors disabled:opacity-50"
+              className="bg-white/95 backdrop-blur-sm p-2.5 rounded-full shadow-lg hover:bg-rose-50 hover:shadow-xl transition-all duration-300 disabled:opacity-50 transform hover:scale-110 border border-rose-100"
               aria-label={inWishlist ? "Remove from wishlist" : "Add to wishlist"}
             >
               {inWishlist ? (
-                <HeartSolidIcon className="h-5 w-5 text-rose-500" />
+                <HeartSolidIcon className="h-5 w-5 text-rose-500 animate-scale-in" />
               ) : (
-                <HeartIcon className="h-5 w-5 text-gray-700" />
+                <HeartIcon className="h-5 w-5 text-rose-600 hover:text-rose-700" />
               )}
             </button>
 
             <button
               onClick={handleAddToCart}
               disabled={isAdding || !product.inStock}
-              className="bg-white p-2 rounded-full shadow-md hover:bg-rose-50 transition-colors disabled:opacity-50"
+              className="bg-white/95 backdrop-blur-sm p-2.5 rounded-full shadow-lg hover:bg-rose-50 hover:shadow-xl transition-all duration-300 disabled:opacity-50 transform hover:scale-110 border border-rose-100"
               aria-label="Add to cart"
             >
-              <ShoppingBagIcon className="h-5 w-5 text-gray-700" />
+              <ShoppingBagIcon className={`h-5 w-5 text-rose-600 hover:text-rose-700 ${isAdding ? 'animate-scale-in' : ''}`} />
             </button>
           </div>
 
           {/* Out of Stock Overlay */}
           {!product.inStock && (
-            <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-              <span className="bg-white px-4 py-2 rounded-lg font-semibold text-gray-900">
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-20">
+              <span className="bg-white px-6 py-3 rounded-xl font-semibold text-gray-900 shadow-xl">
                 Out of Stock
               </span>
             </div>

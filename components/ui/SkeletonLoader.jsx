@@ -1,33 +1,53 @@
-// Skeleton loader components for loading states
+// Exciting Skeleton loader components with sophisticated animations
 
 export function ProductCardSkeleton() {
   return (
-    <div className="bg-white rounded-lg shadow-sm overflow-hidden animate-pulse">
-      {/* Image skeleton */}
-      <div className="aspect-square bg-gray-200" />
+    <div className="bg-white rounded-lg shadow-sm overflow-hidden group">
+      {/* Image skeleton with shimmer effect */}
+      <div className="aspect-square bg-gradient-to-br from-rose-50 via-blush-50 to-lavender-50 relative overflow-hidden">
+        <div className="absolute inset-0 -translate-x-full animate-shimmer bg-gradient-to-r from-transparent via-white/60 to-transparent" />
+        {/* Floating heart animation */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <svg className="w-16 h-16 text-rose-200 animate-float" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+          </svg>
+        </div>
+      </div>
 
       <div className="p-4">
         {/* Category skeleton */}
-        <div className="h-3 bg-gray-200 rounded w-16 mb-2" />
+        <div className="h-3 bg-gradient-to-r from-rose-100 to-blush-100 rounded w-16 mb-2 relative overflow-hidden">
+          <div className="absolute inset-0 -translate-x-full animate-shimmer bg-gradient-to-r from-transparent via-white/60 to-transparent" />
+        </div>
 
         {/* Title skeleton */}
-        <div className="h-5 bg-gray-200 rounded w-3/4 mb-3" />
+        <div className="h-5 bg-gradient-to-r from-gray-100 to-gray-200 rounded w-3/4 mb-3 relative overflow-hidden">
+          <div className="absolute inset-0 -translate-x-full animate-shimmer bg-gradient-to-r from-transparent via-white/60 to-transparent" />
+        </div>
 
         {/* Price skeleton */}
         <div className="flex items-center gap-2 mb-4">
-          <div className="h-6 bg-gray-200 rounded w-20" />
-          <div className="h-5 bg-gray-200 rounded w-16" />
+          <div className="h-6 bg-gradient-to-r from-luxury-100 to-rose-100 rounded w-20 relative overflow-hidden">
+            <div className="absolute inset-0 -translate-x-full animate-shimmer bg-gradient-to-r from-transparent via-white/60 to-transparent" />
+          </div>
+          <div className="h-5 bg-gradient-to-r from-gray-100 to-gray-200 rounded w-16 relative overflow-hidden">
+            <div className="absolute inset-0 -translate-x-full animate-shimmer bg-gradient-to-r from-transparent via-white/60 to-transparent" />
+          </div>
         </div>
 
         {/* Size options skeleton */}
         <div className="flex gap-2 mb-3">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="w-10 h-10 bg-gray-200 rounded" />
+            <div key={i} className="w-10 h-10 bg-gradient-to-br from-rose-50 to-blush-50 rounded relative overflow-hidden">
+              <div className="absolute inset-0 -translate-x-full animate-shimmer bg-gradient-to-r from-transparent via-white/60 to-transparent" style={{ animationDelay: `${i * 0.1}s` }} />
+            </div>
           ))}
         </div>
 
         {/* Button skeleton */}
-        <div className="h-10 bg-gray-200 rounded" />
+        <div className="h-10 bg-gradient-to-r from-rose-100 via-blush-100 to-lavender-100 rounded relative overflow-hidden">
+          <div className="absolute inset-0 -translate-x-full animate-shimmer bg-gradient-to-r from-transparent via-white/60 to-transparent" />
+        </div>
       </div>
     </div>
   );

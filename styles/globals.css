@@ -16,19 +16,19 @@
 
 @layer components {
   .btn-primary {
-    @apply bg-rose-500 text-white px-6 py-3 rounded-lg font-medium hover:bg-rose-600 transition-all duration-200 shadow-md hover:shadow-lg;
+    @apply bg-rose-500 text-white px-6 py-3 rounded-lg font-medium hover:bg-rose-600 transition-all duration-300 shadow-md hover:shadow-xl transform hover:-translate-y-0.5;
   }
 
   .btn-secondary {
-    @apply bg-white text-rose-600 px-6 py-3 rounded-lg font-medium border-2 border-rose-300 hover:bg-rose-50 transition-all duration-200;
+    @apply bg-white text-rose-600 px-6 py-3 rounded-lg font-medium border-2 border-rose-300 hover:bg-rose-50 hover:border-rose-400 transition-all duration-300 transform hover:-translate-y-0.5 hover:shadow-lg;
   }
 
   .btn-blush {
-    @apply bg-gradient-to-r from-blush-400 to-rose-400 text-white px-6 py-3 rounded-lg font-medium hover:from-blush-500 hover:to-rose-500 transition-all duration-200 shadow-md hover:shadow-lg;
+    @apply bg-gradient-to-r from-blush-400 via-rose-400 to-luxury-500 text-white px-6 py-3 rounded-lg font-medium hover:from-blush-500 hover:via-rose-500 hover:to-luxury-600 transition-all duration-300 shadow-lg hover:shadow-2xl transform hover:-translate-y-0.5 bg-size-200 bg-pos-0 hover:bg-pos-100;
   }
 
   .btn-outline {
-    @apply bg-transparent text-gray-700 px-6 py-3 rounded-lg font-medium border-2 border-gray-300 hover:border-rose-400 hover:text-rose-600 transition-all duration-200;
+    @apply bg-transparent text-gray-700 px-6 py-3 rounded-lg font-medium border-2 border-gray-300 hover:border-rose-400 hover:text-rose-600 transition-all duration-300 transform hover:-translate-y-0.5;
   }
 
   .input-field {
@@ -36,7 +36,7 @@
   }
 
   .card {
-    @apply bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-2xl;
+    @apply bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-500 hover:shadow-2xl transform hover:-translate-y-1 border border-gray-100 hover:border-rose-200;
   }
 
   .intimate-gradient {
@@ -44,11 +44,30 @@
   }
 
   .section-title {
-    @apply text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-4;
+    @apply text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-4 animate-fade-in;
   }
 
   .section-subtitle {
-    @apply text-lg md:text-xl text-gray-600 mb-8;
+    @apply text-lg md:text-xl text-gray-600 mb-8 animate-slide-up;
+  }
+
+  /* Sophisticated gradient text */
+  .text-gradient-luxury {
+    @apply bg-gradient-to-r from-burgundy-600 via-rose-600 to-luxury-600 bg-clip-text text-transparent;
+  }
+
+  /* Premium card with glow effect */
+  .card-premium {
+    @apply bg-white rounded-2xl shadow-xl overflow-hidden transition-all duration-500 hover:shadow-2xl transform hover:-translate-y-2 border-2 border-transparent hover:border-rose-200 relative;
+  }
+
+  .card-premium::before {
+    content: '';
+    @apply absolute inset-0 bg-gradient-to-br from-rose-50/50 to-blush-50/50 opacity-0 transition-opacity duration-500;
+  }
+
+  .card-premium:hover::before {
+    @apply opacity-100;
   }
 }
 
