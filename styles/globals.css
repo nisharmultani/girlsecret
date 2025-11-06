@@ -24,7 +24,7 @@
   }
 
   .btn-blush {
-    @apply bg-gradient-to-r from-blush-400 via-rose-400 to-luxury-500 text-white px-6 py-3 rounded-lg font-medium hover:from-blush-500 hover:via-rose-500 hover:to-luxury-600 transition-all duration-300 shadow-lg hover:shadow-2xl transform hover:-translate-y-0.5 bg-size-200 bg-pos-0 hover:bg-pos-100;
+    @apply bg-gradient-to-r from-blush-400 via-rose-400 to-luxury-500 text-white px-6 py-3 rounded-lg font-medium hover:from-blush-500 hover:via-rose-500 hover:to-luxury-600 transition-all duration-300 shadow-lg hover:shadow-2xl transform hover:-translate-y-0.5;
   }
 
   .btn-outline {
