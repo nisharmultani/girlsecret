@@ -134,7 +134,7 @@ export default function ProductCard({ product }) {
                     ))}
                   </div>
                   <span className="text-xs font-bold text-gray-700">
-                    {product.reviewCount}
+                    {(product.averageRating || 0).toFixed(1)}
                   </span>
                 </div>
 
