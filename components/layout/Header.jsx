@@ -74,11 +74,11 @@ export default function Header() {
           </div>
 
           {/* Mobile menu button and icons */}
-          <div className="flex items-center gap-4 lg:hidden">
+          <div className="flex items-center gap-2 lg:hidden">
             <button
               type="button"
               onClick={() => setSearchOpen(true)}
-              className="text-gray-700 hover:text-rose-600 transition-colors"
+              className="p-3 text-gray-700 hover:text-rose-600 transition-colors"
               aria-label="Search"
             >
               <MagnifyingGlassIcon className="h-6 w-6" />
@@ -86,12 +86,12 @@ export default function Header() {
 
             <Link
               href="/cart"
-              className="relative text-gray-700 hover:text-rose-600 transition-colors"
+              className="relative p-3 text-gray-700 hover:text-rose-600 transition-colors"
               aria-label="Shopping cart"
             >
               <ShoppingBagIcon className="h-6 w-6" />
               {cartCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-rose-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                <span className="absolute top-1 right-1 bg-rose-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
                   {cartCount}
                 </span>
               )}
@@ -99,7 +99,7 @@ export default function Header() {
 
             <button
               type="button"
-              className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700"
+              className="p-3 inline-flex items-center justify-center rounded-md text-gray-700"
               onClick={() => setMobileMenuOpen(true)}
             >
               <span className="sr-only">Open main menu</span>
@@ -121,11 +121,11 @@ export default function Header() {
           </div>
 
           {/* Right side actions */}
-          <div className="hidden lg:flex lg:flex-1 lg:justify-end lg:gap-x-6 lg:items-center">
+          <div className="hidden lg:flex lg:flex-1 lg:justify-end lg:gap-x-3 lg:items-center">
             <button
               type="button"
               onClick={() => setSearchOpen(true)}
-              className="text-gray-700 hover:text-rose-600 transition-colors"
+              className="p-3 text-gray-700 hover:text-rose-600 transition-colors rounded-lg hover:bg-rose-50"
               aria-label="Search"
             >
               <MagnifyingGlassIcon className="h-6 w-6" />
@@ -133,12 +133,12 @@ export default function Header() {
 
             <Link
               href="/account/wishlist"
-              className="relative text-gray-700 hover:text-rose-600 transition-colors"
+              className="relative p-3 text-gray-700 hover:text-rose-600 transition-colors rounded-lg hover:bg-rose-50"
               aria-label="Wishlist"
             >
               <HeartIcon className="h-6 w-6" />
               {wishlistCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-rose-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                <span className="absolute top-1 right-1 bg-rose-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
                   {wishlistCount}
                 </span>
               )}
@@ -146,12 +146,12 @@ export default function Header() {
 
             <Link
               href="/cart"
-              className="relative text-gray-700 hover:text-rose-600 transition-colors"
+              className="relative p-3 text-gray-700 hover:text-rose-600 transition-colors rounded-lg hover:bg-rose-50"
               aria-label="Shopping cart"
             >
               <ShoppingBagIcon className="h-6 w-6" />
               {cartCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-rose-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                <span className="absolute top-1 right-1 bg-rose-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
                   {cartCount}
                 </span>
               )}
@@ -160,7 +160,7 @@ export default function Header() {
             {/* User Menu or Login/Register */}
             {isAuthenticated ? (
               <Menu as="div" className="relative">
-                <Menu.Button className="flex items-center gap-2 text-gray-700 hover:text-rose-600 transition-colors">
+                <Menu.Button className="flex items-center gap-2 p-3 text-gray-700 hover:text-rose-600 transition-colors rounded-lg hover:bg-rose-50">
                   <UserCircleIcon className="h-6 w-6" />
                   <span className="text-sm font-semibold hidden xl:block">{user?.firstName}</span>
                   <ChevronDownIcon className="h-4 w-4 hidden xl:block" />
@@ -310,7 +310,7 @@ export default function Header() {
                 </Link>
                 <button
                   type="button"
-                  className="-m-2.5 rounded-md p-2.5 text-gray-700"
+                  className="p-3 rounded-md text-gray-700 hover:bg-gray-100"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   <span className="sr-only">Close menu</span>

@@ -1,5 +1,6 @@
 import Header from './Header';
 import Footer from './Footer';
+import BottomNav from './BottomNav';
 import GoogleTagManager, { GoogleTagManagerNoScript } from '../GoogleTagManager';
 import GoogleAdsense from '../GoogleAdsense';
 
@@ -16,6 +17,7 @@ export default function Layout({ children }) {
           {children}
         </main>
         <Footer />
+        <BottomNav />
       </div>
     </>
   );

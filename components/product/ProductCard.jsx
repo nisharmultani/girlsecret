@@ -200,30 +200,30 @@ export default function ProductCard({ product }) {
                 <button
                   onClick={toggleWishlist}
                   disabled={isTogglingWishlist}
-                  className="bg-white border-2 border-gray-200 hover:border-rose-400 p-2 rounded-lg hover:bg-rose-50 transition-all duration-300 disabled:opacity-50"
+                  className="bg-white border-2 border-gray-200 hover:border-rose-400 p-2.5 rounded-lg hover:bg-rose-50 transition-all duration-300 disabled:opacity-50"
                   aria-label={inWishlist ? "Remove from wishlist" : "Add to wishlist"}
                 >
                   {inWishlist ? (
-                    <HeartSolidIcon className="h-4 w-4 text-rose-500" />
+                    <HeartSolidIcon className="h-5 w-5 text-rose-500" />
                   ) : (
-                    <HeartIcon className="h-4 w-4 text-gray-700" />
+                    <HeartIcon className="h-5 w-5 text-gray-700" />
                   )}
                 </button>
 
                 <button
                   onClick={handleAddToCart}
                   disabled={isAdding || !product.inStock}
-                  className="btn-blush p-2 rounded-lg transition-all duration-300 disabled:opacity-50"
+                  className="btn-blush p-2.5 rounded-lg transition-all duration-300 disabled:opacity-50"
                   aria-label="Add to cart"
                 >
-                  <ShoppingBagIcon className="h-4 w-4" />
+                  <ShoppingBagIcon className="h-5 w-5" />
                 </button>
 
                 <button
-                  className="bg-white border-2 border-gray-200 hover:border-gray-400 p-2 rounded-lg hover:bg-gray-50 transition-all duration-300"
+                  className="bg-white border-2 border-gray-200 hover:border-gray-400 p-2.5 rounded-lg hover:bg-gray-50 transition-all duration-300"
                   aria-label="Quick view"
                 >
-                  <EyeIcon className="h-4 w-4 text-gray-700" />
+                  <EyeIcon className="h-5 w-5 text-gray-700" />
                 </button>
               </div>
             </div>

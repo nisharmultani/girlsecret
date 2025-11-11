@@ -14,6 +14,22 @@ export default function Document() {
         {/* Character Encoding */}
         <meta charSet="utf-8" />
 
+        {/* PWA Configuration */}
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#f43f5e" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-title" content="GirlSecret" />
+
+        {/* App Icons */}
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-192x192.png" />
+
+        {/* Microsoft Tiles */}
+        <meta name="msapplication-TileColor" content="#f43f5e" />
+        <meta name="msapplication-TileImage" content="/icons/icon-144x144.png" />
+
         {/* Resource Hints for Performance */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
