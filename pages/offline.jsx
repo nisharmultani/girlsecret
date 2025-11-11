@@ -1,6 +1,18 @@
 import { WifiOffIcon } from '@heroicons/react/24/outline';
 
 export default function Offline() {
+  const handleReload = () => {
+    if (typeof window !== 'undefined') {
+      window.location.reload();
+    }
+  };
+
+  const handleGoBack = () => {
+    if (typeof window !== 'undefined') {
+      window.history.back();
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center px-4">
       <div className="text-center max-w-md">
@@ -13,22 +25,22 @@ export default function Offline() {
           </div>
         </div>
 
-        <h1 className="text-4xl font-black text-gray-900 mb-4">You're Offline</h1>
+        <h1 className="text-4xl font-black text-gray-900 mb-4">You&apos;re Offline</h1>
 
         <p className="text-lg text-gray-600 mb-8">
-          It looks like you've lost your internet connection. Don't worry, you can still browse cached pages!
+          It looks like you&apos;ve lost your internet connection. Don&apos;t worry, you can still browse cached pages!
         </p>
 
         <div className="space-y-4">
           <button
-            onClick={() => window.location.reload()}
+            onClick={handleReload}
             className="w-full btn-blush py-4 text-lg font-bold shadow-xl"
           >
             Try Again
           </button>
 
           <button
-            onClick={() => window.history.back()}
+            onClick={handleGoBack}
             className="w-full bg-white border-2 border-gray-200 hover:border-gray-400 px-6 py-4 rounded-xl font-bold text-gray-900 hover:bg-gray-50 transition-all duration-300"
           >
             Go Back
@@ -37,7 +49,7 @@ export default function Offline() {
 
         <div className="mt-12 pt-8 border-t border-gray-200">
           <p className="text-sm text-gray-500">
-            Make sure you're connected to the internet and try again.
+            Make sure you&apos;re connected to the internet and try again.
           </p>
         </div>
       </div>
