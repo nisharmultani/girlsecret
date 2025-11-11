@@ -146,37 +146,50 @@ export default function ProductCard({ product }) {
             {product.name}
           </h3>
 
-          {/* Premium Rating and Social Proof */}
-          <div className="flex items-center justify-between gap-3 mb-4">
-            {/* Star Rating with Glow */}
-            <div className="flex items-center gap-1.5 bg-amber-50 px-3 py-1.5 rounded-xl border border-amber-100">
-              <div className="flex">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <StarIcon
-                    key={star}
-                    className={`h-3.5 w-3.5 -ml-0.5 first:ml-0 ${
-                      star <= Math.round(product.averageRating || 0)
-                        ? 'text-amber-400 drop-shadow-sm'
-                        : 'text-gray-300'
-                    }`}
-                  />
-                ))}
-              </div>
-              <span className="text-xs font-bold text-gray-700">
-                {product.reviewCount || 0}
-              </span>
-            </div>
+          {/* Rating and Social Proof */}
+          <div className="flex items-center gap-3 mb-4">
+            {/* Show reviews only if product has reviews */}
+            {product.reviewCount > 0 ? (
+              <>
+                {/* Star Rating */}
+                <div className="flex items-center gap-1.5 bg-amber-50 px-3 py-1.5 rounded-xl border border-amber-100">
+                  <div className="flex">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <StarIcon
+                        key={star}
+                        className={`h-3.5 w-3.5 -ml-0.5 first:ml-0 ${
+                          star <= Math.round(product.averageRating || 0)
+                            ? 'text-amber-400 drop-shadow-sm'
+                            : 'text-gray-300'
+                        }`}
+                      />
+                    ))}
+                  </div>
+                  <span className="text-xs font-bold text-gray-700">
+                    {product.reviewCount}
+                  </span>
+                </div>
 
-            {/* Sold Count Badge */}
-            {product.soldCount > 0 && (
-              <div className="flex items-center gap-1.5 bg-green-50 px-3 py-1.5 rounded-xl border border-green-100">
-                <svg className="w-3.5 h-3.5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                </svg>
-                <span className="text-xs font-bold text-green-700">
-                  {product.soldCount.toLocaleString()} sold
-                </span>
-              </div>
+                {/* Sold Count (if exists) */}
+                {product.soldCount > 0 && (
+                  <div className="flex items-center gap-1.5 bg-green-50 px-3 py-1.5 rounded-xl border border-green-100">
+                    <span className="text-xs font-bold text-green-700">
+                      {product.soldCount.toLocaleString()} sold
+                    </span>
+                  </div>
+                )}
+              </>
+            ) : (
+              <>
+                {/* If no reviews, show sold count in main position */}
+                {product.soldCount > 0 && (
+                  <div className="flex items-center gap-1.5 bg-green-50 px-3 py-1.5 rounded-xl border border-green-100">
+                    <span className="text-xs font-bold text-green-700">
+                      {product.soldCount.toLocaleString()} sold
+                    </span>
+                  </div>
+                )}
+              </>
             )}
           </div>
 
