@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import Head from 'next/head';
-import { useRouter } from 'next/router';
-
+import Image from 'next/image';
 export default function ProductManagement() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -435,9 +434,11 @@ export default function ProductManagement() {
                         <td className="px-6 py-4">
                           <div className="flex items-center">
                             {product.images && product.images.length > 0 && (
-                              <img
+                              <Image
                                 src={product.images[0]}
                                 alt={product.name}
+                                height={12}
+                                width={12}
                                 className="w-12 h-12 object-cover rounded mr-3"
                               />
                             )}
@@ -705,8 +706,10 @@ export default function ProductManagement() {
                     <div className="mt-4 grid grid-cols-3 gap-4">
                       {productForm.images.map((url, index) => (
                         <div key={index} className="relative group">
-                          <img
+                          <Image
                             src={url}
+                            height={32}
+                            width={32}
                             alt={`Product ${index + 1}`}
                             className="w-full h-32 object-cover rounded-lg"
                           />
@@ -775,9 +778,11 @@ export default function ProductManagement() {
                     <div className="mt-4 grid grid-cols-4 gap-3">
                       {productForm.availableProductImages.map((url, index) => (
                         <div key={index} className="relative group">
-                          <img
+                          <Image
                             src={url}
                             alt={`Variant ${index + 1}`}
+                            height={24}
+                            width={24}
                             className="w-full h-24 object-cover rounded-lg"
                           />
                           <button
