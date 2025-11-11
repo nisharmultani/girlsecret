@@ -194,10 +194,15 @@ export default function ProductCard({ product }) {
           </div>
 
           {/* Sizes Info - Simple */}
-          {sizes.length > 0 && (
+          {sizes.length > 0 ? (
             <div className="mb-3 text-sm text-gray-600">
               <span className="font-medium">Available sizes: </span>
               <span>{sizes.join(', ')}</span>
+            </div>
+          ) : (
+            <div className="mb-3 text-sm text-gray-600">
+              <span className="font-medium">Size: </span>
+              <span>Free Size</span>
             </div>
           )}
 
