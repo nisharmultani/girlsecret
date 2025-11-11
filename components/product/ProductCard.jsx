@@ -1,12 +1,13 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { HeartIcon, ShoppingBagIcon } from '@heroicons/react/24/outline';
+import { HeartIcon, ShoppingBagIcon, EyeIcon } from '@heroicons/react/24/outline';
 import { HeartIcon as HeartSolidIcon, StarIcon } from '@heroicons/react/24/solid';
 import { formatPrice, formatDiscount } from '../../utils/format';
 import { addToCart } from '../../lib/cart';
 import { useState, useEffect } from 'react';
 import { useWishlist } from '../../context/WishlistContext';
 import { imageSkeletonClass } from '../../utils/imageOptimization';
+import Badge, { DiscountBadge, BadgeContainer } from '../ui/Badge';
 
 export default function ProductCard({ product }) {
   const { isInWishlist, toggleWishlist: toggleWishlistContext } = useWishlist();
@@ -45,21 +46,28 @@ export default function ProductCard({ product }) {
     setIsTogglingWishlist(false);
   };
 
+  // Determine product badges
+  const isNew = product.isNew || (product.createdTime && new Date(product.createdTime) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000));
+  const isHot = product.isHot || (product.soldCount && product.soldCount > 100);
+  const isTrending = product.isTrending || (product.averageRating >= 4.5 && product.reviewCount > 50);
+  const isLimited = product.isLimited || (product.stock && product.stock < 10 && product.stock > 0);
+
   return (
     <Link href={`/products/${product.slug}`}>
-      <div className="group card cursor-pointer h-full flex flex-col">
-        {/* Image */}
-        <div className="relative aspect-square overflow-hidden bg-gray-100">
+      <div className="group card-luxury cursor-pointer h-full flex flex-col relative">
+        {/* Image Container with Zoom */}
+        <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 rounded-t-3xl">
           {/* Loading Skeleton */}
           {!imageLoaded && (
             <div className={`absolute inset-0 ${imageSkeletonClass}`} />
           )}
 
+          {/* Premium Image with Zoom Effect */}
           <Image
             src={imageUrl}
             alt={product.name}
             fill
-            className={`object-cover group-hover:scale-110 transition-all duration-500 ${
+            className={`object-cover group-hover:scale-[1.15] transition-all duration-700 ease-out ${
               imageLoaded ? 'opacity-100' : 'opacity-0'
             }`}
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -68,23 +76,28 @@ export default function ProductCard({ product }) {
             quality={85}
           />
 
-          {/* Discount Badge */}
-          {hasDiscount && (
-            <div className="absolute top-4 left-4 bg-rose-500 text-white px-3 py-1 rounded-full text-sm font-bold">
-              -{discountPercent}%
-            </div>
-          )}
+          {/* Gradient Overlay on Hover */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-          {/* Quick Actions */}
-          <div className="absolute top-4 right-4 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+          {/* Badges Container - Top Left */}
+          <BadgeContainer className="absolute top-3 left-3 z-10">
+            {isNew && <Badge type="new" />}
+            {isHot && <Badge type="hot" />}
+            {isTrending && <Badge type="trending" />}
+            {isLimited && <Badge type="limited" />}
+            {hasDiscount && <DiscountBadge percent={discountPercent} />}
+          </BadgeContainer>
+
+          {/* Premium Quick Actions - Top Right */}
+          <div className="absolute top-3 right-3 z-10 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-2 group-hover:translate-x-0">
             <button
               onClick={toggleWishlist}
               disabled={isTogglingWishlist}
-              className="bg-white p-2 rounded-full shadow-md hover:bg-rose-50 transition-colors disabled:opacity-50"
+              className="glass bg-white/90 backdrop-blur-md p-2.5 rounded-xl shadow-xl hover:shadow-2xl hover:bg-white hover:scale-110 transition-all duration-300 disabled:opacity-50"
               aria-label={inWishlist ? "Remove from wishlist" : "Add to wishlist"}
             >
               {inWishlist ? (
-                <HeartSolidIcon className="h-5 w-5 text-rose-500" />
+                <HeartSolidIcon className="h-5 w-5 text-rose-500 animate-pulse" />
               ) : (
                 <HeartIcon className="h-5 w-5 text-gray-700" />
               )}
@@ -93,106 +106,123 @@ export default function ProductCard({ product }) {
             <button
               onClick={handleAddToCart}
               disabled={isAdding || !product.inStock}
-              className="bg-white p-2 rounded-full shadow-md hover:bg-rose-50 transition-colors disabled:opacity-50"
+              className="glass bg-white/90 backdrop-blur-md p-2.5 rounded-xl shadow-xl hover:shadow-2xl hover:bg-white hover:scale-110 transition-all duration-300 disabled:opacity-50"
               aria-label="Add to cart"
             >
               <ShoppingBagIcon className="h-5 w-5 text-gray-700" />
             </button>
+
+            <button
+              className="glass bg-white/90 backdrop-blur-md p-2.5 rounded-xl shadow-xl hover:shadow-2xl hover:bg-white hover:scale-110 transition-all duration-300"
+              aria-label="Quick view"
+            >
+              <EyeIcon className="h-5 w-5 text-gray-700" />
+            </button>
           </div>
 
-          {/* Out of Stock Overlay */}
+          {/* Out of Stock Overlay - Premium */}
           {!product.inStock && (
-            <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-              <span className="bg-white px-4 py-2 rounded-lg font-semibold text-gray-900">
-                Out of Stock
-              </span>
+            <div className="absolute inset-0 glass-dark flex items-center justify-center z-20">
+              <div className="glass bg-white/95 px-6 py-3 rounded-2xl font-bold text-gray-900 shadow-2xl border-2 border-white">
+                <Badge type="sold-out" />
+              </div>
             </div>
           )}
         </div>
 
-        {/* Product Info */}
-        <div className="p-4 flex flex-col flex-grow">
-          {/* Category */}
+        {/* Premium Product Info */}
+        <div className="p-5 flex flex-col flex-grow bg-gradient-to-br from-white to-rose-50/20">
+          {/* Category Badge */}
           {product.category && (
-            <p className="text-xs text-gray-500 uppercase tracking-wide mb-2">
-              {product.category}
-            </p>
+            <div className="inline-flex items-center self-start mb-3">
+              <span className="text-[10px] font-bold text-rose-600 uppercase tracking-widest px-3 py-1 bg-rose-50 rounded-full border border-rose-100">
+                {product.category}
+              </span>
+            </div>
           )}
 
-          {/* Name */}
-          <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-rose-600 transition-colors">
+          {/* Name with Premium Typography */}
+          <h3 className="text-lg font-bold text-gray-900 mb-3 line-clamp-2 group-hover:text-gradient-luxury transition-all duration-300 leading-tight">
             {product.name}
           </h3>
 
-          {/* Rating and Sold Count */}
-          <div className="flex items-center justify-between gap-2 mb-2">
-            {/* Star Rating */}
-            <div className="flex items-center gap-1">
+          {/* Premium Rating and Social Proof */}
+          <div className="flex items-center justify-between gap-3 mb-4">
+            {/* Star Rating with Glow */}
+            <div className="flex items-center gap-1.5 bg-amber-50 px-3 py-1.5 rounded-xl border border-amber-100">
               <div className="flex">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <StarIcon
                     key={star}
-                    className={`h-4 w-4 ${
+                    className={`h-3.5 w-3.5 -ml-0.5 first:ml-0 ${
                       star <= Math.round(product.averageRating || 0)
-                        ? 'text-yellow-400'
+                        ? 'text-amber-400 drop-shadow-sm'
                         : 'text-gray-300'
                     }`}
                   />
                 ))}
               </div>
-              <span className="text-xs text-gray-600">
-                ({product.reviewCount || 0})
+              <span className="text-xs font-bold text-gray-700">
+                {product.reviewCount || 0}
               </span>
             </div>
 
-            {/* Sold Count - Improved Badge with "sold" text */}
+            {/* Sold Count Badge */}
             {product.soldCount > 0 && (
-              <div className="flex items-center gap-1 text-gray-600">
-                <svg className="w-3.5 h-3.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+              <div className="flex items-center gap-1.5 bg-green-50 px-3 py-1.5 rounded-xl border border-green-100">
+                <svg className="w-3.5 h-3.5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
                 </svg>
-                <span className="text-xs font-medium">
-                  {product.soldCount.toLocaleString()} sold
+                <span className="text-xs font-bold text-green-700">
+                  {product.soldCount.toLocaleString()}
                 </span>
               </div>
             )}
           </div>
 
-          {/* Sizes Info */}
+          {/* Sizes Info - Premium */}
           {displaySizes.length > 0 && (
-            <div className="mb-2 flex items-center gap-1 text-xs text-gray-600">
-              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="mb-4 flex items-center gap-2 text-xs text-gray-600 bg-gray-50 px-3 py-2 rounded-xl border border-gray-100">
+              <svg className="w-4 h-4 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
               </svg>
-              <span>{sizes.length} size{sizes.length > 1 ? 's' : ''} available</span>
+              <span className="font-semibold">{sizes.length} size{sizes.length > 1 ? 's' : ''}</span>
             </div>
           )}
 
-          {/* Price */}
-          <div className="mt-auto flex items-center gap-2">
+          {/* Premium Price with Gradient */}
+          <div className="mt-auto pt-4 border-t border-gray-100">
             {hasDiscount ? (
-              <>
-                <span className="text-xl font-bold text-rose-600">
+              <div className="flex items-baseline gap-3">
+                <span className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-rose-600 to-pink-600">
                   {formatPrice(product.salePrice)}
                 </span>
-                <span className="text-sm text-gray-500 line-through">
+                <span className="text-base text-gray-400 line-through font-medium">
                   {formatPrice(product.price)}
                 </span>
-              </>
+              </div>
             ) : (
-              <span className="text-xl font-bold text-gray-900">
+              <span className="text-2xl font-black text-gray-900">
                 {formatPrice(product.price)}
               </span>
             )}
           </div>
 
-          {/* Add to Cart Button (visible on mobile) */}
+          {/* Premium Add to Cart Button (visible on mobile) */}
           <button
             onClick={handleAddToCart}
             disabled={isAdding || !product.inStock}
-            className="mt-4 w-full btn-primary lg:hidden disabled:opacity-50 disabled:cursor-not-allowed"
+            className="mt-4 w-full btn-blush lg:hidden disabled:opacity-50 disabled:cursor-not-allowed text-base font-bold py-3.5 shadow-xl"
           >
-            {isAdding ? 'Added!' : product.inStock ? 'Add to Cart' : 'Out of Stock'}
+            {isAdding ? (
+              <span className="flex items-center justify-center gap-2">
+                <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                </svg>
+                Added!
+              </span>
+            ) : product.inStock ? 'Add to Cart' : 'Out of Stock'}
           </button>
         </div>
       </div>
