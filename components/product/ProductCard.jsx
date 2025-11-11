@@ -6,11 +6,13 @@ import { formatPrice, formatDiscount } from '../../utils/format';
 import { addToCart } from '../../lib/cart';
 import { useState, useEffect } from 'react';
 import { useWishlist } from '../../context/WishlistContext';
+import { imageSkeletonClass } from '../../utils/imageOptimization';
 
 export default function ProductCard({ product }) {
   const { isInWishlist, toggleWishlist: toggleWishlistContext } = useWishlist();
   const [isAdding, setIsAdding] = useState(false);
   const [isTogglingWishlist, setIsTogglingWishlist] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   // Show Available_Products first (variant images), then fall back to main images
   // This prevents size guides or extra images from showing in card
@@ -48,12 +50,22 @@ export default function ProductCard({ product }) {
       <div className="group card cursor-pointer h-full flex flex-col">
         {/* Image */}
         <div className="relative aspect-square overflow-hidden bg-gray-100">
+          {/* Loading Skeleton */}
+          {!imageLoaded && (
+            <div className={`absolute inset-0 ${imageSkeletonClass}`} />
+          )}
+
           <Image
             src={imageUrl}
             alt={product.name}
             fill
-            className="object-cover group-hover:scale-110 transition-transform duration-500"
+            className={`object-cover group-hover:scale-110 transition-all duration-500 ${
+              imageLoaded ? 'opacity-100' : 'opacity-0'
+            }`}
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            loading="lazy"
+            onLoad={() => setImageLoaded(true)}
+            quality={85}
           />
 
           {/* Discount Badge */}

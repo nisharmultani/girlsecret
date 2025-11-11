@@ -6,6 +6,8 @@ import {
   PhotoIcon,
   ShoppingBagIcon
 } from '@heroicons/react/24/outline';
+import Image from 'next/image';
+
 
 export default function ImportProduct() {
   const [productData, setProductData] = useState({
@@ -333,10 +335,12 @@ AliExpress URL: ${formatted.aliexpressUrl}
                   <div className="grid grid-cols-2 gap-3">
                     {previewImages.slice(0, 4).map((url, index) => (
                       <div key={index} className="relative aspect-square rounded-lg overflow-hidden bg-gray-100 border border-gray-200">
-                        <img
+                        <Image
                           src={url}
                           alt={`Preview ${index + 1}`}
                           className="w-full h-full object-cover"
+                          height={40}
+                          width={40}
                           onError={(e) => {
                             e.target.style.display = 'none';
                             e.target.parentElement.innerHTML = '<div class="flex items-center justify-center h-full text-sm text-gray-400">Invalid URL</div>';

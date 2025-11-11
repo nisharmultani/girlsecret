@@ -1,12 +1,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-// import image1 from "@/public/images/Image1.jpg"
-// import image2 from "../../public/images/Image2.jpg"
-// import image3 from "../../public/images/Image3.jpg"
-// import image4 from "../../public/images/Image4.jpg"
-
-
+import { getOptimizedImageProps } from '../../utils/imageOptimization';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 
 const slides = [
@@ -133,13 +128,16 @@ export default function HeroCarousel() {
                   </div>
                 </div>
 
-                {/* Image - Placeholder for now */}
+                {/* Hero Image with Optimization */}
                 <div className="relative h-[300px] md:h-[400px] lg:h-[500px] hidden lg:block">
-                  {/* <div className="absolute inset-0 bg-white/50 backdrop-blur-sm rounded-3xl flex items-center justify-center"> */}
-                    {/* <p className="text-gray-400 text-sm">Product Image {s.id}</p> */}
-                                    <Image src={s.image}  alt={s.id} height={300} width={500}  className="object-cover rounded"/>
-
-                  {/* </div> */}
+                  <Image
+                    {...getOptimizedImageProps(s.image, index === 0)}
+                    alt={`${s.title} ${s.subtitle}`}
+                    fill
+                    sizes="(max-width: 1024px) 0vw, 50vw"
+                    className="object-cover rounded-3xl"
+                    quality={90}
+                  />
                 </div>
               </div>
             </div>
