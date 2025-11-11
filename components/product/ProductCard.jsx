@@ -54,9 +54,9 @@ export default function ProductCard({ product }) {
 
   return (
     <Link href={`/products/${product.slug}`}>
-      <div className="group card-luxury cursor-pointer h-full flex flex-col relative">
+      <div className="group card cursor-pointer h-full flex flex-col relative">
         {/* Image Container with Zoom */}
-        <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 rounded-t-3xl">
+        <div className="relative aspect-square overflow-hidden bg-gray-100 rounded-t-2xl">
           {/* Loading Skeleton */}
           {!imageLoaded && (
             <div className={`absolute inset-0 ${imageSkeletonClass}`} />
@@ -130,8 +130,8 @@ export default function ProductCard({ product }) {
           )}
         </div>
 
-        {/* Premium Product Info */}
-        <div className="p-5 flex flex-col flex-grow bg-gradient-to-br from-white to-rose-50/20">
+        {/* Product Info */}
+        <div className="p-5 flex flex-col flex-grow">
           {/* Category Badge */}
           {product.category && (
             <div className="inline-flex items-center self-start mb-3">
@@ -141,8 +141,8 @@ export default function ProductCard({ product }) {
             </div>
           )}
 
-          {/* Name with Premium Typography */}
-          <h3 className="text-lg font-bold text-gray-900 mb-3 line-clamp-2 group-hover:text-gradient-luxury transition-all duration-300 leading-tight">
+          {/* Product Name */}
+          <h3 className="text-lg font-bold text-gray-900 mb-3 line-clamp-2 leading-tight">
             {product.name}
           </h3>
 
@@ -174,19 +174,17 @@ export default function ProductCard({ product }) {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
                 </svg>
                 <span className="text-xs font-bold text-green-700">
-                  {product.soldCount.toLocaleString()}
+                  {product.soldCount.toLocaleString()} sold
                 </span>
               </div>
             )}
           </div>
 
-          {/* Sizes Info - Premium */}
-          {displaySizes.length > 0 && (
-            <div className="mb-4 flex items-center gap-2 text-xs text-gray-600 bg-gray-50 px-3 py-2 rounded-xl border border-gray-100">
-              <svg className="w-4 h-4 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
-              </svg>
-              <span className="font-semibold">{sizes.length} size{sizes.length > 1 ? 's' : ''}</span>
+          {/* Sizes Info - Simple */}
+          {sizes.length > 0 && (
+            <div className="mb-3 text-sm text-gray-600">
+              <span className="font-medium">Available sizes: </span>
+              <span>{sizes.join(', ')}</span>
             </div>
           )}
 

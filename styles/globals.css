@@ -96,8 +96,7 @@
   .card {
     @apply bg-white rounded-2xl overflow-hidden
     transition-all duration-500 ease-out
-    shadow-xl shadow-gray-200/50
-    hover:shadow-2xl hover:shadow-gray-300/60
+    shadow-md hover:shadow-xl
     hover:-translate-y-2;
   }
 
