@@ -176,54 +176,56 @@ export default function ProductCard({ product }) {
 
           {/* Premium Price with Quick Actions */}
           <div className="mt-auto pt-4 border-t border-gray-100">
-            {/* Price */}
-            <div className="mb-3">
-              {hasDiscount ? (
-                <div className="flex items-baseline gap-3">
-                  <span className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-rose-600 to-pink-600">
-                    {formatPrice(product.salePrice)}
-                  </span>
-                  <span className="text-base text-gray-400 line-through font-medium">
+            <div className="flex items-center justify-between gap-3">
+              {/* Price */}
+              <div>
+                {hasDiscount ? (
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-rose-600 to-pink-600">
+                      {formatPrice(product.salePrice)}
+                    </span>
+                    <span className="text-sm text-gray-400 line-through font-medium">
+                      {formatPrice(product.price)}
+                    </span>
+                  </div>
+                ) : (
+                  <span className="text-2xl font-black text-gray-900">
                     {formatPrice(product.price)}
                   </span>
-                </div>
-              ) : (
-                <span className="text-2xl font-black text-gray-900">
-                  {formatPrice(product.price)}
-                </span>
-              )}
-            </div>
-
-            {/* Quick Actions - Show on Desktop Hover */}
-            <div className="hidden lg:flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
-              <button
-                onClick={toggleWishlist}
-                disabled={isTogglingWishlist}
-                className="flex-1 flex items-center justify-center gap-2 bg-white border-2 border-gray-200 hover:border-rose-400 px-4 py-2.5 rounded-xl font-semibold text-sm hover:bg-rose-50 transition-all duration-300 disabled:opacity-50"
-                aria-label={inWishlist ? "Remove from wishlist" : "Add to wishlist"}
-              >
-                {inWishlist ? (
-                  <HeartSolidIcon className="h-5 w-5 text-rose-500" />
-                ) : (
-                  <HeartIcon className="h-5 w-5 text-gray-700" />
                 )}
-              </button>
+              </div>
 
-              <button
-                onClick={handleAddToCart}
-                disabled={isAdding || !product.inStock}
-                className="flex-1 flex items-center justify-center gap-2 btn-blush px-4 py-2.5 rounded-xl font-semibold text-sm transition-all duration-300 disabled:opacity-50"
-                aria-label="Add to cart"
-              >
-                <ShoppingBagIcon className="h-5 w-5" />
-              </button>
+              {/* Quick Actions - Show on Desktop Hover */}
+              <div className="hidden lg:flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                <button
+                  onClick={toggleWishlist}
+                  disabled={isTogglingWishlist}
+                  className="bg-white border-2 border-gray-200 hover:border-rose-400 p-2 rounded-lg hover:bg-rose-50 transition-all duration-300 disabled:opacity-50"
+                  aria-label={inWishlist ? "Remove from wishlist" : "Add to wishlist"}
+                >
+                  {inWishlist ? (
+                    <HeartSolidIcon className="h-4 w-4 text-rose-500" />
+                  ) : (
+                    <HeartIcon className="h-4 w-4 text-gray-700" />
+                  )}
+                </button>
 
-              <button
-                className="flex-1 flex items-center justify-center gap-2 bg-white border-2 border-gray-200 hover:border-gray-400 px-4 py-2.5 rounded-xl font-semibold text-sm hover:bg-gray-50 transition-all duration-300"
-                aria-label="Quick view"
-              >
-                <EyeIcon className="h-5 w-5 text-gray-700" />
-              </button>
+                <button
+                  onClick={handleAddToCart}
+                  disabled={isAdding || !product.inStock}
+                  className="btn-blush p-2 rounded-lg transition-all duration-300 disabled:opacity-50"
+                  aria-label="Add to cart"
+                >
+                  <ShoppingBagIcon className="h-4 w-4" />
+                </button>
+
+                <button
+                  className="bg-white border-2 border-gray-200 hover:border-gray-400 p-2 rounded-lg hover:bg-gray-50 transition-all duration-300"
+                  aria-label="Quick view"
+                >
+                  <EyeIcon className="h-4 w-4 text-gray-700" />
+                </button>
+              </div>
             </div>
           </div>
 
