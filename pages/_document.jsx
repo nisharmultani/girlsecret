@@ -14,6 +14,23 @@ export default function Document() {
         {/* Character Encoding */}
         <meta charSet="utf-8" />
 
+        {/* Resource Hints for Performance */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://dl.airtable.com" />
+        <link rel="dns-prefetch" href="https://v5.airtableusercontent.com" />
+        <link rel="dns-prefetch" href="https://res.cloudinary.com" />
+
+        {/* Preload Critical Images */}
+        <link
+          rel="preload"
+          as="image"
+          href="/images/Image1.jpg"
+          type="image/jpeg"
+          imageSrcSet="/images/optimized/Image1.avif 1024w"
+          imageSizes="(max-width: 1024px) 0vw, 50vw"
+        />
+
         {/* Structured Data for Organization */}
         <script
           type="application/ld+json"

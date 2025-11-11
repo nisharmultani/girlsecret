@@ -7,7 +7,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "optimize-images": "node scripts/optimize-images.js"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.17",
@@ -29,6 +30,7 @@
     "eslint": "^8.56.0",
     "eslint-config-next": "^14.0.4",
     "postcss": "^8.4.32",
+    "sharp": "^0.34.5",
     "tailwindcss": "^3.3.6"
   }
 }
