@@ -83,7 +83,7 @@ export default function TestimonialsCarousel() {
   ];
 
   return (
-    <section className="py-16 md:py-20 bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50">
+    <section className="py-16 md:py-20 bg-gray-50">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="section-title">Loved by Customers</h2>
