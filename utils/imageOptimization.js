@@ -1,5 +1,16 @@
 import blurDataMap from '../lib/imageBlurData.json';
 
+// Dynamic blur data loading for server-side
+let serverBlurData = null;
+if (typeof window === 'undefined') {
+  try {
+    const { loadBlurData } = require('../lib/blurDataStorage');
+    serverBlurData = loadBlurData;
+  } catch (error) {
+    // Ignore on client side
+  }
+}
+
 /**
  * Get optimized image path
  * @param {string} imagePath - Original image path (e.g., "/images/Image1.jpg")
@@ -23,14 +34,51 @@ export function getOptimizedImagePath(imagePath) {
 
 /**
  * Get blur placeholder for an image
- * @param {string} imagePath - Image path (e.g., "/images/Image1.jpg")
+ * @param {string} imagePath - Image path (e.g., "/images/Image1.jpg") or full URL
  * @returns {string|undefined} - Base64 blur data URL or undefined
  */
 export function getBlurDataURL(imagePath) {
   if (!imagePath) return undefined;
 
-  const filename = imagePath.split('/').pop();
+  // Try to load from server-side blur data first (for Cloudinary/Airtable images)
+  if (serverBlurData && typeof window === 'undefined') {
+    const dynamicData = serverBlurData();
+    const key = getImageKey(imagePath);
+    if (dynamicData[key]) {
+      return dynamicData[key];
+    }
+  }
+
+  // Fallback to static blur data (for local images)
+  const filename = imagePath.split('/').pop().split('?')[0]; // Remove query params
   return blurDataMap[filename];
+}
+
+/**
+ * Get image key for blur data lookup
+ * @param {string} imagePath - Image path or URL
+ * @returns {string} - Key for lookup
+ */
+function getImageKey(imagePath) {
+  // For Cloudinary URLs
+  if (imagePath.includes('cloudinary.com')) {
+    const match = imagePath.match(/\/([^/]+)\.(jpg|jpeg|png|webp|avif)$/i);
+    if (match) {
+      return match[1];
+    }
+  }
+
+  // For Airtable URLs
+  if (imagePath.includes('airtable')) {
+    const match = imagePath.match(/\/([^/?]+)(\?|$)/);
+    if (match) {
+      return match[1];
+    }
+  }
+
+  // For local paths
+  const parts = imagePath.split('/');
+  return parts[parts.length - 1].split('?')[0];
 }
 
 /**
