@@ -14,6 +14,7 @@ import { getCartCount } from '../../lib/cart';
 import { useAuth } from '../../context/AuthContext';
 import { useWishlist } from '../../context/WishlistContext';
 import SearchModal from '../SearchModal';
+import InfoBanner from '../ui/InfoBanner';
 
 const navigation = [
   { name: 'Home', href: '/' },
@@ -55,14 +56,27 @@ export default function Header() {
   }, []);
 
   return (
-    <header
-      className={`fixed w-full top-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? 'bg-white shadow-md py-2'
-          : 'bg-white/95 backdrop-blur-sm py-4'
-      }`}
-    >
-      <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <header className="fixed w-full top-0 z-50">
+      {/* Info Banner - Promotional messages */}
+      <InfoBanner
+        message="Free Shipping on Orders Over £50"
+        link="/shop"
+        linkText="Shop Now"
+        dismissible={true}
+        storageKey="shippingBannerDismissed"
+        backgroundColor="bg-black"
+        textColor="text-white"
+      />
+
+      {/* Main Navigation */}
+      <nav
+        className={`transition-all duration-300 ${
+          scrolled
+            ? 'bg-white shadow-md py-2'
+            : 'bg-white/95 backdrop-blur-sm py-4'
+        }`}
+      >
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between">
           {/* Logo */}
           <div className="flex lg:flex-1">
@@ -274,6 +288,7 @@ export default function Header() {
               </div>
             )}
           </div>
+        </div>
         </div>
       </nav>
 
