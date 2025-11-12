@@ -211,44 +211,53 @@ export default function Shop({ products: initialProducts, categories }) {
         />
       </Head>
 
-      <div className="min-h-screen bg-gray-50">
-        {/* Promotional Banner */}
+      <div className="min-h-screen bg-white">
+        {/* Promotional Banner - Compact */}
         <Banner
           imageSrc="https://images.unsplash.com/photo-1445205170230-053b83016050?w=1920&h=300&fit=crop"
           imageAlt="Shop Collection Banner"
           title="Exclusive Collection"
-          subtitle="Limited Time Offer"
-          buttonText="View Deals"
+          subtitle="Shop Our Latest Styles"
+          buttonText="View All"
           buttonLink="/shop?sort=featured"
-          height="h-64 md:h-80"
+          height="h-48 md:h-64"
         />
 
-        {/* Header */}
-        <div className="bg-white shadow-sm border-b">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
-            <h1 className="text-2xl md:text-3xl font-serif font-bold text-gray-900 mb-2">
-              {urlSearch
-                ? 'Search Results'
-                : selectedCategory !== 'all'
-                ? `${selectedCategory} Collection`
-                : 'Shop Collection'}
-            </h1>
-            <p className="text-sm md:text-base text-gray-600 mb-6">
-              {urlSearch ? (
-                <>
-                  Showing results for &quot;<span className="font-semibold">{urlSearch}</span>&quot;
-                  {selectedCategory !== 'all' && (
-                    <> in <span className="font-semibold">{selectedCategory}</span></>
+        {/* Header - Compact */}
+        <div className="bg-white border-b border-gray-200">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 md:py-5">
+            <div className="flex items-center justify-between mb-3">
+              <h1 className="text-xl md:text-2xl font-serif font-bold text-gray-900">
+                {urlSearch
+                  ? 'Search Results'
+                  : selectedCategory !== 'all'
+                  ? `${selectedCategory} Collection`
+                  : 'Shop All'}
+              </h1>
+              {/* Clear Search/Filter Links */}
+              {(urlSearch || (urlCategory && selectedCategory !== 'all')) && (
+                <div className="flex gap-3">
+                  {urlSearch && (
+                    <button
+                      onClick={clearSearch}
+                      className="text-xs sm:text-sm text-black hover:text-gray-700 font-medium underline"
+                    >
+                      Clear search
+                    </button>
                   )}
-                </>
-              ) : selectedCategory !== 'all' ? (
-                <>Shop our complete collection of {selectedCategory.toLowerCase()}</>
-              ) : (
-                'Beautiful bras, panties, and lingerie designed for comfort and confidence'
+                  {urlCategory && selectedCategory !== 'all' && !urlSearch && (
+                    <button
+                      onClick={() => router.push('/shop')}
+                      className="text-xs sm:text-sm text-black hover:text-gray-700 font-medium underline"
+                    >
+                      Show all
+                    </button>
+                  )}
+                </div>
               )}
-            </p>
+            </div>
 
-            {/* Search Bar */}
+            {/* Search Bar - Compact */}
             <form onSubmit={handleSearch} className="max-w-2xl">
               <div className="relative">
                 <input
@@ -256,63 +265,41 @@ export default function Shop({ products: initialProducts, categories }) {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search products..."
-                  className="w-full px-4 py-2.5 pl-11 border-2 border-gray-300 rounded-lg focus:border-rose-500 focus:ring-2 focus:ring-rose-200 outline-none transition-all text-sm md:text-base"
+                  className="w-full px-3 py-2 pl-10 border border-gray-300 rounded-lg focus:border-black focus:ring-1 focus:ring-black outline-none transition-all text-sm"
                 />
-                <MagnifyingGlassIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <button
                   type="submit"
-                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-rose-500 hover:bg-rose-600 text-white px-4 md:px-6 py-1.5 md:py-2 rounded-lg font-semibold transition-colors text-sm"
+                  className="absolute right-1.5 top-1/2 -translate-y-1/2 bg-black hover:bg-gray-800 text-white px-3 md:px-4 py-1 rounded-md font-semibold transition-colors text-xs sm:text-sm"
                 >
                   Search
                 </button>
               </div>
             </form>
-
-            {/* Clear Search/Filter Links */}
-            {(urlSearch || (urlCategory && selectedCategory !== 'all')) && (
-              <div className="mt-3 flex gap-4">
-                {urlSearch && (
-                  <button
-                    onClick={clearSearch}
-                    className="text-sm text-rose-600 hover:text-rose-700 font-medium"
-                  >
-                    ✕ Clear search
-                  </button>
-                )}
-                {urlCategory && selectedCategory !== 'all' && !urlSearch && (
-                  <button
-                    onClick={() => router.push('/shop')}
-                    className="text-sm text-rose-600 hover:text-rose-700 font-medium"
-                  >
-                    ✕ Show all categories
-                  </button>
-                )}
-              </div>
-            )}
           </div>
         </div>
 
-        {/* Category Tabs - Sticky */}
+        {/* Category Tabs - Sticky - Compact */}
         <div className="bg-white border-b border-gray-200 sticky top-0 z-20 shadow-sm">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide py-3">
+            <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide py-2">
               <button
                 onClick={() => handleCategoryChange('all')}
-                className={`px-4 md:px-6 py-2 md:py-2.5 rounded-full text-sm md:text-base font-semibold whitespace-nowrap transition-all ${
+                className={`px-3 md:px-4 py-1.5 rounded-full text-xs md:text-sm font-semibold whitespace-nowrap transition-all ${
                   selectedCategory === 'all'
-                    ? 'bg-rose-500 text-white shadow-md'
+                    ? 'bg-black text-white shadow-md'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
-                All Products
+                All
               </button>
               {categories.map((category) => (
                 <button
                   key={category}
                   onClick={() => handleCategoryChange(category)}
-                  className={`px-4 md:px-6 py-2 md:py-2.5 rounded-full text-sm md:text-base font-semibold whitespace-nowrap transition-all ${
+                  className={`px-3 md:px-4 py-1.5 rounded-full text-xs md:text-sm font-semibold whitespace-nowrap transition-all ${
                     selectedCategory === category
-                      ? 'bg-rose-500 text-white shadow-md'
+                      ? 'bg-black text-white shadow-md'
                       : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
                 >
@@ -337,8 +324,8 @@ export default function Shop({ products: initialProducts, categories }) {
           totalCount={products.length}
         />
 
-        {/* Products Grid - Full Width */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Products Grid - Full Width - Reduced Padding */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           {isSearching ? (
             <ProductGridSkeleton count={8} />
           ) : filteredProducts.length > 0 ? (
@@ -354,12 +341,12 @@ export default function Shop({ products: initialProducts, categories }) {
               <p className="text-gray-500 mb-4">
                 {urlSearch
                   ? 'Try a different search term or adjust your filters.'
-                  : 'Try adjusting your filters to find what you\'re looking for.'}
+                  : 'Try adjusting your filters to find what you&apos;re looking for.'}
               </p>
               {urlSearch && (
                 <button
                   onClick={clearSearch}
-                  className="inline-flex items-center px-4 py-2 bg-rose-500 hover:bg-rose-600 text-white rounded-lg font-medium transition-colors"
+                  className="inline-flex items-center px-4 py-2 bg-black hover:bg-gray-800 text-white rounded-lg font-medium transition-colors"
                 >
                   View all products
                 </button>

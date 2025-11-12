@@ -62,7 +62,7 @@ export default function Home({ featuredProducts, newArrivals, bestSellers }) {
         imageSrc="https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=1920&h=400&fit=crop"
         imageAlt="New Collection Banner"
         title="New Collection"
-        subtitle="Spring/Summer 2024"
+        subtitle="Discover Timeless Elegance"
         buttonText="Explore Now"
         buttonLink="/shop"
         height="h-80 md:h-96"

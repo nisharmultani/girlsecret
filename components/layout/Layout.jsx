@@ -3,6 +3,7 @@ import Footer from './Footer';
 import BottomNav from './BottomNav';
 import GoogleTagManager, { GoogleTagManagerNoScript } from '../GoogleTagManager';
 import GoogleAdsense from '../GoogleAdsense';
+import WelcomeModal from '../ui/WelcomeModal';
 
 export default function Layout({ children }) {
   return (
@@ -18,6 +19,7 @@ export default function Layout({ children }) {
         </main>
         <Footer />
         <BottomNav />
+        <WelcomeModal />
       </div>
     </>
   );
