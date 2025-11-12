@@ -212,8 +212,8 @@ export default function Shop({ products: initialProducts, categories }) {
       </Head>
 
       <div className="min-h-screen bg-white">
-        {/* Promotional Banner - Compact */}
-        <Banner
+        {/* Promotional Banner - Removed for cleaner layout */}
+        {/* <Banner
           imageSrc="https://images.unsplash.com/photo-1445205170230-053b83016050?w=1920&h=300&fit=crop"
           imageAlt="Shop Collection Banner"
           title="Exclusive Collection"
@@ -221,12 +221,12 @@ export default function Shop({ products: initialProducts, categories }) {
           buttonText="View All"
           buttonLink="/shop?sort=featured"
           height="h-48 md:h-64"
-        />
+        /> */}
 
         {/* Header - Compact */}
-        <div className="bg-white border-b border-gray-200">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 md:py-5">
-            <div className="flex items-center justify-between mb-3">
+        <div className="bg-white border-b border-gray-200 pt-4 md:pt-6">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-4 md:pb-5">
+            <div className="flex items-center justify-between">
               <h1 className="text-xl md:text-2xl font-serif font-bold text-gray-900">
                 {urlSearch
                   ? 'Search Results'
@@ -256,26 +256,6 @@ export default function Shop({ products: initialProducts, categories }) {
                 </div>
               )}
             </div>
-
-            {/* Search Bar - Compact */}
-            <form onSubmit={handleSearch} className="max-w-2xl">
-              <div className="relative">
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search products..."
-                  className="w-full px-3 py-2 pl-10 border border-gray-300 rounded-lg focus:border-black focus:ring-1 focus:ring-black outline-none transition-all text-sm"
-                />
-                <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                <button
-                  type="submit"
-                  className="absolute right-1.5 top-1/2 -translate-y-1/2 bg-black hover:bg-gray-800 text-white px-3 md:px-4 py-1 rounded-md font-semibold transition-colors text-xs sm:text-sm"
-                >
-                  Search
-                </button>
-              </div>
-            </form>
           </div>
         </div>
 
@@ -322,6 +302,14 @@ export default function Shop({ products: initialProducts, categories }) {
           selectedCategory={selectedCategory}
           resultCount={filteredProducts.length}
           totalCount={products.length}
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          onSearch={() => {
+            if (searchQuery.trim()) {
+              router.push(`/shop?search=${encodeURIComponent(searchQuery)}`);
+            }
+          }}
+          onClearSearch={clearSearch}
         />
 
         {/* Products Grid - Full Width - Reduced Padding */}
