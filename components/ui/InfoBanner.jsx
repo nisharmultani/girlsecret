@@ -5,7 +5,7 @@ export default function InfoBanner({
   message = 'Free shipping on orders over £50',
   link = '/shop',
   linkText = 'Shop Now',
-  dismissible = true,
+  dismissible = false,
   storageKey = 'infoBannerDismissed',
   backgroundColor = 'bg-black',
   textColor = 'text-white',

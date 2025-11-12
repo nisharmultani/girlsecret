@@ -66,7 +66,7 @@ export default function Header() {
           message: 'Free Shipping on Orders Over £50',
           link: '/shop',
           linkText: 'Shop Now',
-          dismissible: true,
+          dismissible: false,
           storageKey: 'defaultShippingBanner',
           backgroundColor: 'bg-black',
           textColor: 'text-white',
