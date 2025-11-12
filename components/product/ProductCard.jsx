@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { HeartIcon } from '@heroicons/react/24/outline';
-import { HeartIcon as HeartSolidIcon } from '@heroicons/react/24/solid';
+import { HeartIcon, StarIcon } from '@heroicons/react/24/outline';
+import { HeartIcon as HeartSolidIcon, StarIcon as StarSolidIcon } from '@heroicons/react/24/solid';
 import { formatPrice, formatDiscount } from '../../utils/format';
 import { useState } from 'react';
 import { useWishlist } from '../../context/WishlistContext';
@@ -34,8 +34,8 @@ export default function ProductCard({ product }) {
   return (
     <Link href={`/products/${product.slug}`} className="group block">
       <div className="relative">
-        {/* Image Container - No card styling, just image */}
-        <div className="relative aspect-[3/4] overflow-hidden bg-gray-100">
+        {/* Image Container */}
+        <div className="relative aspect-[3/4] overflow-hidden bg-gray-100 mb-3">
           {/* Loading Skeleton */}
           {!imageLoaded && (
             <div className={`absolute inset-0 ${imageSkeletonClass}`} />
@@ -49,18 +49,25 @@ export default function ProductCard({ product }) {
             className={`object-cover group-hover:scale-105 transition-transform duration-500 ${
               imageLoaded ? 'opacity-100' : 'opacity-0'
             }`}
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
             loading="lazy"
             onLoad={() => setImageLoaded(true)}
             quality={85}
           />
 
-          {/* Discount Badge - Simple, top-left */}
-          {hasDiscount && (
-            <div className="absolute top-2 left-2 bg-black text-white text-xs font-bold px-2 py-1">
-              -{discountPercent}%
-            </div>
-          )}
+          {/* Badges Container - Top Left */}
+          <div className="absolute top-2 left-2 flex flex-col gap-1 z-10">
+            {hasDiscount && (
+              <div className="bg-black text-white text-xs font-bold px-2 py-1">
+                -{discountPercent}%
+              </div>
+            )}
+            {product.isNew && (
+              <div className="bg-white text-black text-xs font-bold px-2 py-1">
+                NEW
+              </div>
+            )}
+          </div>
 
           {/* Out of Stock Overlay */}
           {!product.inStock && (
@@ -86,22 +93,56 @@ export default function ProductCard({ product }) {
           </button>
         </div>
 
-        {/* Product Info - Below image, no padding container */}
-        <div className="mt-3">
+        {/* Product Info - Below image */}
+        <div className="space-y-2">
           {/* Category - Small, uppercase */}
           {product.category && (
-            <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">
+            <p className="text-xs text-gray-500 uppercase tracking-wide">
               {product.category}
             </p>
           )}
 
           {/* Product Name */}
-          <h3 className="text-sm font-medium text-gray-900 mb-2 line-clamp-2">
+          <h3 className="text-sm font-medium text-gray-900 line-clamp-2 leading-snug">
             {product.name}
           </h3>
 
+          {/* Rating and Sold Count - Single Line */}
+          <div className="flex items-center gap-3 text-xs">
+            {/* Star Rating */}
+            {product.reviewCount > 0 && (
+              <div className="flex items-center gap-1">
+                <div className="flex items-center">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <StarSolidIcon
+                      key={star}
+                      className={`h-3 w-3 ${
+                        star <= Math.round(product.averageRating || 0)
+                          ? 'text-black'
+                          : 'text-gray-300'
+                      }`}
+                    />
+                  ))}
+                </div>
+                <span className="text-gray-600">
+                  {(product.averageRating || 0).toFixed(1)}
+                </span>
+                <span className="text-gray-400">
+                  ({product.reviewCount})
+                </span>
+              </div>
+            )}
+
+            {/* Sold Count */}
+            {product.soldCount > 0 && (
+              <div className="text-gray-500">
+                {product.soldCount.toLocaleString()} sold
+              </div>
+            )}
+          </div>
+
           {/* Price */}
-          <div className="flex items-baseline gap-2">
+          <div className="flex items-baseline gap-2 pt-1">
             {hasDiscount ? (
               <>
                 <span className="text-base font-bold text-black">
@@ -117,18 +158,6 @@ export default function ProductCard({ product }) {
               </span>
             )}
           </div>
-
-          {/* Reviews - Optional, very subtle */}
-          {product.reviewCount > 0 && (
-            <div className="flex items-center gap-1 mt-1">
-              <span className="text-xs text-gray-500">
-                ★ {(product.averageRating || 0).toFixed(1)}
-              </span>
-              <span className="text-xs text-gray-400">
-                ({product.reviewCount})
-              </span>
-            </div>
-          )}
         </div>
       </div>
     </Link>
