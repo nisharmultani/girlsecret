@@ -75,7 +75,7 @@ export default function Home({ featuredProducts, newArrivals, bestSellers }) {
       <SectionDivider variant="pattern" />
 
       {/* Featured Products Section */}
-      <section className="py-16 md:py-20 bg-gray-50">
+      <section className="py-16 md:py-20 bg-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="section-title">Featured Products</h2>
@@ -134,7 +134,7 @@ export default function Home({ featuredProducts, newArrivals, bestSellers }) {
       <SectionDivider variant="simple" />
 
       {/* Value Proposition / Why Choose Us */}
-      <section className="py-16 md:py-20 bg-gray-50">
+      <section className="py-16 md:py-20 bg-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="section-title">Why Choose GirlSecret?</h2>

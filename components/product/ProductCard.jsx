@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { HeartIcon, StarIcon } from '@heroicons/react/24/outline';
+import { HeartIcon } from '@heroicons/react/24/outline';
 import { HeartIcon as HeartSolidIcon, StarIcon as StarSolidIcon } from '@heroicons/react/24/solid';
 import { formatPrice, formatDiscount } from '../../utils/format';
 import { useState } from 'react';
@@ -34,19 +34,19 @@ export default function ProductCard({ product }) {
   return (
     <Link href={`/products/${product.slug}`} className="group block">
       <div className="relative">
-        {/* Image Container */}
-        <div className="relative aspect-[3/4] overflow-hidden bg-gray-100 mb-3">
+        {/* Image Container - Fixed size, centered, no stretch */}
+        <div className="relative aspect-[3/4] overflow-hidden bg-white mb-3">
           {/* Loading Skeleton */}
           {!imageLoaded && (
             <div className={`absolute inset-0 ${imageSkeletonClass}`} />
           )}
 
-          {/* Image with subtle zoom on hover */}
+          {/* Image - centered, no stretching */}
           <Image
             src={imageUrl}
             alt={product.name}
             fill
-            className={`object-cover group-hover:scale-105 transition-transform duration-500 ${
+            className={`object-contain group-hover:scale-105 transition-transform duration-500 ${
               imageLoaded ? 'opacity-100' : 'opacity-0'
             }`}
             sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
@@ -63,7 +63,7 @@ export default function ProductCard({ product }) {
               </div>
             )}
             {product.isNew && (
-              <div className="bg-white text-black text-xs font-bold px-2 py-1">
+              <div className="bg-white text-black text-xs font-bold px-2 py-1 border border-black">
                 NEW
               </div>
             )}
@@ -82,7 +82,7 @@ export default function ProductCard({ product }) {
           <button
             onClick={toggleWishlist}
             disabled={isTogglingWishlist}
-            className="absolute top-2 right-2 bg-white/90 hover:bg-white p-2 rounded-full transition-all opacity-0 group-hover:opacity-100 disabled:opacity-50"
+            className="absolute top-2 right-2 bg-white/90 hover:bg-white p-2 rounded-full transition-all opacity-0 group-hover:opacity-100 disabled:opacity-50 shadow-sm"
             aria-label={inWishlist ? "Remove from wishlist" : "Add to wishlist"}
           >
             {inWishlist ? (
@@ -103,12 +103,12 @@ export default function ProductCard({ product }) {
           )}
 
           {/* Product Name */}
-          <h3 className="text-sm font-medium text-gray-900 line-clamp-2 leading-snug">
+          <h3 className="text-sm font-medium text-gray-900 line-clamp-2 leading-snug min-h-[2.5rem]">
             {product.name}
           </h3>
 
           {/* Rating and Sold Count - Single Line */}
-          <div className="flex items-center gap-3 text-xs">
+          <div className="flex items-center gap-3 text-xs min-h-[1.25rem]">
             {/* Star Rating */}
             {product.reviewCount > 0 && (
               <div className="flex items-center gap-1">
@@ -124,7 +124,7 @@ export default function ProductCard({ product }) {
                     />
                   ))}
                 </div>
-                <span className="text-gray-600">
+                <span className="text-gray-600 font-medium">
                   {(product.averageRating || 0).toFixed(1)}
                 </span>
                 <span className="text-gray-400">
@@ -135,25 +135,25 @@ export default function ProductCard({ product }) {
 
             {/* Sold Count */}
             {product.soldCount > 0 && (
-              <div className="text-gray-500">
+              <div className="text-gray-500 font-medium">
                 {product.soldCount.toLocaleString()} sold
               </div>
             )}
           </div>
 
-          {/* Price */}
+          {/* Price - Larger, more prominent */}
           <div className="flex items-baseline gap-2 pt-1">
             {hasDiscount ? (
               <>
-                <span className="text-base font-bold text-black">
+                <span className="text-xl font-bold text-black">
                   {formatPrice(product.salePrice)}
                 </span>
-                <span className="text-sm text-gray-400 line-through">
+                <span className="text-sm text-gray-400 line-through font-normal">
                   {formatPrice(product.price)}
                 </span>
               </>
             ) : (
-              <span className="text-base font-bold text-black">
+              <span className="text-xl font-bold text-black">
                 {formatPrice(product.price)}
               </span>
             )}
