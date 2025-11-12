@@ -30,6 +30,7 @@ export default function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [cartCount, setCartCount] = useState(0);
   const [scrolled, setScrolled] = useState(false);
+  const [infoBanner, setInfoBanner] = useState(null);
   const { user, isAuthenticated, logout } = useAuth();
   const { wishlistCount, getWishlistCount } = useWishlist();
 
@@ -49,6 +50,32 @@ export default function Header() {
 
     window.addEventListener('scroll', handleScroll);
 
+    // Fetch info banners from API
+    const fetchInfoBanners = async () => {
+      try {
+        const response = await fetch('/api/info-banners');
+        const data = await response.json();
+        if (data.success && data.banners && data.banners.length > 0) {
+          // Use the highest priority banner (already sorted by priority desc)
+          setInfoBanner(data.banners[0]);
+        }
+      } catch (error) {
+        console.error('Failed to fetch info banners:', error);
+        // Fallback to default banner if API fails
+        setInfoBanner({
+          message: 'Free Shipping on Orders Over £50',
+          link: '/shop',
+          linkText: 'Shop Now',
+          dismissible: true,
+          storageKey: 'defaultShippingBanner',
+          backgroundColor: 'bg-black',
+          textColor: 'text-white',
+        });
+      }
+    };
+
+    fetchInfoBanners();
+
     return () => {
       window.removeEventListener('cartUpdated', updateCartCount);
       window.removeEventListener('scroll', handleScroll);
@@ -57,16 +84,18 @@ export default function Header() {
 
   return (
     <header className="fixed w-full top-0 z-50">
-      {/* Info Banner - Promotional messages */}
-      <InfoBanner
-        message="Free Shipping on Orders Over £50"
-        link="/shop"
-        linkText="Shop Now"
-        dismissible={true}
-        storageKey="shippingBannerDismissed"
-        backgroundColor="bg-black"
-        textColor="text-white"
-      />
+      {/* Info Banner - Promotional messages from Airtable */}
+      {infoBanner && (
+        <InfoBanner
+          message={infoBanner.message}
+          link={infoBanner.link}
+          linkText={infoBanner.linkText}
+          dismissible={infoBanner.dismissible}
+          storageKey={infoBanner.storageKey}
+          backgroundColor={infoBanner.backgroundColor}
+          textColor={infoBanner.textColor}
+        />
+      )}
 
       {/* Main Navigation */}
       <nav
