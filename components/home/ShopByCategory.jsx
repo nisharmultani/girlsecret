@@ -94,13 +94,6 @@ export default function ShopByCategory() {
                     <ArrowRightIcon className="w-4 h-4 transform group-hover:translate-x-2 transition-transform duration-300" />
                   </div>
                 </div>
-
-                {/* Number Badge */}
-                <div className="absolute top-4 right-4 w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/30">
-                  <span className="text-white font-bold text-lg">
-                    {String(index + 1).padStart(2, '0')}
-                  </span>
-                </div>
               </div>
             </Link>
           ))}

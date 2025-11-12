@@ -6,6 +6,7 @@ import HeroCarousel from '../components/home/HeroCarousel';
 import ShopByCategory from '../components/home/ShopByCategory';
 import TestimonialsCarousel from '../components/home/TestimonialsCarousel';
 import Banner from '../components/ui/Banner';
+import SectionDivider from '../components/ui/SectionDivider';
 import { ArrowRightIcon, SparklesIcon, TruckIcon, ShieldCheckIcon, HeartIcon } from '@heroicons/react/24/outline';
 
 export default function Home({ featuredProducts, newArrivals, bestSellers }) {
@@ -70,6 +71,9 @@ export default function Home({ featuredProducts, newArrivals, bestSellers }) {
       {/* Shop by Category */}
       <ShopByCategory />
 
+      {/* Decorative Divider */}
+      <SectionDivider variant="pattern" />
+
       {/* Featured Products Section */}
       <section className="py-16 md:py-20 bg-gray-50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -91,6 +95,9 @@ export default function Home({ featuredProducts, newArrivals, bestSellers }) {
         </div>
       </section>
 
+      {/* Decorative Divider */}
+      <SectionDivider variant="dots" />
+
       {/* New Arrivals Section */}
       {newArrivals.length > 0 && (
         <section className="py-16 md:py-20 bg-white">
@@ -104,7 +111,7 @@ export default function Home({ featuredProducts, newArrivals, bestSellers }) {
               </div>
               <Link
                 href="/shop?sort=newest"
-                className="hidden sm:inline-flex items-center text-rose-600 hover:text-rose-700 font-semibold transition-colors"
+                className="hidden sm:inline-flex items-center text-black hover:text-neutral-700 font-semibold transition-colors"
               >
                 View All
                 <ArrowRightIcon className="w-4 h-4 ml-1" />
@@ -123,6 +130,9 @@ export default function Home({ featuredProducts, newArrivals, bestSellers }) {
         </section>
       )}
 
+      {/* Decorative Divider */}
+      <SectionDivider variant="simple" />
+
       {/* Value Proposition / Why Choose Us */}
       <section className="py-16 md:py-20 bg-gray-50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -133,32 +143,32 @@ export default function Home({ featuredProducts, newArrivals, bestSellers }) {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
             <div className="bg-white rounded-2xl p-6 md:p-8 text-center shadow-sm hover:shadow-lg transition-shadow">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-rose-100 mb-4">
-                <SparklesIcon className="w-8 h-8 text-rose-600" />
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 mb-4">
+                <SparklesIcon className="w-8 h-8 text-black" />
               </div>
               <h3 className="text-lg md:text-xl font-semibold mb-2">Perfect Fit Guarantee</h3>
               <p className="text-gray-600 text-sm md:text-base">Free exchanges and expert fit guidance to ensure your comfort</p>
             </div>
 
             <div className="bg-white rounded-2xl p-6 md:p-8 text-center shadow-sm hover:shadow-lg transition-shadow">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-rose-100 mb-4">
-                <TruckIcon className="w-8 h-8 text-rose-600" />
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 mb-4">
+                <TruckIcon className="w-8 h-8 text-black" />
               </div>
               <h3 className="text-lg md:text-xl font-semibold mb-2">Discreet Delivery</h3>
               <p className="text-gray-600 text-sm md:text-base">Free shipping over £50 in plain, unmarked packaging</p>
             </div>
 
             <div className="bg-white rounded-2xl p-6 md:p-8 text-center shadow-sm hover:shadow-lg transition-shadow">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-rose-100 mb-4">
-                <ShieldCheckIcon className="w-8 h-8 text-rose-600" />
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 mb-4">
+                <ShieldCheckIcon className="w-8 h-8 text-black" />
               </div>
               <h3 className="text-lg md:text-xl font-semibold mb-2">Premium Quality</h3>
               <p className="text-gray-600 text-sm md:text-base">Soft fabrics, delicate lace, and exceptional craftsmanship</p>
             </div>
 
             <div className="bg-white rounded-2xl p-6 md:p-8 text-center shadow-sm hover:shadow-lg transition-shadow">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-rose-100 mb-4">
-                <HeartIcon className="w-8 h-8 text-rose-600" />
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 mb-4">
+                <HeartIcon className="w-8 h-8 text-black" />
               </div>
               <h3 className="text-lg md:text-xl font-semibold mb-2">Made with Love</h3>
               <p className="text-gray-600 text-sm md:text-base">Every piece designed to make you feel beautiful</p>
@@ -180,7 +190,7 @@ export default function Home({ featuredProducts, newArrivals, bestSellers }) {
               </div>
               <Link
                 href="/shop"
-                className="hidden sm:inline-flex items-center text-rose-600 hover:text-rose-700 font-semibold transition-colors"
+                className="hidden sm:inline-flex items-center text-black hover:text-neutral-700 font-semibold transition-colors"
               >
                 View All
                 <ArrowRightIcon className="w-4 h-4 ml-1" />
@@ -199,8 +209,14 @@ export default function Home({ featuredProducts, newArrivals, bestSellers }) {
         </section>
       )}
 
+      {/* Decorative Divider */}
+      <SectionDivider variant="pattern" />
+
       {/* Customer Testimonials */}
       <TestimonialsCarousel />
+
+      {/* Decorative Divider */}
+      <SectionDivider variant="dots" />
 
       {/* Newsletter Section */}
       <section className="py-16 md:py-20 bg-white">
