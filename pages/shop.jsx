@@ -6,6 +6,7 @@ import ProductGrid from '../components/product/ProductGrid';
 import FilterBar from '../components/product/FilterBar';
 import MobileFilterDrawer from '../components/product/MobileFilterDrawer';
 import { ProductGridSkeleton } from '../components/ui/SkeletonLoader';
+import Banner from '../components/ui/Banner';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 
 export default function Shop({ products: initialProducts, categories }) {
@@ -211,6 +212,17 @@ export default function Shop({ products: initialProducts, categories }) {
       </Head>
 
       <div className="min-h-screen bg-gray-50">
+        {/* Promotional Banner */}
+        <Banner
+          imageSrc="https://images.unsplash.com/photo-1445205170230-053b83016050?w=1920&h=300&fit=crop"
+          imageAlt="Shop Collection Banner"
+          title="Exclusive Collection"
+          subtitle="Limited Time Offer"
+          buttonText="View Deals"
+          buttonLink="/shop?sort=featured"
+          height="h-64 md:h-80"
+        />
+
         {/* Header */}
         <div className="bg-white shadow-sm border-b">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">

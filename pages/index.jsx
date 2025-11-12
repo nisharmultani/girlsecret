@@ -5,6 +5,7 @@ import ProductGrid from '../components/product/ProductGrid';
 import HeroCarousel from '../components/home/HeroCarousel';
 import ShopByCategory from '../components/home/ShopByCategory';
 import TestimonialsCarousel from '../components/home/TestimonialsCarousel';
+import Banner from '../components/ui/Banner';
 import { ArrowRightIcon, SparklesIcon, TruckIcon, ShieldCheckIcon, HeartIcon } from '@heroicons/react/24/outline';
 
 export default function Home({ featuredProducts, newArrivals, bestSellers }) {
@@ -54,6 +55,17 @@ export default function Home({ featuredProducts, newArrivals, bestSellers }) {
     <>
       {/* Hero Carousel */}
       <HeroCarousel />
+
+      {/* Promotional Banner */}
+      <Banner
+        imageSrc="https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=1920&h=400&fit=crop"
+        imageAlt="New Collection Banner"
+        title="New Collection"
+        subtitle="Spring/Summer 2024"
+        buttonText="Explore Now"
+        buttonLink="/shop"
+        height="h-80 md:h-96"
+      />
 
       {/* Shop by Category */}
       <ShopByCategory />
