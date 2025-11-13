@@ -11,12 +11,22 @@ export default function ProductCard({ product }) {
   const { isInWishlist, toggleWishlist: toggleWishlistContext } = useWishlist();
   const [isTogglingWishlist, setIsTogglingWishlist] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
 
   // Show Available_Products first (variant images), then fall back to main images
   const availableProducts = product.Available_Products || [];
   const mainImages = product.images || [];
-  const firstImage = availableProducts.length > 0 ? availableProducts[0] : mainImages[0];
-  const imageUrl = firstImage?.thumbnails?.large?.url || firstImage?.url;
+
+  // Get first and second images
+  const allImages = availableProducts.length > 0 ? availableProducts : mainImages;
+  const firstImage = allImages[0];
+  const secondImage = allImages[1]; // Second image for hover effect
+
+  const firstImageUrl = firstImage?.thumbnails?.large?.url || firstImage?.url;
+  const secondImageUrl = secondImage?.thumbnails?.large?.url || secondImage?.url;
+
+  // Use second image on hover if available, otherwise keep first image
+  const displayImageUrl = isHovered && secondImageUrl ? secondImageUrl : firstImageUrl;
 
   const hasDiscount = product.salePrice && product.salePrice < product.price;
   const discountPercent = hasDiscount ? formatDiscount(product.price, product.salePrice) : 0;
@@ -33,7 +43,11 @@ export default function ProductCard({ product }) {
 
   return (
     <Link href={`/products/${product.slug}`} className="group block">
-      <div className="relative">
+      <div
+        className="relative"
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
         {/* Image Container - Proper cover with overflow hidden */}
         <div className="relative aspect-[3/4] overflow-hidden bg-gray-50 mb-3 rounded-sm">
           {/* Loading Skeleton */}
@@ -43,10 +57,10 @@ export default function ProductCard({ product }) {
 
           {/* Image - covers entire area, zooms on hover */}
           <Image
-            src={imageUrl}
+            src={displayImageUrl}
             alt={product.name}
             fill
-            className={`object-cover group-hover:scale-110 transition-transform duration-700 ease-out ${
+            className={`object-cover group-hover:scale-110 transition-all duration-700 ease-out ${
               imageLoaded ? 'opacity-100' : 'opacity-0'
             }`}
             sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
