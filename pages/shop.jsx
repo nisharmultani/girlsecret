@@ -6,7 +6,7 @@ import ProductGrid from '../components/product/ProductGrid';
 import FilterBar from '../components/product/FilterBar';
 import MobileFilterDrawer from '../components/product/MobileFilterDrawer';
 import { ProductGridSkeleton } from '../components/ui/SkeletonLoader';
-import Banner from '../components/ui/Banner';
+import ShopHero from '../components/ui/ShopHero';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 
 export default function Shop({ products: initialProducts, categories }) {
@@ -212,16 +212,18 @@ export default function Shop({ products: initialProducts, categories }) {
       </Head>
 
       <div className="min-h-screen bg-white">
-        {/* Promotional Banner - Removed for cleaner layout */}
-        {/* <Banner
-          imageSrc="https://images.unsplash.com/photo-1445205170230-053b83016050?w=1920&h=300&fit=crop"
-          imageAlt="Shop Collection Banner"
+        {/* Hero Header */}
+        <ShopHero
+          imageSrc="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1920&h=600&fit=crop"
           title="Exclusive Collection"
-          subtitle="Shop Our Latest Styles"
-          buttonText="View All"
-          buttonLink="/shop?sort=featured"
-          height="h-48 md:h-64"
-        /> */}
+          subtitle="New Arrivals"
+          description="Discover our latest designs crafted for elegance and comfort"
+          ctaText="Explore Now"
+          ctaLink="#products"
+          badge="Limited Time"
+          height="h-[300px] md:h-[400px] lg:h-[500px]"
+          textAlign="left"
+        />
 
         {/* Header - Compact */}
         <div className="bg-white border-b border-gray-200 pt-4 md:pt-6">
@@ -313,7 +315,7 @@ export default function Shop({ products: initialProducts, categories }) {
         />
 
         {/* Products Grid - Full Width - Reduced Padding */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div id="products" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           {isSearching ? (
             <ProductGridSkeleton count={8} />
           ) : filteredProducts.length > 0 ? (
