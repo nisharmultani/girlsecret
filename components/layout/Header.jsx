@@ -22,6 +22,7 @@ const navigation = [
   { name: 'Bras', href: '/shop?category=Bras' },
   { name: 'Panties', href: '/shop?category=Panties' },
   { name: 'Lingerie', href: '/shop?category=Lingerie' },
+  { name: 'Blog', href: '/blog' },
   { name: 'About', href: '/about' },
 ];
 
