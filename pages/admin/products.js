@@ -222,11 +222,6 @@ export default function ProductManagement() {
       return;
     }
 
-    if (productForm.images.length === 0) {
-      alert('Please upload at least one product image');
-      return;
-    }
-
     try {
       setSaving(true);
 
@@ -670,7 +665,7 @@ export default function ProductManagement() {
                 {/* Image Upload */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Product Images <span className="text-red-500">*</span>
+                    Product Images
                   </label>
 
                   <div className="mt-2">
