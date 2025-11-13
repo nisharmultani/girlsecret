@@ -17,11 +17,18 @@ export default function ProductCard({ product }) {
   const availableProducts = product.Available_Products || [];
   const mainImages = product.images || [];
 
-  // Use availableProducts only if there are 2+ images, otherwise use mainImages
-  // This ensures hover effect works for single-variant products with multiple images
-  const allImages = availableProducts.length >= 2 ? availableProducts : mainImages;
-  const firstImage = allImages[0];
-  const secondImage = allImages[1]; // Second image for hover effect
+  // First image: Always from Available_Products if available, otherwise mainImages
+  const firstImage = availableProducts.length > 0 ? availableProducts[0] : mainImages[0];
+
+  // Second image for hover: Try Available_Products[1], then mainImages[0], then mainImages[1]
+  let secondImage = null;
+  if (availableProducts.length > 0) {
+    // If first image is from Available_Products, try Available_Products[1] or mainImages[0]
+    secondImage = availableProducts[1] || mainImages[0];
+  } else {
+    // If first image is from mainImages, use mainImages[1]
+    secondImage = mainImages[1];
+  }
 
   const firstImageUrl = firstImage?.thumbnails?.large?.url || firstImage?.url;
   const secondImageUrl = secondImage?.thumbnails?.large?.url || secondImage?.url;
