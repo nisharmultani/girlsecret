@@ -225,24 +225,29 @@ export default function Shop({ products: initialProducts, categories }) {
           textAlign="left"
         />
 
-        {/* Header - Compact */}
-        <div className="bg-white border-b border-gray-200 pt-4 md:pt-6">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-4 md:pb-5">
+        {/* Header - Refined */}
+        <div className="bg-white border-b border-gray-100 py-6 md:py-8">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between">
-              <h1 className="text-xl md:text-2xl font-serif font-bold text-gray-900">
-                {urlSearch
-                  ? 'Search Results'
-                  : selectedCategory !== 'all'
-                  ? `${selectedCategory} Collection`
-                  : 'Shop All'}
-              </h1>
+              <div>
+                <h1 className="text-2xl md:text-3xl font-serif font-bold text-gray-900 mb-1">
+                  {urlSearch
+                    ? 'Search Results'
+                    : selectedCategory !== 'all'
+                    ? `${selectedCategory} Collection`
+                    : 'Shop All'}
+                </h1>
+                <p className="text-sm text-gray-500">
+                  {filteredProducts.length} {filteredProducts.length === 1 ? 'product' : 'products'} available
+                </p>
+              </div>
               {/* Clear Search/Filter Links */}
               {(urlSearch || (urlCategory && selectedCategory !== 'all')) && (
                 <div className="flex gap-3">
                   {urlSearch && (
                     <button
                       onClick={clearSearch}
-                      className="text-xs sm:text-sm text-black hover:text-gray-700 font-medium underline"
+                      className="text-xs sm:text-sm text-black hover:text-gray-700 font-medium underline underline-offset-2"
                     >
                       Clear search
                     </button>
@@ -250,7 +255,7 @@ export default function Shop({ products: initialProducts, categories }) {
                   {urlCategory && selectedCategory !== 'all' && !urlSearch && (
                     <button
                       onClick={() => router.push('/shop')}
-                      className="text-xs sm:text-sm text-black hover:text-gray-700 font-medium underline"
+                      className="text-xs sm:text-sm text-black hover:text-gray-700 font-medium underline underline-offset-2"
                     >
                       Show all
                     </button>
@@ -314,35 +319,37 @@ export default function Shop({ products: initialProducts, categories }) {
           onClearSearch={clearSearch}
         />
 
-        {/* Products Grid - Full Width - Reduced Padding */}
-        <div id="products" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          {isSearching ? (
-            <ProductGridSkeleton count={8} />
-          ) : filteredProducts.length > 0 ? (
-            <ProductGrid products={filteredProducts} />
-          ) : (
-            <div className="text-center py-16">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 mb-4">
-                <MagnifyingGlassIcon className="w-8 h-8 text-gray-400" />
+        {/* Products Grid - Enhanced Layout */}
+        <div id="products" className="bg-gray-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+            {isSearching ? (
+              <ProductGridSkeleton count={10} />
+            ) : filteredProducts.length > 0 ? (
+              <ProductGrid products={filteredProducts} />
+            ) : (
+              <div className="text-center py-20 bg-white rounded-lg">
+                <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gray-100 mb-6">
+                  <MagnifyingGlassIcon className="w-10 h-10 text-gray-400" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                  No products found
+                </h3>
+                <p className="text-gray-500 mb-6 max-w-md mx-auto">
+                  {urlSearch
+                    ? 'Try a different search term or adjust your filters to find what you\'re looking for.'
+                    : 'Try adjusting your filters to find what you\'re looking for.'}
+                </p>
+                {urlSearch && (
+                  <button
+                    onClick={clearSearch}
+                    className="inline-flex items-center px-6 py-3 bg-black hover:bg-gray-800 text-white font-semibold transition-colors shadow-lg hover:shadow-xl"
+                  >
+                    View all products
+                  </button>
+                )}
               </div>
-              <h3 className="text-lg font-medium text-gray-900 mb-1">
-                No products found
-              </h3>
-              <p className="text-gray-500 mb-4">
-                {urlSearch
-                  ? 'Try a different search term or adjust your filters.'
-                  : 'Try adjusting your filters to find what you&apos;re looking for.'}
-              </p>
-              {urlSearch && (
-                <button
-                  onClick={clearSearch}
-                  className="inline-flex items-center px-4 py-2 bg-black hover:bg-gray-800 text-white rounded-lg font-medium transition-colors"
-                >
-                  View all products
-                </button>
-              )}
-            </div>
-          )}
+            )}
+          </div>
         </div>
 
         {/* Mobile Filter Drawer */}

@@ -34,19 +34,19 @@ export default function ProductCard({ product }) {
   return (
     <Link href={`/products/${product.slug}`} className="group block">
       <div className="relative">
-        {/* Image Container - Fixed size, centered, no stretch */}
-        <div className="relative aspect-[3/4] overflow-hidden bg-white mb-3">
+        {/* Image Container - Proper cover with overflow hidden */}
+        <div className="relative aspect-[3/4] overflow-hidden bg-gray-50 mb-3 rounded-sm">
           {/* Loading Skeleton */}
           {!imageLoaded && (
             <div className={`absolute inset-0 ${imageSkeletonClass}`} />
           )}
 
-          {/* Image - centered, no stretching */}
+          {/* Image - covers entire area, zooms on hover */}
           <Image
             src={imageUrl}
             alt={product.name}
             fill
-            className={`object-contain group-hover:scale-105 transition-transform duration-500 ${
+            className={`object-cover group-hover:scale-110 transition-transform duration-700 ease-out ${
               imageLoaded ? 'opacity-100' : 'opacity-0'
             }`}
             sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
@@ -55,15 +55,18 @@ export default function ProductCard({ product }) {
             quality={85}
           />
 
+          {/* Subtle gradient overlay on hover */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
           {/* Badges Container - Top Left */}
-          <div className="absolute top-2 left-2 flex flex-col gap-1 z-10">
+          <div className="absolute top-2 left-2 flex flex-col gap-1.5 z-10">
             {hasDiscount && (
-              <div className="bg-black text-white text-xs font-bold px-2 py-1">
+              <div className="bg-black text-white text-xs font-bold px-2.5 py-1 shadow-lg">
                 -{discountPercent}%
               </div>
             )}
             {product.isNew && (
-              <div className="bg-white text-black text-xs font-bold px-2 py-1 border border-black">
+              <div className="bg-white text-black text-xs font-bold px-2.5 py-1 border border-black shadow-md">
                 NEW
               </div>
             )}
@@ -71,8 +74,8 @@ export default function ProductCard({ product }) {
 
           {/* Out of Stock Overlay */}
           {!product.inStock && (
-            <div className="absolute inset-0 bg-white/80 flex items-center justify-center">
-              <span className="bg-black text-white text-sm font-bold px-4 py-2">
+            <div className="absolute inset-0 bg-white/90 flex items-center justify-center backdrop-blur-sm">
+              <span className="bg-black text-white text-sm font-bold px-5 py-2.5">
                 SOLD OUT
               </span>
             </div>
@@ -82,37 +85,37 @@ export default function ProductCard({ product }) {
           <button
             onClick={toggleWishlist}
             disabled={isTogglingWishlist}
-            className="absolute top-2 right-2 bg-white/90 hover:bg-white p-2 rounded-full transition-all opacity-0 group-hover:opacity-100 disabled:opacity-50 shadow-sm"
+            className="absolute top-2 right-2 bg-white/95 hover:bg-white p-2.5 rounded-full transition-all opacity-0 group-hover:opacity-100 disabled:opacity-50 shadow-lg hover:shadow-xl transform hover:scale-110"
             aria-label={inWishlist ? "Remove from wishlist" : "Add to wishlist"}
           >
             {inWishlist ? (
-              <HeartSolidIcon className="h-5 w-5 text-black" />
+              <HeartSolidIcon className="h-4 w-4 text-black" />
             ) : (
-              <HeartIcon className="h-5 w-5 text-black" />
+              <HeartIcon className="h-4 w-4 text-black" />
             )}
           </button>
         </div>
 
         {/* Product Info - Below image */}
-        <div className="space-y-2">
+        <div className="space-y-1.5">
           {/* Category - Small, uppercase */}
           {product.category && (
-            <p className="text-xs text-gray-500 uppercase tracking-wide">
+            <p className="text-xs text-gray-500 uppercase tracking-wider">
               {product.category}
             </p>
           )}
 
           {/* Product Name */}
-          <h3 className="text-sm font-medium text-gray-900 line-clamp-2 leading-snug min-h-[2.5rem]">
+          <h3 className="text-sm font-medium text-gray-900 line-clamp-2 leading-snug min-h-[2.5rem] group-hover:text-gray-700 transition-colors">
             {product.name}
           </h3>
 
           {/* Rating and Sold Count - Single Line */}
-          <div className="flex items-center gap-3 text-xs min-h-[1.25rem]">
+          <div className="flex items-center gap-2.5 text-xs min-h-[1.25rem]">
             {/* Star Rating */}
             {product.reviewCount > 0 && (
               <div className="flex items-center gap-1">
-                <div className="flex items-center">
+                <div className="flex items-center -space-x-0.5">
                   {[1, 2, 3, 4, 5].map((star) => (
                     <StarSolidIcon
                       key={star}
@@ -124,7 +127,7 @@ export default function ProductCard({ product }) {
                     />
                   ))}
                 </div>
-                <span className="text-gray-600 font-medium">
+                <span className="text-gray-700 font-semibold">
                   {(product.averageRating || 0).toFixed(1)}
                 </span>
                 <span className="text-gray-400">
@@ -141,8 +144,8 @@ export default function ProductCard({ product }) {
             )}
           </div>
 
-          {/* Price - Larger, more prominent */}
-          <div className="flex items-baseline gap-2 pt-1">
+          {/* Price - Prominent and attractive */}
+          <div className="flex items-baseline gap-2 pt-0.5">
             {hasDiscount ? (
               <>
                 <span className="text-xl font-bold text-black">
