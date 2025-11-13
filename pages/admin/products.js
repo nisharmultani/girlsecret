@@ -433,15 +433,20 @@ export default function ProductManagement() {
                       <tr key={product.id} className="hover:bg-gray-50">
                         <td className="px-6 py-4">
                           <div className="flex items-center">
-                            {product.images && product.images.length > 0 && (
-                              <Image
-                                src={product.images[0]}
-                                alt={product.name}
-                                height={12}
-                                width={12}
-                                className="w-12 h-12 object-cover rounded mr-3"
-                              />
-                            )}
+                            {product.images && product.images.length > 0 && (() => {
+                              const firstImage = product.images[0];
+                              const imageUrl = typeof firstImage === 'string'
+                                ? firstImage
+                                : (firstImage?.thumbnails?.large?.url || firstImage?.url || '');
+
+                              return imageUrl ? (
+                                <img
+                                  src={imageUrl}
+                                  alt={product.name}
+                                  className="w-12 h-12 object-cover rounded mr-3"
+                                />
+                              ) : null;
+                            })()}
                             <div>
                               <div className="text-sm font-medium text-gray-900">
                                 {product.name}
@@ -704,31 +709,37 @@ export default function ProductManagement() {
                   {/* Image Preview */}
                   {productForm.images.length > 0 && (
                     <div className="mt-4 grid grid-cols-3 gap-4">
-                      {productForm.images.map((url, index) => (
-                        <div key={index} className="relative group">
-                          <Image
-                            src={url}
-                            height={32}
-                            width={32}
-                            alt={`Product ${index + 1}`}
-                            className="w-full h-32 object-cover rounded-lg"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => removeImage(index)}
-                            className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
-                          >
-                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                          </button>
-                          {index === 0 && (
-                            <span className="absolute bottom-2 left-2 bg-pink-600 text-white text-xs px-2 py-1 rounded">
-                              Main
-                            </span>
-                          )}
-                        </div>
-                      ))}
+                      {productForm.images.map((image, index) => {
+                        const imageUrl = typeof image === 'string'
+                          ? image
+                          : (image?.thumbnails?.large?.url || image?.url || '');
+
+                        return (
+                          <div key={index} className="relative group">
+                            {imageUrl && (
+                              <img
+                                src={imageUrl}
+                                alt={`Product ${index + 1}`}
+                                className="w-full h-32 object-cover rounded-lg"
+                              />
+                            )}
+                            <button
+                              type="button"
+                              onClick={() => removeImage(index)}
+                              className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                            >
+                              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                              </svg>
+                            </button>
+                            {index === 0 && (
+                              <span className="absolute bottom-2 left-2 bg-pink-600 text-white text-xs px-2 py-1 rounded">
+                                Main
+                              </span>
+                            )}
+                          </div>
+                        );
+                      })}
                     </div>
                   )}
                 </div>
@@ -776,26 +787,32 @@ export default function ProductManagement() {
                   {/* Available Product Image Preview */}
                   {productForm.availableProductImages.length > 0 && (
                     <div className="mt-4 grid grid-cols-4 gap-3">
-                      {productForm.availableProductImages.map((url, index) => (
-                        <div key={index} className="relative group">
-                          <Image
-                            src={url}
-                            alt={`Variant ${index + 1}`}
-                            height={24}
-                            width={24}
-                            className="w-full h-24 object-cover rounded-lg"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => removeAvailableProductImage(index)}
-                            className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
-                          >
-                            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                          </button>
-                        </div>
-                      ))}
+                      {productForm.availableProductImages.map((image, index) => {
+                        const imageUrl = typeof image === 'string'
+                          ? image
+                          : (image?.thumbnails?.large?.url || image?.url || '');
+
+                        return (
+                          <div key={index} className="relative group">
+                            {imageUrl && (
+                              <img
+                                src={imageUrl}
+                                alt={`Variant ${index + 1}`}
+                                className="w-full h-24 object-cover rounded-lg"
+                              />
+                            )}
+                            <button
+                              type="button"
+                              onClick={() => removeAvailableProductImage(index)}
+                              className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                            >
+                              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                              </svg>
+                            </button>
+                          </div>
+                        );
+                      })}
                     </div>
                   )}
                 </div>
