@@ -207,47 +207,114 @@ export default function ProductDetail({ product, reviews = [] }) {
 
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-16">
           <div className="lg:grid lg:grid-cols-[1fr_450px] lg:gap-16">
-            {/* Vertical Scrollable Image Gallery - Modern Style */}
+            {/* Vertical Scrollable Image Gallery - Dynamic Layout */}
             <div className="space-y-1 lg:pr-4">
-              {allMedia.map((media, index) => (
-                <div key={index} className="relative w-full" data-image-index={index}>
-                  {media.type === 'video' ? (
-                    // Video Player
-                    <div className="relative w-full aspect-[3/4] rounded-sm overflow-hidden bg-black">
-                      <iframe
-                        src={media.embedUrl}
-                        title={`Product video ${index + 1}`}
-                        className="absolute inset-0 w-full h-full"
-                        frameBorder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                      />
-                      {hasDiscount && index === 0 && (
-                        <div className="absolute top-4 left-4 bg-black text-white px-3 py-1.5 text-sm font-bold z-10">
-                          -{discountPercent}% OFF
+              {allMedia.map((media, index) => {
+                // Create dynamic layout pattern: large, 2 side-by-side, large, 2 side-by-side, etc.
+                const position = index % 3;
+                const isLarge = position === 0; // Index 0, 3, 6, 9... = large
+                const isPairStart = position === 1; // Index 1, 4, 7... = start of pair
+                const isPairEnd = position === 2; // Index 2, 5, 8... = end of pair
+
+                // Skip rendering pair end images (they'll be rendered with pair start)
+                if (isPairEnd) return null;
+
+                return (
+                  <div key={index} className="relative w-full" data-image-index={index}>
+                    {isLarge ? (
+                      // Large Full-Width Image or Video
+                      media.type === 'video' ? (
+                        <div className="relative w-full aspect-[3/4] rounded-sm overflow-hidden bg-black">
+                          <iframe
+                            src={media.embedUrl}
+                            title={`Product video ${index + 1}`}
+                            className="absolute inset-0 w-full h-full"
+                            frameBorder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                          />
+                          {hasDiscount && index === 0 && (
+                            <div className="absolute top-4 left-4 bg-black text-white px-3 py-1.5 text-sm font-bold z-10">
+                              -{discountPercent}% OFF
+                            </div>
+                          )}
                         </div>
-                      )}
-                    </div>
-                  ) : (
-                    // Large Product Image
-                    <div className="relative w-full aspect-[3/4] rounded-sm overflow-hidden bg-gray-50">
-                      <Image
-                        src={media.url || media.thumbnails?.large?.url}
-                        alt={`${product.name} ${index + 1}`}
-                        fill
-                        className="object-cover"
-                        sizes="(max-width: 1024px) 100vw, 60vw"
-                        priority={index === 0}
-                      />
-                      {hasDiscount && index === 0 && (
-                        <div className="absolute top-4 left-4 bg-black text-white px-3 py-1.5 text-sm font-bold">
-                          -{discountPercent}% OFF
+                      ) : (
+                        <div className="relative w-full aspect-[3/4] rounded-sm overflow-hidden bg-gray-50">
+                          <Image
+                            src={media.url || media.thumbnails?.large?.url}
+                            alt={`${product.name} ${index + 1}`}
+                            fill
+                            className="object-cover"
+                            sizes="(max-width: 1024px) 100vw, 60vw"
+                            priority={index === 0}
+                          />
+                          {hasDiscount && index === 0 && (
+                            <div className="absolute top-4 left-4 bg-black text-white px-3 py-1.5 text-sm font-bold">
+                              -{discountPercent}% OFF
+                            </div>
+                          )}
                         </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              ))}
+                      )
+                    ) : isPairStart && allMedia[index + 1] ? (
+                      // Two Images Side by Side
+                      <div className="grid grid-cols-2 gap-1">
+                        {/* First image of pair */}
+                        <div className="relative w-full" data-image-index={index}>
+                          {media.type === 'video' ? (
+                            <div className="relative w-full aspect-[3/4] rounded-sm overflow-hidden bg-black">
+                              <iframe
+                                src={media.embedUrl}
+                                title={`Product video ${index + 1}`}
+                                className="absolute inset-0 w-full h-full"
+                                frameBorder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowFullScreen
+                              />
+                            </div>
+                          ) : (
+                            <div className="relative w-full aspect-[3/4] rounded-sm overflow-hidden bg-gray-50">
+                              <Image
+                                src={media.url || media.thumbnails?.large?.url}
+                                alt={`${product.name} ${index + 1}`}
+                                fill
+                                className="object-cover"
+                                sizes="(max-width: 1024px) 50vw, 30vw"
+                              />
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Second image of pair */}
+                        <div className="relative w-full" data-image-index={index + 1}>
+                          {allMedia[index + 1].type === 'video' ? (
+                            <div className="relative w-full aspect-[3/4] rounded-sm overflow-hidden bg-black">
+                              <iframe
+                                src={allMedia[index + 1].embedUrl}
+                                title={`Product video ${index + 2}`}
+                                className="absolute inset-0 w-full h-full"
+                                frameBorder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowFullScreen
+                              />
+                            </div>
+                          ) : (
+                            <div className="relative w-full aspect-[3/4] rounded-sm overflow-hidden bg-gray-50">
+                              <Image
+                                src={allMedia[index + 1].url || allMedia[index + 1].thumbnails?.large?.url}
+                                alt={`${product.name} ${index + 2}`}
+                                fill
+                                className="object-cover"
+                                sizes="(max-width: 1024px) 50vw, 30vw"
+                              />
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ) : null}
+                  </div>
+                );
+              }).filter(Boolean)}
 
               {/* Trust Badges Below Gallery - Desktop Only */}
               <div className="hidden lg:grid grid-cols-2 gap-3 pt-4">
