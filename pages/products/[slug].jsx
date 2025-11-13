@@ -206,123 +206,80 @@ export default function ProductDetail({ product, reviews = [] }) {
         </div>
 
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-16">
-          <div className="grid lg:grid-cols-2 gap-12">
-            {/* Media Gallery - AliExpress style with thumbnails on left */}
-            <div className="flex gap-4">
-              {/* Thumbnails - Left Side with scroll */}
-              {allMedia.length > 1 && (
-                <div className="flex flex-col gap-3 w-20 flex-shrink-0 max-h-[600px] overflow-y-auto pr-1" style={{scrollbarWidth: 'thin', scrollbarColor: '#d1d5db #f3f4f6'}}>
-                  {allMedia.map((media, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setSelectedImage(index)}
-                      className={`relative aspect-square rounded-lg overflow-hidden border-2 transition-all flex-shrink-0 ${
-                        selectedImage === index
-                          ? 'ring-2 ring-rose-500 border-rose-500 shadow-lg'
-                          : 'border-gray-200 hover:border-rose-300'
-                      }`}
-                    >
-                      {media.type === 'video' ? (
-                        // Video thumbnail
-                        <div className="w-full h-full bg-black flex items-center justify-center">
-                          {getVideoThumbnail(media) ? (
-                            <Image
-                              src={getVideoThumbnail(media)}
-                              alt={`Video ${index + 1}`}
-                              fill
-                              className="object-cover"
-                            />
-                          ) : (
-                            <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
-                              <path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" />
-                            </svg>
-                          )}
-                          <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center">
-                            <svg className="w-8 h-8 text-white drop-shadow-lg" fill="currentColor" viewBox="0 0 20 20">
-                              <path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" />
-                            </svg>
-                          </div>
+          <div className="lg:grid lg:grid-cols-[1fr_450px] lg:gap-16">
+            {/* Vertical Scrollable Image Gallery - Modern Style */}
+            <div className="space-y-1 lg:pr-4">
+              {allMedia.map((media, index) => (
+                <div key={index} className="relative w-full" data-image-index={index}>
+                  {media.type === 'video' ? (
+                    // Video Player
+                    <div className="relative w-full aspect-[3/4] rounded-sm overflow-hidden bg-black">
+                      <iframe
+                        src={media.embedUrl}
+                        title={`Product video ${index + 1}`}
+                        className="absolute inset-0 w-full h-full"
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      />
+                      {hasDiscount && index === 0 && (
+                        <div className="absolute top-4 left-4 bg-black text-white px-3 py-1.5 text-sm font-bold z-10">
+                          -{discountPercent}% OFF
                         </div>
-                      ) : (
-                        // Image thumbnail
-                        <Image
-                          src={media.thumbnails?.large?.url || media.url}
-                          alt={`${product.name} ${index + 1}`}
-                          fill
-                          className="object-cover"
-                        />
                       )}
-                    </button>
-                  ))}
+                    </div>
+                  ) : (
+                    // Large Product Image
+                    <div className="relative w-full aspect-[3/4] rounded-sm overflow-hidden bg-gray-50">
+                      <Image
+                        src={media.url || media.thumbnails?.large?.url}
+                        alt={`${product.name} ${index + 1}`}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 1024px) 100vw, 60vw"
+                        priority={index === 0}
+                      />
+                      {hasDiscount && index === 0 && (
+                        <div className="absolute top-4 left-4 bg-black text-white px-3 py-1.5 text-sm font-bold">
+                          -{discountPercent}% OFF
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
-              )}
+              ))}
 
-              {/* Main Display - Right Side */}
-              <div className="flex-1 space-y-4">
-                {allMedia[selectedImage]?.type === 'video' ? (
-                  // Video Player
-                  <div className="relative w-full aspect-square rounded-lg overflow-hidden bg-black">
-                    <iframe
-                      src={allMedia[selectedImage].embedUrl}
-                      title="Product video"
-                      className="absolute inset-0 w-full h-full"
-                      frameBorder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                    />
-                    {hasDiscount && (
-                      <div className="absolute top-4 left-4 bg-rose-500 text-white px-4 py-2 rounded-full text-lg font-bold z-10">
-                        -{discountPercent}%
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  // Image Zoom
-                  <ImageZoom
-                    src={allMedia[selectedImage]?.url || allMedia[selectedImage]?.thumbnails?.large?.url}
-                    alt={product.name}
-                    priority
-                  >
-                    {hasDiscount && (
-                      <div className="absolute top-4 left-4 bg-rose-500 text-white px-4 py-2 rounded-full text-lg font-bold">
-                        -{discountPercent}%
-                      </div>
-                    )}
-                  </ImageZoom>
-                )}
-
-                {/* Trust Badges Below Gallery */}
-                <div className="grid grid-cols-2 gap-3 mt-4">
-                  <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg border border-gray-200">
-                    <svg className="w-5 h-5 text-green-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <span className="text-xs font-medium text-gray-700">Quality Guaranteed</span>
-                  </div>
-                  <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg border border-gray-200">
-                    <svg className="w-5 h-5 text-blue-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                    </svg>
-                    <span className="text-xs font-medium text-gray-700">Secure Checkout</span>
-                  </div>
-                  <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg border border-gray-200">
-                    <svg className="w-5 h-5 text-purple-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-                    </svg>
-                    <span className="text-xs font-medium text-gray-700">Easy Returns</span>
-                  </div>
-                  <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg border border-gray-200">
-                    <svg className="w-5 h-5 text-rose-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                    </svg>
-                    <span className="text-xs font-medium text-gray-700">Discreet Delivery</span>
-                  </div>
+              {/* Trust Badges Below Gallery - Desktop Only */}
+              <div className="hidden lg:grid grid-cols-2 gap-3 pt-4">
+                <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-sm border border-gray-200">
+                  <svg className="w-5 h-5 text-green-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span className="text-xs font-medium text-gray-700">Quality Guaranteed</span>
+                </div>
+                <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-sm border border-gray-200">
+                  <svg className="w-5 h-5 text-blue-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
+                  <span className="text-xs font-medium text-gray-700">Secure Checkout</span>
+                </div>
+                <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-sm border border-gray-200">
+                  <svg className="w-5 h-5 text-purple-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                  </svg>
+                  <span className="text-xs font-medium text-gray-700">Easy Returns</span>
+                </div>
+                <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-sm border border-gray-200">
+                  <svg className="w-5 h-5 text-rose-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                  </svg>
+                  <span className="text-xs font-medium text-gray-700">Discreet Delivery</span>
                 </div>
               </div>
             </div>
 
-            {/* Product Info */}
-            <div>
+            {/* Product Info - Sticky on Desktop */}
+            <div className="mt-8 lg:mt-0 lg:sticky lg:top-4 lg:self-start lg:h-fit">
               {product.category && (
                 <p className="text-sm text-gray-500 uppercase tracking-wide mb-2">
                   {product.category}
@@ -512,13 +469,13 @@ export default function ProductDetail({ product, reviews = [] }) {
                 </div>
               )}
 
-              {/* Available Products Section */}
+              {/* Available Products Section - Quick Navigation */}
               {availableProductCount > 0 && (
                 <div className="mb-6">
                   <label className="text-sm font-semibold text-gray-900 mb-3 block">
-                    Available Products ({availableProductCount})
+                    Available Variants ({availableProductCount})
                   </label>
-                  <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
+                  <div className="flex flex-wrap gap-3">
                     {availableProductImages.map((image, index) => {
                       const imageUrl = image.url || image.thumbnails?.large?.url;
                       const isSelected = selectedImage === index;
@@ -526,27 +483,37 @@ export default function ProductDetail({ product, reviews = [] }) {
                       return (
                         <button
                           key={index}
-                          onClick={() => handleAvailableProductClick(index)}
-                          className={`relative group overflow-hidden rounded-lg border-2 transition-all hover:scale-105 ${
+                          onClick={() => {
+                            setSelectedImage(index);
+                            // Scroll to the corresponding image in the gallery
+                            if (typeof window !== 'undefined') {
+                              const imageElements = document.querySelectorAll('[data-image-index]');
+                              const targetImage = imageElements[index];
+                              if (targetImage) {
+                                targetImage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                              }
+                            }
+                          }}
+                          className={`relative group overflow-hidden rounded-sm border-2 transition-all ${
                             isSelected
-                              ? 'border-rose-500 ring-2 ring-rose-200 shadow-lg scale-105'
-                              : 'border-gray-300 hover:border-rose-300'
+                              ? 'border-black ring-2 ring-gray-300 shadow-md'
+                              : 'border-gray-300 hover:border-gray-400'
                           }`}
                           type="button"
-                          title={`Available product ${index + 1}`}
+                          title={`Variant ${index + 1}`}
                         >
-                          <div className="relative aspect-square">
+                          <div className="relative w-16 h-16">
                             <Image
                               src={imageUrl}
-                              alt={`Available product ${index + 1}`}
+                              alt={`Variant ${index + 1}`}
                               fill
-                              sizes="(max-width: 640px) 33vw, (max-width: 1024px) 25vw, 20vw"
+                              sizes="64px"
                               className="object-cover"
                             />
                             {/* Selected Checkmark */}
                             {isSelected && (
-                              <div className="absolute inset-0 bg-rose-500 bg-opacity-20 flex items-center justify-center">
-                                <svg className="w-8 h-8 text-white drop-shadow-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <div className="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center">
+                                <svg className="w-5 h-5 text-white drop-shadow-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                                 </svg>
                               </div>
