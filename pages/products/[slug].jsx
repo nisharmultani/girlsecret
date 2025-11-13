@@ -337,7 +337,7 @@ export default function ProductDetail({ product, reviews = [] }) {
                   <span className="text-xs font-medium text-gray-700">Easy Returns</span>
                 </div>
                 <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-sm border border-gray-200">
-                  <svg className="w-5 h-5 text-rose-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="w-5 h-5 text-gray-700 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                   </svg>
                   <span className="text-xs font-medium text-gray-700">Discreet Delivery</span>
@@ -395,13 +395,13 @@ export default function ProductDetail({ product, reviews = [] }) {
                 <div className="flex items-center gap-4">
                   {hasDiscount ? (
                     <>
-                      <span className="text-4xl font-bold text-rose-600">
+                      <span className="text-4xl font-bold text-black">
                         {formatPrice(product.salePrice)}
                       </span>
                       <span className="text-2xl text-gray-500 line-through">
                         {formatPrice(product.price)}
                       </span>
-                      <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-rose-100 text-rose-800">
+                      <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-black text-white">
                         SAVE {discountPercent}%
                       </span>
                     </>
@@ -412,7 +412,7 @@ export default function ProductDetail({ product, reviews = [] }) {
                   )}
                 </div>
                 {hasDiscount && (
-                  <p className="text-sm text-rose-600 mt-2">
+                  <p className="text-sm text-gray-700 mt-2">
                     You save {formatPrice(discountAmount)} on this item!
                   </p>
                 )}
@@ -448,7 +448,7 @@ export default function ProductDetail({ product, reviews = [] }) {
                 {product.description && product.description.length > 200 && (
                   <button
                     onClick={() => setShowFullDescription(!showFullDescription)}
-                    className="text-rose-600 hover:text-rose-700 font-medium text-sm mt-2 inline-flex items-center gap-1"
+                    className="text-black hover:text-gray-700 font-medium text-sm mt-2 inline-flex items-center gap-1"
                   >
                     {showFullDescription ? (
                       <>
@@ -473,7 +473,7 @@ export default function ProductDetail({ product, reviews = [] }) {
               {product.specifications && (
                 <div className="mb-6 bg-gray-50 rounded-lg p-5 border border-gray-200">
                   <h3 className="text-base font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                    <svg className="w-5 h-5 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg className="w-5 h-5 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
                     Product Specifications
@@ -508,11 +508,11 @@ export default function ProductDetail({ product, reviews = [] }) {
                 <div className="mb-6">
                   <div className="flex items-center justify-between mb-3">
                     <label className="text-sm font-semibold text-gray-900">
-                      Select Size {selectedSize && <span className="text-rose-600">: {selectedSize}</span>}
+                      Select Size {selectedSize && <span className="text-black">: {selectedSize}</span>}
                     </label>
                     <button
                       onClick={() => setShowSizeGuide(true)}
-                      className="text-sm text-rose-600 hover:text-rose-700 font-medium"
+                      className="text-sm text-black hover:text-gray-700 font-medium"
                       type="button"
                     >
                       Size Guide
@@ -525,8 +525,8 @@ export default function ProductDetail({ product, reviews = [] }) {
                         onClick={() => setSelectedSize(size)}
                         className={`px-3 py-2 border-2 rounded-lg text-sm font-medium transition-all ${
                           selectedSize === size
-                            ? 'border-rose-500 bg-rose-50 text-rose-700 shadow-md'
-                            : 'border-gray-300 hover:border-rose-300 hover:bg-gray-50'
+                            ? 'border-black bg-gray-100 text-black shadow-md'
+                            : 'border-gray-300 hover:border-gray-400 hover:bg-gray-50'
                         }`}
                       >
                         {size}
@@ -615,7 +615,7 @@ export default function ProductDetail({ product, reviews = [] }) {
                   title={inWishlist ? "Remove from wishlist" : "Add to wishlist"}
                 >
                   {inWishlist ? (
-                    <HeartSolidIcon className="w-6 h-6 text-rose-500" />
+                    <HeartSolidIcon className="w-6 h-6 text-black" />
                   ) : (
                     <HeartIcon className="w-6 h-6" />
                   )}
@@ -625,14 +625,14 @@ export default function ProductDetail({ product, reviews = [] }) {
               {/* Features */}
               <div className="space-y-3 mb-6 border-t border-b border-gray-200 py-6">
                 <div className="flex items-start gap-3 text-gray-700">
-                  <TruckIcon className="w-6 h-6 text-rose-500 flex-shrink-0 mt-0.5" />
+                  <TruckIcon className="w-6 h-6 text-gray-700 flex-shrink-0 mt-0.5" />
                   <div>
                     <div className="font-medium">Free shipping on orders over £50</div>
                     <div className="text-sm text-gray-600">Ships in plain, unmarked packaging for your privacy</div>
                   </div>
                 </div>
                 <div className="flex items-center gap-3 text-gray-700">
-                  <ShieldCheckIcon className="w-6 h-6 text-rose-500" />
+                  <ShieldCheckIcon className="w-6 h-6 text-gray-700" />
                   <span>Easy exchanges & 30-day returns</span>
                 </div>
               </div>
@@ -654,7 +654,7 @@ export default function ProductDetail({ product, reviews = [] }) {
               {reviews.length > 3 && (
                 <button
                   onClick={() => setShowAllReviews(true)}
-                  className="text-rose-600 hover:text-rose-700 font-semibold flex items-center gap-2"
+                  className="text-black hover:text-gray-700 font-semibold flex items-center gap-2"
                 >
                   View All {reviews.length} Reviews
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -672,7 +672,7 @@ export default function ProductDetail({ product, reviews = [] }) {
                       <div className="flex items-start justify-between mb-3">
                         <div className="flex items-center gap-3">
                           {/* Avatar */}
-                          <div className="w-10 h-10 rounded-full bg-rose-500 flex items-center justify-center text-white font-semibold">
+                          <div className="w-10 h-10 rounded-full bg-black flex items-center justify-center text-white font-semibold">
                             {review.name.charAt(0).toUpperCase()}
                           </div>
 
@@ -789,7 +789,7 @@ export default function ProductDetail({ product, reviews = [] }) {
                 <div className="flex items-center gap-2">
                   {hasDiscount ? (
                     <>
-                      <span className="text-xl font-bold text-rose-600">
+                      <span className="text-xl font-bold text-black">
                         {formatPrice(product.salePrice)}
                       </span>
                       <span className="text-sm text-gray-500 line-through">
@@ -808,7 +808,7 @@ export default function ProductDetail({ product, reviews = [] }) {
               <button
                 onClick={handleAddToCart}
                 disabled={!product.inStock || isAdding}
-                className="flex-1 bg-rose-500 hover:bg-rose-600 text-white font-semibold py-3 px-4 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm flex items-center justify-center gap-2"
+                className="flex-1 bg-black hover:bg-gray-800 text-white font-semibold py-3 px-4 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm flex items-center justify-center gap-2"
               >
                 <ShoppingBagIcon className="w-5 h-5" />
                 {isAdding ? 'Adding...' : product.inStock ? 'Add to Cart' : 'Out of Stock'}
@@ -826,7 +826,7 @@ export default function ProductDetail({ product, reviews = [] }) {
                 title={inWishlist ? "Remove from wishlist" : "Add to wishlist"}
               >
                 {inWishlist ? (
-                  <HeartSolidIcon className="w-6 h-6 text-rose-500" />
+                  <HeartSolidIcon className="w-6 h-6 text-black" />
                 ) : (
                   <HeartIcon className="w-6 h-6 text-gray-700" />
                 )}
