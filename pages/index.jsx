@@ -58,7 +58,7 @@ export default function Home({ featuredProducts, newArrivals, bestSellers }) {
       <HeroCarousel />
 
       {/* Promotional Banner */}
-      <Banner
+      {/* <Banner
         imageSrc="https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=1920&h=400&fit=crop"
         imageAlt="New Collection Banner"
         title="New Collection"
@@ -66,13 +66,13 @@ export default function Home({ featuredProducts, newArrivals, bestSellers }) {
         buttonText="Explore Now"
         buttonLink="/shop"
         height="h-80 md:h-96"
-      />
+      /> */}
 
       {/* Shop by Category */}
       <ShopByCategory />
 
       {/* Decorative Divider */}
-      <SectionDivider variant="pattern" />
+      {/* <SectionDivider variant="pattern" /> */}
 
       {/* Featured Products Section */}
       <section className="py-16 md:py-20 bg-white">
@@ -96,7 +96,7 @@ export default function Home({ featuredProducts, newArrivals, bestSellers }) {
       </section>
 
       {/* Decorative Divider */}
-      <SectionDivider variant="dots" />
+      {/* <SectionDivider variant="dots" /> */}
 
       {/* New Arrivals Section */}
       {newArrivals.length > 0 && (
@@ -131,7 +131,7 @@ export default function Home({ featuredProducts, newArrivals, bestSellers }) {
       )}
 
       {/* Decorative Divider */}
-      <SectionDivider variant="simple" />
+      {/* <SectionDivider variant="simple" /> */}
 
       {/* Value Proposition / Why Choose Us */}
       <section className="py-16 md:py-20 bg-white">
@@ -210,13 +210,13 @@ export default function Home({ featuredProducts, newArrivals, bestSellers }) {
       )}
 
       {/* Decorative Divider */}
-      <SectionDivider variant="pattern" />
+      {/* <SectionDivider variant="pattern" /> */}
 
       {/* Customer Testimonials */}
       <TestimonialsCarousel />
 
       {/* Decorative Divider */}
-      <SectionDivider variant="dots" />
+      {/* <SectionDivider variant="dots" /> */}
 
       {/* Newsletter Section */}
       <section className="py-16 md:py-20 bg-white">
