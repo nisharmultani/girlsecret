@@ -275,30 +275,29 @@ export async function getStaticProps() {
       reviewCount: reviewStats[product.id]?.count || 0,
     }));
 
-    // Featured Products - Show 6 for 3-column grid
-    const featuredProducts = productsWithReviews.filter(p => p.featured).slice(0, 6);
+    // Featured Products - Show 6 newest featured products
+    const featuredProducts = productsWithReviews
+      .filter(p => p.featured)
+      .sort((a, b) => {
+        const dateA = new Date(a.created_At || 0);
+        const dateB = new Date(b.created_At || 0);
+        return dateB - dateA; // Newest first
+      })
+      .slice(0, 6);
 
     // New Arrivals - Most recent products (3 for cleaner grid)
     const newArrivals = productsWithReviews
       .sort((a, b) => {
-        const dateA = new Date(a.createdTime || 0);
-        const dateB = new Date(b.createdTime || 0);
-        return dateB - dateA;
+        const dateA = new Date(a.created_At || 0);
+        const dateB = new Date(b.created_At || 0);
+        return dateB - dateA; // Newest first
       })
       .slice(0, 3);
 
-    // Best Sellers - Featured products that aren't in featuredProducts (3 for cleaner grid)
+    // Best Sellers - Sort by sold count (3 for cleaner grid)
     const bestSellers = productsWithReviews
-      .filter(p => p.featured && !featuredProducts.includes(p))
+      .sort((a, b) => (b.soldCount || 0) - (a.soldCount || 0)) // Highest sold count first
       .slice(0, 3);
-
-    // If not enough best sellers, fill with random products
-    if (bestSellers.length < 3) {
-      const additionalProducts = productsWithReviews
-        .filter(p => !featuredProducts.includes(p) && !bestSellers.includes(p))
-        .slice(0, 3 - bestSellers.length);
-      bestSellers.push(...additionalProducts);
-    }
 
     return {
       props: {
