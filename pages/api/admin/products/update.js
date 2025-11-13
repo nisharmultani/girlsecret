@@ -70,7 +70,14 @@ export default async function handler(req, res) {
     // Handle main images - convert URLs to Airtable attachment format
     if (images !== undefined) {
       if (images.length > 0) {
-        updateData.Images = images.map(url => ({ url }));
+        updateData.Images = images.map(img => {
+          // If it's already an Airtable attachment object (has id property), extract id and url
+          if (typeof img === 'object' && img !== null && img.id) {
+            return { id: img.id, url: img.url || img.thumbnails?.large?.url };
+          }
+          // If it's just a URL string, wrap it
+          return typeof img === 'string' ? { url: img } : { url: img.url };
+        });
       } else {
         updateData.Images = [];
       }
@@ -79,7 +86,14 @@ export default async function handler(req, res) {
     // Handle available product images (variants) - convert URLs to Airtable attachment format
     if (availableProductImages !== undefined) {
       if (availableProductImages.length > 0) {
-        updateData.Available_Products = availableProductImages.map(url => ({ url }));
+        updateData.Available_Products = availableProductImages.map(img => {
+          // If it's already an Airtable attachment object (has id property), extract id and url
+          if (typeof img === 'object' && img !== null && img.id) {
+            return { id: img.id, url: img.url || img.thumbnails?.large?.url };
+          }
+          // If it's just a URL string, wrap it
+          return typeof img === 'string' ? { url: img } : { url: img.url };
+        });
       } else {
         updateData.Available_Products = [];
       }

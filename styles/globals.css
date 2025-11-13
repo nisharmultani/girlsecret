@@ -34,34 +34,34 @@
 @layer components {
   /* === PREMIUM BUTTONS === */
   .btn-primary {
-    @apply bg-rose-500 text-white px-6 py-3 rounded-xl font-semibold
-    hover:bg-rose-600 active:scale-95
+    @apply bg-black text-white px-6 py-3 rounded-xl font-semibold
+    hover:bg-neutral-800 active:scale-95
     transition-all duration-300 ease-out
-    shadow-lg shadow-rose-500/30 hover:shadow-xl hover:shadow-rose-500/40
+    shadow-lg shadow-black/30 hover:shadow-xl hover:shadow-black/40
     hover:-translate-y-0.5;
   }
 
   .btn-secondary {
-    @apply bg-white text-rose-600 px-6 py-3 rounded-xl font-semibold
-    border-2 border-rose-200 hover:border-rose-400 hover:bg-rose-50
+    @apply bg-white text-black px-6 py-3 rounded-xl font-semibold
+    border-2 border-gray-200 hover:border-black hover:bg-gray-50
     active:scale-95 transition-all duration-300 ease-out
     shadow-md hover:shadow-lg hover:-translate-y-0.5;
   }
 
   .btn-blush {
-    @apply bg-gradient-to-r from-blush-400 via-rose-400 to-rose-500
+    @apply bg-gradient-to-r from-neutral-800 via-neutral-700 to-black
     text-white px-6 py-3 rounded-xl font-semibold
-    hover:from-blush-500 hover:via-rose-500 hover:to-rose-600
+    hover:from-neutral-900 hover:via-neutral-800 hover:to-black
     active:scale-95 transition-all duration-300 ease-out
-    shadow-lg shadow-blush-500/30 hover:shadow-xl hover:shadow-rose-500/40
+    shadow-lg shadow-black/30 hover:shadow-xl hover:shadow-black/40
     hover:-translate-y-0.5;
   }
 
   .btn-luxury {
-    @apply relative overflow-hidden bg-gradient-to-r from-rose-500 via-blush-500 to-lavender-500
+    @apply relative overflow-hidden bg-gradient-to-r from-neutral-800 via-neutral-900 to-black
     text-white px-8 py-4 rounded-2xl font-bold text-lg
     transition-all duration-500 ease-out
-    shadow-2xl shadow-rose-500/50 hover:shadow-rose-500/60
+    shadow-2xl shadow-black/50 hover:shadow-black/60
     hover:scale-105 active:scale-100
     before:absolute before:inset-0 before:bg-white/20 before:translate-y-full
     before:transition-transform before:duration-500 hover:before:translate-y-0;
@@ -78,7 +78,7 @@
 
   .btn-outline {
     @apply bg-transparent text-gray-700 px-6 py-3 rounded-xl font-semibold
-    border-2 border-gray-300 hover:border-rose-400 hover:text-rose-600 hover:bg-rose-50
+    border-2 border-gray-300 hover:border-black hover:text-black hover:bg-gray-50
     active:scale-95 transition-all duration-300 ease-out
     hover:shadow-md hover:-translate-y-0.5;
   }
@@ -86,7 +86,7 @@
   /* === INPUT FIELDS === */
   .input-field {
     @apply w-full px-4 py-3 border-2 border-gray-200 rounded-xl
-    focus:ring-4 focus:ring-rose-400/20 focus:border-rose-400
+    focus:ring-4 focus:ring-black/20 focus:border-black
     transition-all duration-300 ease-out
     shadow-sm focus:shadow-md
     placeholder:text-gray-400;
@@ -101,11 +101,11 @@
   }
 
   .card-luxury {
-    @apply bg-gradient-to-br from-white via-rose-50/30 to-blush-50/30
-    rounded-3xl overflow-hidden border border-rose-100/50
+    @apply bg-gradient-to-br from-white via-gray-50/30 to-gray-100/30
+    rounded-3xl overflow-hidden border border-gray-200/50
     transition-all duration-500 ease-out
-    shadow-2xl shadow-rose-200/40
-    hover:shadow-[0_20px_60px_-15px_rgba(244,63,94,0.3)]
+    shadow-2xl shadow-gray-300/40
+    hover:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.2)]
     hover:-translate-y-3 hover:scale-[1.02];
   }
 
@@ -136,18 +136,18 @@
   }
 
   .badge-sale {
-    @apply badge bg-gradient-to-r from-rose-600 to-pink-600 text-white
-    shadow-lg shadow-rose-600/40;
+    @apply badge bg-gradient-to-r from-black to-neutral-800 text-white
+    shadow-lg shadow-black/40;
   }
 
   .badge-limited {
-    @apply badge bg-gradient-to-r from-purple-600 via-violet-600 to-fuchsia-600 text-white
-    shadow-lg shadow-purple-600/40;
+    @apply badge bg-gradient-to-r from-neutral-700 via-neutral-800 to-black text-white
+    shadow-lg shadow-black/40;
   }
 
   .badge-trending {
-    @apply badge bg-gradient-to-r from-amber-500 via-yellow-500 to-orange-500 text-white
-    shadow-lg shadow-amber-500/40;
+    @apply badge bg-gradient-to-r from-neutral-600 via-neutral-700 to-neutral-800 text-white
+    shadow-lg shadow-neutral-700/40;
   }
 
   .badge-sold-out {
@@ -157,11 +157,11 @@
 
   /* === GRADIENTS === */
   .intimate-gradient {
-    @apply bg-gradient-to-br from-rose-50 via-blush-50 to-lavender-50;
+    @apply bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200;
   }
 
   .luxury-gradient {
-    @apply bg-gradient-to-br from-rose-50 via-pink-50 via-purple-50 to-indigo-50;
+    @apply bg-gradient-to-br from-white via-gray-50 via-gray-100 to-gray-200;
   }
 
   .shimmer-gradient {
@@ -194,7 +194,7 @@
   }
 
   .hover-glow {
-    @apply transition-all duration-300 ease-out hover:shadow-2xl hover:shadow-rose-500/30;
+    @apply transition-all duration-300 ease-out hover:shadow-2xl hover:shadow-black/30;
   }
 
   .hover-scale {
@@ -205,15 +205,15 @@
 @layer utilities {
   /* === TEXT GRADIENTS === */
   .text-gradient {
-    @apply bg-gradient-to-r from-rose-500 to-blush-500 bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-black to-neutral-700 bg-clip-text text-transparent;
   }
 
   .text-gradient-luxury {
-    @apply bg-gradient-to-r from-rose-500 via-blush-500 to-lavender-500 bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-black via-neutral-800 to-neutral-600 bg-clip-text text-transparent;
   }
 
   .text-gradient-gold {
-    @apply bg-gradient-to-r from-amber-500 via-yellow-500 to-orange-500 bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-neutral-600 via-neutral-700 to-neutral-800 bg-clip-text text-transparent;
   }
 
   /* === SCROLLBAR === */
@@ -311,10 +311,10 @@
 
   @keyframes glow {
     0% {
-      filter: drop-shadow(0 0 5px rgba(244, 63, 94, 0.5));
+      filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.3));
     }
     100% {
-      filter: drop-shadow(0 0 20px rgba(244, 63, 94, 0.8));
+      filter: drop-shadow(0 0 20px rgba(0, 0, 0, 0.5));
     }
   }
 
@@ -353,17 +353,17 @@
   /* === SHADOW UTILITIES === */
   .shadow-luxury {
     box-shadow:
-      0 4px 6px -1px rgba(244, 63, 94, 0.1),
-      0 2px 4px -1px rgba(244, 63, 94, 0.06),
-      0 20px 25px -5px rgba(244, 63, 94, 0.1),
-      0 10px 10px -5px rgba(244, 63, 94, 0.04);
+      0 4px 6px -1px rgba(0, 0, 0, 0.1),
+      0 2px 4px -1px rgba(0, 0, 0, 0.06),
+      0 20px 25px -5px rgba(0, 0, 0, 0.1),
+      0 10px 10px -5px rgba(0, 0, 0, 0.04);
   }
 
   .shadow-glow-rose {
-    box-shadow: 0 0 30px rgba(244, 63, 94, 0.4);
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
   }
 
   .shadow-glow-blush {
-    box-shadow: 0 0 30px rgba(236, 72, 153, 0.4);
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.25);
   }
 }
