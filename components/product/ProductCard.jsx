@@ -17,8 +17,9 @@ export default function ProductCard({ product }) {
   const availableProducts = product.Available_Products || [];
   const mainImages = product.images || [];
 
-  // Get first and second images
-  const allImages = availableProducts.length > 0 ? availableProducts : mainImages;
+  // Use availableProducts only if there are 2+ images, otherwise use mainImages
+  // This ensures hover effect works for single-variant products with multiple images
+  const allImages = availableProducts.length >= 2 ? availableProducts : mainImages;
   const firstImage = allImages[0];
   const secondImage = allImages[1]; // Second image for hover effect
 
