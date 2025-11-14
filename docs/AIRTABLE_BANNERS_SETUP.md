@@ -14,16 +14,23 @@ The home page now supports dynamic banners that you can manage through Airtable:
 
 Create a new table in your Airtable base called `HeroBanners` with the following fields:
 
-| Field Name | Field Type | Description | Example |
-|------------|------------|-------------|---------|
-| **Title** | Single line text | Main heading text | "Elegance Redefined" |
-| **Subtitle** | Single line text | Subheading text | "Timeless Beauty" |
-| **Description** | Long text | Supporting description | "Discover intimate apparel designed for confidence and comfort." |
-| **CTAText** | Single line text | Button text | "Shop Collection" |
-| **CTALink** | URL | Button destination | "/shop" or "https://..." |
-| **Image** | Attachment | Hero image (recommended: 1920x1080px) | Upload image file |
-| **Order** | Number | Display order (lower numbers first) | 1, 2, 3, 4... |
-| **Active** | Checkbox | Enable/disable this banner | ✓ |
+| Field Name | Field Type | Description | Required | Example |
+|------------|------------|-------------|----------|---------|
+| **Title** | Single line text | Main heading text | Optional | "Elegance Redefined" |
+| **Subtitle** | Single line text | Subheading text | Optional | "Timeless Beauty" |
+| **Description** | Long text | Supporting description | Optional | "Discover intimate apparel designed for confidence and comfort." |
+| **CTAText** | Single line text | Button text | Optional | "Shop Collection" |
+| **CTALink** | URL | Button destination | Optional | "/shop" or "https://..." |
+| **Image** | Attachment | Hero image (recommended: 1920x1080px) | **Required** | Upload image file |
+| **Order** | Number | Display order (lower numbers first) | **Required** | 1, 2, 3, 4... |
+| **Active** | Checkbox | Enable/disable this banner | **Required** | ✓ |
+
+**Note:** All text fields (Title, Subtitle, Description, CTAText, CTALink) are **optional**. This allows you to create:
+- **Image-only slides** - Just upload an image without any text
+- **Partial text slides** - Include only the fields you want (e.g., just title and button)
+- **Full content slides** - Use all text fields for rich storytelling
+
+The dark overlay is automatically hidden when no text is present, ensuring your images display with full vibrancy.
 
 ### 2. PromoBanners Table
 
@@ -54,7 +61,7 @@ Create a new table in your Airtable base called `PromoBanners` with the followin
 
 #### HeroBanners Sample Records:
 
-**Record 1:**
+**Record 1 - Full Content Slide:**
 - Title: "Elegance Redefined"
 - Subtitle: "Timeless Beauty"
 - Description: "Discover intimate apparel designed for confidence and comfort."
@@ -64,15 +71,38 @@ Create a new table in your Airtable base called `PromoBanners` with the followin
 - Order: 1
 - Active: ✓
 
-**Record 2:**
-- Title: "Modern Luxury"
-- Subtitle: "Premium Collection"
-- Description: "Experience the perfect blend of sophistication and comfort."
-- CTAText: "Explore Now"
-- CTALink: "/shop?category=Lingerie"
-- Image: Upload another lifestyle image
+**Record 2 - Image Only Slide (No Text):**
+- Title: *(leave empty)*
+- Subtitle: *(leave empty)*
+- Description: *(leave empty)*
+- CTAText: *(leave empty)*
+- CTALink: *(leave empty)*
+- Image: Upload a beautiful product or lifestyle image
 - Order: 2
 - Active: ✓
+*Perfect for showcasing stunning photography without distractions*
+
+**Record 3 - Title & Button Only:**
+- Title: "New Collection"
+- Subtitle: *(leave empty)*
+- Description: *(leave empty)*
+- CTAText: "Shop Now"
+- CTALink: "/shop?tag=new"
+- Image: Upload promotional image
+- Order: 3
+- Active: ✓
+*Minimal text with clear call-to-action*
+
+**Record 4 - Title Only (No Button):**
+- Title: "Valentine's Day Special"
+- Subtitle: *(leave empty)*
+- Description: *(leave empty)*
+- CTAText: *(leave empty)*
+- CTALink: *(leave empty)*
+- Image: Upload Valentine's themed image
+- Order: 4
+- Active: ✓
+*Great for announcements without requiring immediate action*
 
 #### PromoBanners Sample Record:
 
@@ -110,6 +140,37 @@ For the `Height` field in PromoBanners, you can use any valid Tailwind CSS heigh
 - `h-64 md:h-80` - Smaller banner (256px mobile, 320px desktop)
 - `h-80 md:h-96` - Medium banner (320px mobile, 384px desktop)
 - `h-96 md:h-[500px]` - Large banner (384px mobile, 500px desktop)
+
+## Banner Content Strategies
+
+### Different Banner Types
+
+**1. Image-Only Banners (No Text)**
+- **Use for:** Brand storytelling, mood photography, product showcases
+- **Best for:** High-quality lifestyle images that speak for themselves
+- **Tip:** No dark overlay is applied, so your images display at full brightness
+
+**2. Title + Button Banners**
+- **Use for:** Direct calls-to-action, sales announcements, new arrivals
+- **Best for:** Clear, focused messaging with immediate action
+- **Example:** "Sale" title with "Shop Now" button
+
+**3. Full Content Banners**
+- **Use for:** Product launches, detailed promotions, storytelling
+- **Best for:** When you need to explain value proposition or build emotion
+- **Includes:** Subtitle, title, description, and button
+
+**4. Title-Only Banners (No Button)**
+- **Use for:** Announcements, event notifications, brand messaging
+- **Best for:** Information you want visible but doesn't require immediate action
+- **Example:** "Coming Soon" or seasonal greetings
+
+### Content Flexibility Tips
+
+- **Mix and match:** Alternate between text-heavy and image-only slides for visual variety
+- **Mobile consideration:** Less text often works better on mobile devices
+- **A/B Testing:** Try the same image with and without text to see what performs better
+- **Seasonal rotation:** Use image-only slides during slower periods, add text during sales
 
 ## Event & Festival Management
 
