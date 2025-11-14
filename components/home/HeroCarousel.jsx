@@ -3,7 +3,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 
-const slides = [
+// Default fallback slides if no Airtable data is provided
+const defaultSlides = [
   {
     id: 1,
     title: 'Elegance Redefined',
@@ -42,7 +43,9 @@ const slides = [
   },
 ];
 
-export default function HeroCarousel() {
+export default function HeroCarousel({ slides: propSlides }) {
+  // Use slides from props, or fallback to default slides
+  const slides = propSlides && propSlides.length > 0 ? propSlides : defaultSlides;
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const [touchStart, setTouchStart] = useState(0);
