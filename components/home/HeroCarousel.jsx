@@ -3,7 +3,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 
-const slides = [
+// Default fallback slides if no Airtable data is provided
+const defaultSlides = [
   {
     id: 1,
     title: 'Elegance Redefined',
@@ -42,7 +43,9 @@ const slides = [
   },
 ];
 
-export default function HeroCarousel() {
+export default function HeroCarousel({ slides: propSlides }) {
+  // Use slides from props, or fallback to default slides
+  const slides = propSlides && propSlides.length > 0 ? propSlides : defaultSlides;
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const [touchStart, setTouchStart] = useState(0);
@@ -120,59 +123,71 @@ export default function HeroCarousel() {
           <div className="absolute inset-0">
             <Image
               src={slide.image}
-              alt={slide.title}
+              alt={slide.title || 'Hero Banner'}
               fill
               priority={index === 0}
               className="object-cover"
               sizes="100vw"
               quality={90}
             />
-            {/* Dark Overlay for better text readability */}
-            <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/30" />
+            {/* Dark Overlay for better text readability - Only show if there's text content */}
+            {(slide.subtitle || slide.title || slide.description || slide.cta) && (
+              <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/30" />
+            )}
           </div>
 
-          {/* Content */}
-          <div className="relative z-10 h-full flex items-center">
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full">
-              <div className="max-w-3xl">
-                {/* Subtitle */}
-                <p className="text-white/90 text-sm sm:text-base md:text-lg font-medium uppercase tracking-widest mb-4 animate-fade-in">
-                  {slide.subtitle}
-                </p>
+          {/* Content - Only show if there's any text content */}
+          {(slide.subtitle || slide.title || slide.description || slide.cta) && (
+            <div className="relative z-10 h-full flex items-center">
+              <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full">
+                <div className="max-w-3xl">
+                  {/* Subtitle */}
+                  {slide.subtitle && (
+                    <p className="text-white/90 text-sm sm:text-base md:text-lg font-medium uppercase tracking-widest mb-4 animate-fade-in">
+                      {slide.subtitle}
+                    </p>
+                  )}
 
-                {/* Title */}
-                <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-serif font-bold text-white mb-6 leading-tight animate-slide-up">
-                  {slide.title}
-                </h1>
+                  {/* Title */}
+                  {slide.title && (
+                    <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-serif font-bold text-white mb-6 leading-tight animate-slide-up">
+                      {slide.title}
+                    </h1>
+                  )}
 
-                {/* Description */}
-                <p className="text-lg sm:text-xl md:text-2xl text-white/90 mb-8 max-w-2xl animate-fade-in">
-                  {slide.description}
-                </p>
+                  {/* Description */}
+                  {slide.description && (
+                    <p className="text-lg sm:text-xl md:text-2xl text-white/90 mb-8 max-w-2xl animate-fade-in">
+                      {slide.description}
+                    </p>
+                  )}
 
-                {/* CTA Button */}
-                <Link
-                  href={slide.ctaLink}
-                  className="inline-flex items-center justify-center px-8 py-4 text-base sm:text-lg font-semibold text-black bg-white rounded-xl hover:bg-gray-100 transition-all duration-300 hover:scale-105 active:scale-95 shadow-xl hover:shadow-2xl animate-fade-in"
-                >
-                  {slide.cta}
-                  <svg
-                    className="ml-2 w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M17 8l4 4m0 0l-4 4m4-4H3"
-                    />
-                  </svg>
-                </Link>
+                  {/* CTA Button */}
+                  {slide.cta && slide.ctaLink && (
+                    <Link
+                      href={slide.ctaLink}
+                      className="inline-flex items-center justify-center px-8 py-4 text-base sm:text-lg font-semibold text-black bg-white rounded-xl hover:bg-gray-100 transition-all duration-300 hover:scale-105 active:scale-95 shadow-xl hover:shadow-2xl animate-fade-in"
+                    >
+                      {slide.cta}
+                      <svg
+                        className="ml-2 w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M17 8l4 4m0 0l-4 4m4-4H3"
+                        />
+                      </svg>
+                    </Link>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
+          )}
         </div>
       ))}
 
