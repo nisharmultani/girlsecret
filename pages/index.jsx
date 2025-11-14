@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { useState } from 'react';
-import { getAllProducts, getAllReviewStats } from '../lib/airtable';
+import { getAllProducts, getAllReviewStats, getActiveHeroBanners, getActivePromoBanners } from '../lib/airtable';
 import ProductGrid from '../components/product/ProductGrid';
 import HeroCarousel from '../components/home/HeroCarousel';
 import ShopByCategory from '../components/home/ShopByCategory';
@@ -9,7 +9,7 @@ import Banner from '../components/ui/Banner';
 import SectionDivider from '../components/ui/SectionDivider';
 import { ArrowRightIcon, SparklesIcon, TruckIcon, ShieldCheckIcon, HeartIcon } from '@heroicons/react/24/outline';
 
-export default function Home({ featuredProducts, newArrivals, bestSellers }) {
+export default function Home({ featuredProducts, newArrivals, bestSellers, heroSlides, promoBanners }) {
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
@@ -54,19 +54,8 @@ export default function Home({ featuredProducts, newArrivals, bestSellers }) {
 
   return (
     <>
-      {/* Hero Carousel */}
-      <HeroCarousel />
-
-      {/* Promotional Banner */}
-      {/* <Banner
-        imageSrc="https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=1920&h=400&fit=crop"
-        imageAlt="New Collection Banner"
-        title="New Collection"
-        subtitle="Discover Timeless Elegance"
-        buttonText="Explore Now"
-        buttonLink="/shop"
-        height="h-80 md:h-96"
-      /> */}
+      {/* Hero Carousel with Airtable Data */}
+      <HeroCarousel slides={heroSlides} />
 
       {/* Shop by Category */}
       <ShopByCategory />
@@ -94,6 +83,20 @@ export default function Home({ featuredProducts, newArrivals, bestSellers }) {
           </div>
         </div>
       </section>
+
+      {/* Promotional Banners from Airtable */}
+      {promoBanners && promoBanners.length > 0 && promoBanners.map((banner) => (
+        <Banner
+          key={banner.id}
+          imageSrc={banner.image}
+          imageAlt={banner.imageAlt}
+          title={banner.title}
+          subtitle={banner.subtitle}
+          buttonText={banner.buttonText}
+          buttonLink={banner.buttonLink}
+          height={banner.height}
+        />
+      ))}
 
       {/* Decorative Divider */}
       {/* <SectionDivider variant="dots" /> */}
@@ -265,8 +268,13 @@ export default function Home({ featuredProducts, newArrivals, bestSellers }) {
 
 export async function getStaticProps() {
   try {
-    const allProducts = await getAllProducts();
-    const reviewStats = await getAllReviewStats();
+    // Fetch all data in parallel for better performance
+    const [allProducts, reviewStats, heroSlides, promoBanners] = await Promise.all([
+      getAllProducts(),
+      getAllReviewStats(),
+      getActiveHeroBanners(),
+      getActivePromoBanners(),
+    ]);
 
     // Merge review stats with products
     const productsWithReviews = allProducts.map(product => ({
@@ -304,6 +312,8 @@ export async function getStaticProps() {
         featuredProducts,
         newArrivals,
         bestSellers,
+        heroSlides: heroSlides || [],
+        promoBanners: promoBanners || [],
         seo: {
           title: 'Home',
           description: 'Discover beautiful intimate apparel, bras, panties, and lingerie designed for comfort and confidence at GirlSecret.',
@@ -320,6 +330,8 @@ export async function getStaticProps() {
         featuredProducts: [],
         newArrivals: [],
         bestSellers: [],
+        heroSlides: [],
+        promoBanners: [],
         seo: {
           title: 'Home',
           path: '/',
