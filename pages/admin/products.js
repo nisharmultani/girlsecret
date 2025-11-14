@@ -435,7 +435,9 @@ export default function ProductManagement() {
                                 : (firstImage?.thumbnails?.large?.url || firstImage?.url || '');
 
                               return imageUrl ? (
-                                <img
+                                <Image
+                                height={12}
+                                width={12}
                                   src={imageUrl}
                                   alt={product.name}
                                   className="w-12 h-12 object-cover rounded mr-3"
@@ -712,8 +714,10 @@ export default function ProductManagement() {
                         return (
                           <div key={index} className="relative group">
                             {imageUrl && (
-                              <img
+                              <Image
                                 src={imageUrl}
+                                height={32}
+                                width={32}
                                 alt={`Product ${index + 1}`}
                                 className="w-full h-32 object-cover rounded-lg"
                               />
@@ -790,8 +794,10 @@ export default function ProductManagement() {
                         return (
                           <div key={index} className="relative group">
                             {imageUrl && (
-                              <img
+                              <Image
                                 src={imageUrl}
+                                height={24}
+                                width={24}
                                 alt={`Variant ${index + 1}`}
                                 className="w-full h-24 object-cover rounded-lg"
                               />

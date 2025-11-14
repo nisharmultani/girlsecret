@@ -193,9 +193,11 @@ export default function BlogPostPage({ post, relatedPosts }) {
           {imageUrl && (
             <div className="mb-12">
               <div className="relative w-full h-96 md:h-[500px] rounded-xl overflow-hidden shadow-lg">
-                <img
+                <Image
                   src={imageUrl}
                   alt={title}
+                  height={3}
+                  width={3}
                   className="w-full h-full object-cover"
                   onError={(e) => {
                     e.target.src = '/images/blog-placeholder.jpg';

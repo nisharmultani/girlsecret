@@ -125,8 +125,10 @@ export default function RichTextRenderer({ content, className = '' }) {
 
       return (
         <span className="block my-6">
-          <img
+          <Image
             src={src}
+            height={2}
+            width={2}
             alt={alt || ''}
             className="rounded-lg max-w-full h-auto mx-auto shadow-md"
             loading="lazy"

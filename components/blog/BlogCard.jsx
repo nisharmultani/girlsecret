@@ -53,7 +53,9 @@ export default function BlogCard({ post }) {
       <Link href={`/blog/${slug}`}>
         {/* Featured Image */}
         <div className="relative h-56 bg-gray-200 overflow-hidden">
-          <img
+          <Image
+          height={4}
+          width={4}
             src={getImageUrl()}
             alt={title}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
