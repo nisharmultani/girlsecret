@@ -57,20 +57,6 @@ export default function Home({ featuredProducts, newArrivals, bestSellers, heroS
       {/* Hero Carousel with Airtable Data */}
       <HeroCarousel slides={heroSlides} />
 
-      {/* Promotional Banners from Airtable */}
-      {promoBanners && promoBanners.length > 0 && promoBanners.map((banner) => (
-        <Banner
-          key={banner.id}
-          imageSrc={banner.image}
-          imageAlt={banner.imageAlt}
-          title={banner.title}
-          subtitle={banner.subtitle}
-          buttonText={banner.buttonText}
-          buttonLink={banner.buttonLink}
-          height={banner.height}
-        />
-      ))}
-
       {/* Shop by Category */}
       <ShopByCategory />
 
@@ -97,6 +83,20 @@ export default function Home({ featuredProducts, newArrivals, bestSellers, heroS
           </div>
         </div>
       </section>
+
+      {/* Promotional Banners from Airtable */}
+      {promoBanners && promoBanners.length > 0 && promoBanners.map((banner) => (
+        <Banner
+          key={banner.id}
+          imageSrc={banner.image}
+          imageAlt={banner.imageAlt}
+          title={banner.title}
+          subtitle={banner.subtitle}
+          buttonText={banner.buttonText}
+          buttonLink={banner.buttonLink}
+          height={banner.height}
+        />
+      ))}
 
       {/* Decorative Divider */}
       {/* <SectionDivider variant="dots" /> */}
