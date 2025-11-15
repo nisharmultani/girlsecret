@@ -27,6 +27,31 @@ export default function Checkout() {
   const [showAddressForm, setShowAddressForm] = useState(!isAuthenticated);
   const [saveAddress, setSaveAddress] = useState(false);
   const [postcodeValue, setPostcodeValue] = useState('');
+  const [cardNumber, setCardNumber] = useState('');
+
+  // Format card number with spaces (4-4-4-4)
+  const formatCardNumber = (value) => {
+    const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+    const matches = v.match(/\d{4,16}/g);
+    const match = (matches && matches[0]) || '';
+    const parts = [];
+
+    for (let i = 0, len = match.length; i < len; i += 4) {
+      parts.push(match.substring(i, i + 4));
+    }
+
+    if (parts.length) {
+      return parts.join(' ');
+    } else {
+      return value;
+    }
+  };
+
+  const handleCardNumberChange = (e) => {
+    const formatted = formatCardNumber(e.target.value);
+    setCardNumber(formatted);
+    setValue('cardNumber', formatted.replace(/\s/g, ''));
+  };
 
   useEffect(() => {
     const cartItems = getCart();
@@ -110,6 +135,13 @@ export default function Checkout() {
 
   const onSubmit = async (data) => {
     setIsProcessing(true);
+
+    // Validate address is provided
+    if (!data.addressLine1 || !data.city || !data.postcode || !data.country) {
+      alert('Please provide a complete shipping address');
+      setIsProcessing(false);
+      return;
+    }
 
     try {
       // Get active referral code if any
@@ -462,7 +494,7 @@ export default function Checkout() {
                 {isAuthenticated && savedAddresses.length > 0 && (
                   <div className="mb-6">
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Select Saved Address
+                      Select Saved Address *
                     </label>
                     <select
                       value={selectedAddressId}
@@ -479,6 +511,18 @@ export default function Checkout() {
                       <option value="new">+ Add New Address</option>
                     </select>
                   </div>
+                )}
+
+                {/* Or add new address button for logged-in users without addresses */}
+                {isAuthenticated && savedAddresses.length === 0 && !showAddressForm && (
+                  <button
+                    type="button"
+                    onClick={() => setShowAddressForm(true)}
+                    className="mb-4 text-black hover:text-neutral-700 font-medium flex items-center gap-2"
+                  >
+                    <MapPinIcon className="w-5 h-5" />
+                    Add Shipping Address
+                  </button>
                 )}
 
                 {/* Address Form */}
@@ -602,9 +646,12 @@ export default function Checkout() {
                     <input
                       type="text"
                       placeholder="4242 4242 4242 4242"
-                      {...register('cardNumber', { required: 'Card number is required' })}
+                      value={cardNumber}
+                      onChange={handleCardNumberChange}
+                      maxLength="19"
                       className="input-field"
                     />
+                    <input type="hidden" {...register('cardNumber', { required: 'Card number is required' })} />
                     {errors.cardNumber && (
                       <p className="mt-1 text-sm text-red-600">{errors.cardNumber.message}</p>
                     )}

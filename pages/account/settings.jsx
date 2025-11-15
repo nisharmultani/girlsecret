@@ -83,16 +83,16 @@ export default function Settings() {
 
         <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
           {/* Profile Header */}
-          <div className="bg-gradient-to-r from-luxury-500 to-luxury-600 px-6 py-8 text-white">
+          <div className="bg-gradient-to-r from-neutral-800 to-black px-6 py-8 text-white">
             <div className="flex items-center gap-4">
               <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
                 <UserCircleIcon className="w-10 h-10" />
               </div>
               <div>
-                <h2 className="text-2xl font-serif font-bold">
+                <h2 className="text-2xl font-serif font-bold text-white">
                   {user?.firstName} {user?.lastName}
                 </h2>
-                <p className="text-luxury-100">{user?.email}</p>
+                <p className="text-gray-200">{user?.email}</p>
               </div>
             </div>
           </div>
