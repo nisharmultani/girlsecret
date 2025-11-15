@@ -26,6 +26,7 @@ export default function ImportProduct() {
 
   const [previewImages, setPreviewImages] = useState([]);
   const [copied, setCopied] = useState(false);
+  const [imageErrors, setImageErrors] = useState({});
 
   const categories = ['Bras', 'Panties', 'Lingerie', 'Sleepwear', 'Accessories'];
 
@@ -36,7 +37,12 @@ export default function ImportProduct() {
     if (field === 'imageUrls') {
       const urls = value.split('\n').filter(url => url.trim());
       setPreviewImages(urls);
+      setImageErrors({}); // Reset image errors when URLs change
     }
+  };
+
+  const handleImageError = (index) => {
+    setImageErrors(prev => ({ ...prev, [index]: true }));
   };
 
   const generateFormattedData = () => {
@@ -144,7 +150,7 @@ AliExpress URL: ${formatted.aliexpressUrl}
             {/* Input Form */}
             <div className="bg-white rounded-lg shadow-sm p-6">
               <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                <ShoppingBagIcon className="w-6 h-6 text-rose-500" />
+                <ShoppingBagIcon className="w-6 h-6 text-black" />
                 Product Information
               </h2>
 
@@ -159,7 +165,7 @@ AliExpress URL: ${formatted.aliexpressUrl}
                     value={productData.aliexpressUrl}
                     onChange={(e) => handleChange('aliexpressUrl', e.target.value)}
                     placeholder="https://www.aliexpress.com/item/..."
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-rose-500 outline-none text-sm"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black outline-none text-sm"
                   />
                 </div>
 
@@ -173,7 +179,7 @@ AliExpress URL: ${formatted.aliexpressUrl}
                     value={productData.name}
                     onChange={(e) => handleChange('name', e.target.value)}
                     placeholder="Elegant Lace Bralette Set"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-rose-500 outline-none"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black outline-none"
                     required
                   />
                 </div>
@@ -186,7 +192,7 @@ AliExpress URL: ${formatted.aliexpressUrl}
                   <select
                     value={productData.category}
                     onChange={(e) => handleChange('category', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-rose-500 outline-none"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black outline-none"
                   >
                     {categories.map(cat => (
                       <option key={cat} value={cat}>{cat}</option>
@@ -206,7 +212,7 @@ AliExpress URL: ${formatted.aliexpressUrl}
                       value={productData.price}
                       onChange={(e) => handleChange('price', e.target.value)}
                       placeholder="29.99"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-rose-500 outline-none"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black outline-none"
                       required
                     />
                   </div>
@@ -220,7 +226,7 @@ AliExpress URL: ${formatted.aliexpressUrl}
                       value={productData.salePrice}
                       onChange={(e) => handleChange('salePrice', e.target.value)}
                       placeholder="24.99"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-rose-500 outline-none"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black outline-none"
                     />
                   </div>
                 </div>
@@ -235,7 +241,7 @@ AliExpress URL: ${formatted.aliexpressUrl}
                     onChange={(e) => handleChange('description', e.target.value)}
                     placeholder="Beautiful and comfortable lace bralette set perfect for everyday wear..."
                     rows={4}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-rose-500 outline-none resize-none"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black outline-none resize-none"
                     required
                   />
                 </div>
@@ -250,7 +256,7 @@ AliExpress URL: ${formatted.aliexpressUrl}
                     value={productData.material}
                     onChange={(e) => handleChange('material', e.target.value)}
                     placeholder="95% Cotton, 5% Spandex"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-rose-500 outline-none"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black outline-none"
                   />
                 </div>
 
@@ -264,7 +270,7 @@ AliExpress URL: ${formatted.aliexpressUrl}
                     value={productData.sizes}
                     onChange={(e) => handleChange('sizes', e.target.value)}
                     placeholder="XS, S, M, L, XL"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-rose-500 outline-none"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black outline-none"
                   />
                 </div>
 
@@ -278,7 +284,7 @@ AliExpress URL: ${formatted.aliexpressUrl}
                     value={productData.colors}
                     onChange={(e) => handleChange('colors', e.target.value)}
                     placeholder="Black, White, Pink, Red"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-rose-500 outline-none"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black outline-none"
                   />
                 </div>
 
@@ -292,7 +298,7 @@ AliExpress URL: ${formatted.aliexpressUrl}
                     onChange={(e) => handleChange('features', e.target.value)}
                     placeholder="Wireless design for comfort&#10;Adjustable straps&#10;Removable padding&#10;Breathable fabric"
                     rows={4}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-rose-500 outline-none resize-none"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black outline-none resize-none"
                   />
                 </div>
 
@@ -306,7 +312,7 @@ AliExpress URL: ${formatted.aliexpressUrl}
                     onChange={(e) => handleChange('imageUrls', e.target.value)}
                     placeholder="https://example.com/image1.jpg&#10;https://example.com/image2.jpg&#10;https://example.com/image3.jpg"
                     rows={5}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-rose-500 outline-none resize-none font-mono text-sm"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black outline-none resize-none font-mono text-sm"
                     required
                   />
                 </div>
@@ -328,28 +334,33 @@ AliExpress URL: ${formatted.aliexpressUrl}
               {/* Image Preview */}
               <div className="bg-white rounded-lg shadow-sm p-6">
                 <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                  <PhotoIcon className="w-6 h-6 text-rose-500" />
+                  <PhotoIcon className="w-6 h-6 text-black" />
                   Image Preview
                 </h2>
                 {previewImages.length > 0 ? (
                   <div className="grid grid-cols-2 gap-3">
                     {previewImages.slice(0, 4).map((url, index) => (
                       <div key={index} className="relative aspect-square rounded-lg overflow-hidden bg-gray-100 border border-gray-200">
-                        <Image
-                          src={url}
-                          alt={`Preview ${index + 1}`}
-                          className="w-full h-full object-cover"
-                          height={40}
-                          width={40}
-                          onError={(e) => {
-                            e.target.style.display = 'none';
-                            e.target.parentElement.innerHTML = '<div class="flex items-center justify-center h-full text-sm text-gray-400">Invalid URL</div>';
-                          }}
-                        />
-                        {index === 0 && (
-                          <div className="absolute top-2 left-2 bg-rose-500 text-white text-xs px-2 py-1 rounded">
-                            Main
+                        {imageErrors[index] ? (
+                          <div className="flex items-center justify-center h-full text-sm text-gray-400">
+                            Invalid URL
                           </div>
+                        ) : (
+                          <>
+                            <Image
+                              src={url}
+                              alt={`Preview ${index + 1}`}
+                              className="w-full h-full object-cover"
+                              fill
+                              sizes="200px"
+                              onError={() => handleImageError(index)}
+                            />
+                            {index === 0 && (
+                              <div className="absolute top-2 left-2 bg-black text-white text-xs px-2 py-1 rounded">
+                                Main
+                              </div>
+                            )}
+                          </>
                         )}
                       </div>
                     ))}
@@ -377,7 +388,7 @@ AliExpress URL: ${formatted.aliexpressUrl}
                   <button
                     onClick={copyToClipboard}
                     disabled={!productData.name || !productData.price}
-                    className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-rose-500 text-white rounded-lg font-semibold hover:bg-rose-600 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+                    className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-black text-white rounded-lg font-semibold hover:bg-neutral-800 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
                   >
                     {copied ? (
                       <>
@@ -395,7 +406,7 @@ AliExpress URL: ${formatted.aliexpressUrl}
                   <button
                     onClick={copyForAirtable}
                     disabled={!productData.name || !productData.price}
-                    className="w-full flex items-center justify-center gap-2 px-4 py-3 border-2 border-rose-500 text-rose-600 rounded-lg font-semibold hover:bg-rose-50 transition-colors disabled:border-gray-300 disabled:text-gray-400 disabled:cursor-not-allowed"
+                    className="w-full flex items-center justify-center gap-2 px-4 py-3 border-2 border-black text-black rounded-lg font-semibold hover:bg-gray-50 transition-colors disabled:border-gray-300 disabled:text-gray-400 disabled:cursor-not-allowed"
                   >
                     <ClipboardDocumentIcon className="w-5 h-5" />
                     Copy for Airtable
