@@ -52,7 +52,7 @@ export default function Cart() {
 
   const handleApplyPromo = async (codeToApply = null) => {
     const code = codeToApply || promoCode;
-    if (!code.trim()) {
+    if (!code || !code.trim()) {
       alert('Please enter a promo code');
       return;
     }

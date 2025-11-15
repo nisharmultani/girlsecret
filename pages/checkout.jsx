@@ -488,7 +488,15 @@ export default function Checkout() {
 
               {/* Shipping Address */}
               <div className="bg-white rounded-xl shadow-sm p-6">
-                <h2 className="text-xl font-semibold mb-4">Shipping Address</h2>
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 rounded-full bg-black/5 flex items-center justify-center">
+                    <MapPinIcon className="w-5 h-5 text-black" />
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-semibold">Shipping Address</h2>
+                    <p className="text-sm text-gray-600">Where should we deliver your order?</p>
+                  </div>
+                </div>
 
                 {/* Saved Addresses Dropdown */}
                 {isAuthenticated && savedAddresses.length > 0 && (
@@ -518,7 +526,7 @@ export default function Checkout() {
                   <button
                     type="button"
                     onClick={() => setShowAddressForm(true)}
-                    className="mb-4 text-black hover:text-neutral-700 font-medium flex items-center gap-2"
+                    className="w-full mb-6 px-6 py-4 bg-black/5 hover:bg-black/10 border-2 border-dashed border-gray-300 hover:border-black rounded-xl font-medium flex items-center justify-center gap-2 transition-all"
                   >
                     <MapPinIcon className="w-5 h-5" />
                     Add Shipping Address
@@ -527,7 +535,7 @@ export default function Checkout() {
 
                 {/* Address Form */}
                 {(showAddressForm || !isAuthenticated) && (
-                  <div className="space-y-4">
+                  <div className="space-y-4 p-5 bg-gray-50 rounded-lg border border-gray-200">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         Address Line 1 *

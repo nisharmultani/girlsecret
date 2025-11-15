@@ -78,7 +78,10 @@ export default function Settings() {
           'Content-Type': 'application/json',
         },
         credentials: 'include',
-        body: JSON.stringify(passwordData),
+        body: JSON.stringify({
+          userId: user.id,
+          ...passwordData
+        }),
       });
 
       const data = await response.json();
