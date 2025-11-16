@@ -154,8 +154,8 @@ export default function Checkout() {
     }
   };
 
-  // Handle payment success
-  const handlePaymentSuccess = async (paymentIntent, formData) => {
+  // Handle form submission (demo mode - will be replaced with Stripe payment)
+  const onSubmit = async (data) => {
     setIsProcessing(true);
 
     try {
@@ -169,26 +169,24 @@ export default function Checkout() {
         shippingCost: shipping,
         discount: 0,
         total: total,
-        customerName: `${formData.firstName} ${formData.lastName}`,
-        customerEmail: formData.email,
-        paymentIntentId: paymentIntent.id,
-        paymentStatus: 'Paid',
+        customerName: `${data.firstName} ${data.lastName}`,
+        customerEmail: data.email,
         shippingAddress: {
-          fullName: `${formData.firstName} ${formData.lastName}`,
-          addressLine1: formData.addressLine1,
-          addressLine2: formData.addressLine2 || '',
-          city: formData.city,
-          postcode: formData.postcode,
-          country: formData.country || 'United Kingdom',
-          phone: formData.phone,
+          fullName: `${data.firstName} ${data.lastName}`,
+          addressLine1: data.addressLine1,
+          addressLine2: data.addressLine2 || '',
+          city: data.city,
+          postcode: data.postcode,
+          country: data.country || 'United Kingdom',
+          phone: data.phone,
         },
         billingAddress: {
-          fullName: `${formData.firstName} ${formData.lastName}`,
-          addressLine1: formData.addressLine1,
-          addressLine2: formData.addressLine2 || '',
-          city: formData.city,
-          postcode: formData.postcode,
-          country: formData.country || 'United Kingdom',
+          fullName: `${data.firstName} ${data.lastName}`,
+          addressLine1: data.addressLine1,
+          addressLine2: data.addressLine2 || '',
+          city: data.city,
+          postcode: data.postcode,
+          country: data.country || 'United Kingdom',
         },
       };
 
