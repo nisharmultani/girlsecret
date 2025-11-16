@@ -1,4 +1,3 @@
-import { buffer } from 'micro';
 import { constructWebhookEvent } from '../../../lib/stripe';
 import { updateOrderPaymentStatus } from '../../../lib/airtable';
 
@@ -9,14 +8,24 @@ export const config = {
   },
 };
 
+// Helper function to read raw body
+async function getRawBody(req) {
+  return new Promise((resolve, reject) => {
+    const chunks = [];
+    req.on('data', (chunk) => chunks.push(chunk));
+    req.on('end', () => resolve(Buffer.concat(chunks).toString('utf8')));
+    req.on('error', reject);
+  });
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
-    // Get the raw body as a buffer
-    const buf = await buffer(req);
+    // Get the raw body as a string
+    const rawBody = await getRawBody(req);
     const signature = req.headers['stripe-signature'];
 
     if (!signature) {
@@ -24,7 +33,7 @@ export default async function handler(req, res) {
     }
 
     // Verify and construct the event
-    const result = constructWebhookEvent(buf.toString(), signature);
+    const result = constructWebhookEvent(rawBody, signature);
 
     if (!result.success) {
       console.error('Webhook verification failed:', result.error);
