@@ -1,11 +1,5 @@
-import Airtable from 'airtable';
+import { updateOrder } from '../../../../lib/airtable';
 import { sendEmail } from '../../../../lib/email';
-
-const base = new Airtable({ apiKey: process.env.NEXT_PUBLIC_AIRTABLE_API_KEY }).base(
-  process.env.NEXT_PUBLIC_AIRTABLE_BASE_ID
-);
-
-const ORDERS_TABLE = 'Orders';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -31,20 +25,26 @@ export default async function handler(req, res) {
     if (aliexpressStatus) updateData.AliExpressStatus = aliexpressStatus;
     if (notes) updateData.Notes = notes;
 
-    // Update order in Airtable
-    const record = await base(ORDERS_TABLE).update(orderId, updateData);
+    // Update order in Airtable using the lib function
+    const result = await updateOrder(orderId, updateData);
+
+    if (!result.success) {
+      return res.status(500).json({ error: result.error || 'Failed to update order' });
+    }
+
+    const record = result.order;
 
     // Get full order details for email
     const orderData = {
-      OrderNumber: record.get('OrderNumber'),
-      CustomerName: record.get('CustomerName'),
-      CustomerEmail: record.get('CustomerEmail'),
-      Status: record.get('Status'),
-      TrackingNumber: record.get('TrackingNumber'),
-      Carrier: record.get('Carrier'),
-      AliExpressStatus: record.get('AliExpressStatus'),
-      Total: record.get('Total'),
-      Items: record.get('Items')
+      OrderNumber: record.fields.OrderNumber || record.get('OrderNumber'),
+      CustomerName: record.fields.CustomerName || record.get('CustomerName'),
+      CustomerEmail: record.fields.CustomerEmail || record.get('CustomerEmail'),
+      Status: record.fields.Status || record.get('Status'),
+      TrackingNumber: record.fields.TrackingNumber || record.get('TrackingNumber'),
+      Carrier: record.fields.Carrier || record.get('Carrier'),
+      AliExpressStatus: record.fields.AliExpressStatus || record.get('AliExpressStatus'),
+      Total: record.fields.Total || record.get('Total'),
+      Items: record.fields.Items || record.get('Items')
     };
 
     // Send notification email to customer

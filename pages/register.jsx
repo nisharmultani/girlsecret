@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { useAuth } from '../context/AuthContext';
 import { useForm } from 'react-hook-form';
+import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 
 export default function Register() {
   const router = useRouter();
@@ -10,6 +11,8 @@ export default function Register() {
   const { register, handleSubmit, watch, formState: { errors } } = useForm();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const password = watch('password');
 
@@ -18,15 +21,15 @@ export default function Register() {
     setError('');
 
     const result = await registerUser({
-      email: data.email,
+      email: data.email.toLowerCase().trim(), // Convert to lowercase and trim whitespace
       password: data.password,
-      firstName: data.firstName,
-      lastName: data.lastName,
+      firstName: data.firstName.trim(),
+      lastName: data.lastName.trim(),
       phone: data.phone || '',
     });
 
     if (result.success) {
-      router.push('/account');
+      router.push('/shop'); // Redirect to shop page instead of account
     } else {
       setError(result.error);
       setIsSubmitting(false);
@@ -122,22 +125,35 @@ export default function Register() {
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Password *
               </label>
-              <input
-                type="password"
-                {...register('password', {
-                  required: 'Password is required',
-                  minLength: {
-                    value: 8,
-                    message: 'Password must be at least 8 characters',
-                  },
-                  pattern: {
-                    value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-                    message: 'Password must contain uppercase, lowercase, and numbers',
-                  },
-                })}
-                className="input-field"
-                placeholder="••••••••"
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  {...register('password', {
+                    required: 'Password is required',
+                    minLength: {
+                      value: 8,
+                      message: 'Password must be at least 8 characters',
+                    },
+                    pattern: {
+                      value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
+                      message: 'Password must contain uppercase, lowercase, and numbers',
+                    },
+                  })}
+                  className="input-field pr-12"
+                  placeholder="••••••••"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                >
+                  {showPassword ? (
+                    <EyeSlashIcon className="w-5 h-5" />
+                  ) : (
+                    <EyeIcon className="w-5 h-5" />
+                  )}
+                </button>
+              </div>
               {errors.password && (
                 <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
               )}
@@ -150,15 +166,28 @@ export default function Register() {
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Confirm Password *
               </label>
-              <input
-                type="password"
-                {...register('confirmPassword', {
-                  required: 'Please confirm your password',
-                  validate: value => value === password || 'Passwords do not match',
-                })}
-                className="input-field"
-                placeholder="••••••••"
-              />
+              <div className="relative">
+                <input
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  {...register('confirmPassword', {
+                    required: 'Please confirm your password',
+                    validate: value => value === password || 'Passwords do not match',
+                  })}
+                  className="input-field pr-12"
+                  placeholder="••••••••"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                >
+                  {showConfirmPassword ? (
+                    <EyeSlashIcon className="w-5 h-5" />
+                  ) : (
+                    <EyeIcon className="w-5 h-5" />
+                  )}
+                </button>
+              </div>
               {errors.confirmPassword && (
                 <p className="mt-1 text-sm text-red-600">{errors.confirmPassword.message}</p>
               )}

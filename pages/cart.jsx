@@ -48,16 +48,21 @@ export default function Cart() {
     loadCart();
   };
 
+  const subtotal = getCartTotal();
+
   const handleApplyPromo = async (codeToApply = null) => {
     const code = codeToApply || promoCode;
-    if (!code.trim()) return;
+    if (!code || !code.trim()) {
+      alert('Please enter a promo code');
+      return;
+    }
 
     setIsValidating(true);
     try {
       const response = await fetch('/api/validate-promo', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code: code, subtotal }),
+        body: JSON.stringify({ code: code.trim().toUpperCase(), subtotal }),
       });
 
       const data = await response.json();
@@ -66,7 +71,7 @@ export default function Cart() {
         setDiscount(data.discount);
         // Don't show alert for auto-applied referral codes
         if (!codeToApply) {
-          alert('Promo code applied successfully!');
+          alert(`Promo code applied! You saved ${formatPrice(data.discount)}`);
         }
       } else {
         if (!codeToApply) {
@@ -75,16 +80,15 @@ export default function Cart() {
         setDiscount(0);
       }
     } catch (error) {
+      console.error('Promo code error:', error);
       if (!codeToApply) {
-        alert('Failed to validate promo code');
+        alert('Failed to validate promo code. Please try again.');
       }
       setDiscount(0);
     } finally {
       setIsValidating(false);
     }
   };
-
-  const subtotal = getCartTotal();
 
   // Calculate total product savings (original price - sale price)
   const productSavings = cart.reduce((total, item) => {
@@ -94,7 +98,7 @@ export default function Cart() {
     return total;
   }, 0);
 
-  const shipping = subtotal > 50 ? 0 : 10;
+  const shipping = subtotal > 50 ? 0 : 4.95; // Free shipping over £50
   const total = subtotal - discount + shipping;
 
   if (cart.length === 0) {

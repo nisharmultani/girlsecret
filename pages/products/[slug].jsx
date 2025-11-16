@@ -33,6 +33,7 @@ export default function ProductDetail({ product, reviews = [] }) {
   const [selectedSize, setSelectedSize] = useState('');
   const [showSizeGuide, setShowSizeGuide] = useState(false);
   const [showFullDescription, setShowFullDescription] = useState(false);
+  const [sizeError, setSizeError] = useState(false);
 
   // Track product view in recently viewed
   useEffect(() => {
@@ -148,7 +149,15 @@ export default function ProductDetail({ product, reviews = [] }) {
   const handleAddToCart = () => {
     // Validate size selection if sizes are available
     if (sizes.length > 0 && !selectedSize) {
-      alert('Please select a size');
+      // Trigger shake animation and red highlight
+      setSizeError(true);
+      // Scroll to size selector
+      const sizeSelector = document.getElementById('size-selector');
+      if (sizeSelector) {
+        sizeSelector.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      // Remove error state after animation completes
+      setTimeout(() => setSizeError(false), 820);
       return;
     }
 
@@ -505,10 +514,11 @@ export default function ProductDetail({ product, reviews = [] }) {
 
               {/* Size Selector */}
               {sizes.length > 0 && (
-                <div className="mb-6">
+                <div id="size-selector" className="mb-6">
                   <div className="flex items-center justify-between mb-3">
-                    <label className="text-sm font-semibold text-gray-900">
+                    <label className={`text-sm font-semibold transition-colors ${sizeError ? 'text-red-600' : 'text-gray-900'}`}>
                       Select Size {selectedSize && <span className="text-black">: {selectedSize}</span>}
+                      {sizeError && <span className="text-red-600 ml-2">* Please select a size</span>}
                     </label>
                     <button
                       onClick={() => setShowSizeGuide(true)}
@@ -518,14 +528,19 @@ export default function ProductDetail({ product, reviews = [] }) {
                       Size Guide
                     </button>
                   </div>
-                  <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
+                  <div className={`grid grid-cols-4 sm:grid-cols-6 gap-2 ${sizeError ? 'animate-shake' : ''}`}>
                     {sizes.map((size) => (
                       <button
                         key={size}
-                        onClick={() => setSelectedSize(size)}
+                        onClick={() => {
+                          setSelectedSize(size);
+                          setSizeError(false);
+                        }}
                         className={`px-3 py-2 border-2 rounded-lg text-sm font-medium transition-all ${
                           selectedSize === size
                             ? 'border-black bg-gray-100 text-black shadow-md'
+                            : sizeError
+                            ? 'border-red-500 hover:border-red-600 hover:bg-red-50 bg-red-50'
                             : 'border-gray-300 hover:border-gray-400 hover:bg-gray-50'
                         }`}
                       >

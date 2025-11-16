@@ -75,15 +75,15 @@ export default function Account() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-serif font-bold text-gray-900">
-                Welcome back, {user.firstName}!
+                Hello, {user.firstName}!
               </h1>
               <p className="mt-2 text-gray-600">
-                Manage your account and view your orders
+                Manage your account, view orders, and track deliveries
               </p>
             </div>
             <div className="hidden sm:block">
-              <div className="w-20 h-20 bg-luxury-100 rounded-full flex items-center justify-center">
-                <UserIcon className="w-10 h-10 text-luxury-600" />
+              <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center">
+                <UserIcon className="w-10 h-10 text-black" />
               </div>
             </div>
           </div>
