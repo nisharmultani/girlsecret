@@ -9,6 +9,12 @@ import Image from 'next/image';
 import PostcodeAutocomplete from '../components/PostcodeAutocomplete';
 import { getActiveReferralCode } from '../lib/referral-tracking';
 import { useReferral } from '../hooks/useReferral';
+import { Elements } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
+import StripePaymentForm from '../components/StripePaymentForm';
+
+// Initialize Stripe with publishable key
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '');
 
 export default function Checkout() {
   const router = useRouter();
@@ -20,6 +26,11 @@ export default function Checkout() {
   const [orderComplete, setOrderComplete] = useState(false);
   const [orderNumber, setOrderNumber] = useState('');
   const [createAccount, setCreateAccount] = useState(false); // For guest account creation
+
+  // Stripe payment intent
+  const [clientSecret, setClientSecret] = useState('');
+  const [paymentIntentId, setPaymentIntentId] = useState('');
+  const [paymentError, setPaymentError] = useState('');
 
   // User addresses
   const [savedAddresses, setSavedAddresses] = useState([]);
@@ -108,7 +119,43 @@ export default function Checkout() {
   const shipping = subtotal > 50 ? 0 : 4.95; // Updated to GBP
   const total = subtotal + shipping;
 
-  const onSubmit = async (data) => {
+  // Create payment intent when cart is loaded
+  useEffect(() => {
+    if (cart.length > 0 && total > 0) {
+      createPaymentIntent();
+    }
+  }, [cart, total]);
+
+  const createPaymentIntent = async () => {
+    try {
+      const response = await fetch('/api/payment/create-intent', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          amount: total,
+          currency: 'gbp',
+          metadata: {
+            customerEmail: user?.email || 'guest',
+          },
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setClientSecret(data.clientSecret);
+        setPaymentIntentId(data.paymentIntentId);
+      } else {
+        setPaymentError(data.error || 'Failed to initialize payment');
+      }
+    } catch (error) {
+      console.error('Payment intent error:', error);
+      setPaymentError('Failed to initialize payment. Please refresh the page.');
+    }
+  };
+
+  // Handle payment success
+  const handlePaymentSuccess = async (paymentIntent, formData) => {
     setIsProcessing(true);
 
     try {
@@ -122,24 +169,26 @@ export default function Checkout() {
         shippingCost: shipping,
         discount: 0,
         total: total,
-        customerName: `${data.firstName} ${data.lastName}`,
-        customerEmail: data.email,
+        customerName: `${formData.firstName} ${formData.lastName}`,
+        customerEmail: formData.email,
+        paymentIntentId: paymentIntent.id,
+        paymentStatus: 'Paid',
         shippingAddress: {
-          fullName: `${data.firstName} ${data.lastName}`,
-          addressLine1: data.addressLine1,
-          addressLine2: data.addressLine2 || '',
-          city: data.city,
-          postcode: data.postcode,
-          country: data.country || 'United Kingdom',
-          phone: data.phone,
+          fullName: `${formData.firstName} ${formData.lastName}`,
+          addressLine1: formData.addressLine1,
+          addressLine2: formData.addressLine2 || '',
+          city: formData.city,
+          postcode: formData.postcode,
+          country: formData.country || 'United Kingdom',
+          phone: formData.phone,
         },
         billingAddress: {
-          fullName: `${data.firstName} ${data.lastName}`,
-          addressLine1: data.addressLine1,
-          addressLine2: data.addressLine2 || '',
-          city: data.city,
-          postcode: data.postcode,
-          country: data.country || 'United Kingdom',
+          fullName: `${formData.firstName} ${formData.lastName}`,
+          addressLine1: formData.addressLine1,
+          addressLine2: formData.addressLine2 || '',
+          city: formData.city,
+          postcode: formData.postcode,
+          country: formData.country || 'United Kingdom',
         },
       };
 
