@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useForm } from 'react-hook-form';
 import Link from 'next/link';
-import Layout from '../components/layout/Layout';
 import Image from 'next/image';
 import {
   MagnifyingGlassIcon,
@@ -89,8 +88,7 @@ export default function TrackOrder() {
   };
 
   return (
-    <Layout>
-      <div className="min-h-screen bg-gray-50 py-12">
+    <div className="min-h-screen bg-gray-50 py-12">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
           {/* Header */}
           <div className="text-center mb-8">
@@ -169,7 +167,7 @@ export default function TrackOrder() {
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-3">
                       <div
-                        className="bg-gradient-to-r from-luxury-600 to-luxury-700 h-3 rounded-full transition-all duration-500"
+                        className="bg-gradient-to-r from-neutral-800 to-black h-3 rounded-full transition-all duration-500"
                         style={{ width: getProgressWidth(order.status) }}
                       ></div>
                     </div>
@@ -178,7 +176,7 @@ export default function TrackOrder() {
 
                 {/* Tracking Information */}
                 {order.trackingNumber && order.carrier && (
-                  <div className="bg-luxury-50 border-l-4 border-luxury-600 p-4 rounded-lg mb-6">
+                  <div className="bg-gray-50 border-l-4 border-black p-4 rounded-lg mb-6">
                     <h3 className="font-semibold text-gray-900 mb-2">Tracking Information</h3>
                     <div className="space-y-1">
                       <p className="text-gray-700">
@@ -193,7 +191,7 @@ export default function TrackOrder() {
                         href={order.trackingUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-block mt-3 text-luxury-600 hover:text-luxury-700 font-medium"
+                        className="inline-block mt-3 text-black hover:text-gray-700 font-medium"
                       >
                         Track on carrier website →
                       </a>
@@ -329,7 +327,7 @@ export default function TrackOrder() {
               </div>
 
               {/* Help Section */}
-              <div className="bg-luxury-50 rounded-xl p-6 text-center">
+              <div className="bg-gray-50 rounded-xl p-6 text-center">
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">
                   Need Help?
                 </h3>
@@ -364,8 +362,7 @@ export default function TrackOrder() {
             </div>
           )}
         </div>
-      </div>
-    </Layout>
+    </div>
   );
 }
 

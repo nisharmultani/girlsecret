@@ -91,7 +91,7 @@ export default function Header() {
           message={infoBanner.message}
           link={infoBanner.link}
           linkText={infoBanner.linkText}
-          dismissible={infoBanner.dismissible}
+          dismissible={false}
           storageKey={infoBanner.storageKey}
           backgroundColor={infoBanner.backgroundColor}
           textColor={infoBanner.textColor}
@@ -302,18 +302,18 @@ export default function Header() {
                 </Transition>
               </Menu>
             ) : (
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3">
                 <Link
                   href="/login"
-                  className="text-sm font-semibold text-gray-700 hover:text-rose-600 transition-colors"
+                  className="text-sm font-semibold text-gray-700 hover:text-rose-600 transition-colors whitespace-nowrap"
                 >
-                  Sign In
+                  Login
                 </Link>
                 <Link
                   href="/register"
-                  className="rounded-lg bg-luxury-600 px-4 py-2 text-sm font-semibold text-white hover:bg-luxury-700 transition-colors"
+                  className="rounded-lg bg-black px-4 py-2 text-sm font-semibold text-white hover:bg-neutral-800 transition-colors whitespace-nowrap"
                 >
-                  Register
+                  Sign Up
                 </Link>
               </div>
             )}
@@ -488,14 +488,14 @@ export default function Header() {
                           className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                           onClick={() => setMobileMenuOpen(false)}
                         >
-                          Sign In
+                          Login
                         </Link>
                         <Link
                           href="/register"
-                          className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 bg-luxury-600 text-white hover:bg-luxury-700"
+                          className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 bg-black text-white hover:bg-neutral-800"
                           onClick={() => setMobileMenuOpen(false)}
                         >
-                          Register
+                          Sign Up
                         </Link>
                       </div>
                     )}

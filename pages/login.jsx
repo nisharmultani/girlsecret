@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { useAuth } from '../context/AuthContext';
 import { useForm } from 'react-hook-form';
+import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 
 export default function Login() {
   const router = useRouter();
@@ -10,12 +11,13 @@ export default function Login() {
   const { register, handleSubmit, formState: { errors } } = useForm();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   const onSubmit = async (data) => {
     setIsSubmitting(true);
     setError('');
 
-    const result = await login(data.email, data.password, data.remember);
+    const result = await login(data.email.toLowerCase().trim(), data.password, data.remember);
 
     if (result.success) {
       // Redirect to account page or return to previous page
@@ -76,20 +78,33 @@ export default function Login() {
                 </label>
                 <Link
                   href="/forgot-password"
-                  className="text-sm text-luxury-600 hover:text-luxury-700"
+                  className="text-sm text-black hover:text-neutral-700"
                 >
                   Forgot password?
                 </Link>
               </div>
-              <input
-                type="password"
-                {...register('password', {
-                  required: 'Password is required',
-                })}
-                className="input-field"
-                placeholder="••••••••"
-                autoComplete="current-password"
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  {...register('password', {
+                    required: 'Password is required',
+                  })}
+                  className="input-field pr-12"
+                  placeholder="••••••••"
+                  autoComplete="current-password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                >
+                  {showPassword ? (
+                    <EyeSlashIcon className="w-5 h-5" />
+                  ) : (
+                    <EyeIcon className="w-5 h-5" />
+                  )}
+                </button>
+              </div>
               {errors.password && (
                 <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
               )}

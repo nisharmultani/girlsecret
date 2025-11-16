@@ -40,6 +40,18 @@ export default function WishlistPage() {
         wishlistItems.includes(product.id)
       );
 
+      // Clean up wishlist if there are invalid product IDs (deleted products)
+      const validProductIds = productsInWishlist.map(p => p.id);
+      const invalidIds = wishlistItems.filter(id => !validProductIds.includes(id));
+
+      if (invalidIds.length > 0) {
+        console.log('Removing invalid product IDs from wishlist:', invalidIds);
+        // Remove invalid IDs from wishlist
+        for (const invalidId of invalidIds) {
+          await removeFromWishlist(invalidId);
+        }
+      }
+
       setWishlistProducts(productsInWishlist);
     } catch (error) {
       console.error('Error loading wishlist products:', error);
@@ -99,8 +111,8 @@ export default function WishlistPage() {
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="section-title flex items-center gap-3">
-              <HeartSolidIcon className="h-8 w-8 text-rose-500" />
+            <h1 className="text-4xl font-serif font-bold text-gray-900 flex items-center gap-3">
+              <HeartSolidIcon className="h-8 w-8 text-black" />
               My Wishlist
             </h1>
             <p className="text-gray-600 mt-2">
@@ -155,7 +167,7 @@ export default function WishlistPage() {
                 return (
                   <div
                     key={product.id}
-                    className="bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col h-full border border-gray-100"
+                    className="product-card group"
                   >
                     {/* Product Image */}
                     <div className="relative">
@@ -167,21 +179,28 @@ export default function WishlistPage() {
                         aria-label="Remove from wishlist"
                       >
                         {removingId === product.id ? (
-                          <div className="animate-spin h-4 w-4 border-2 border-rose-500 border-t-transparent rounded-full"></div>
+                          <div className="animate-spin h-4 w-4 border-2 border-black border-t-transparent rounded-full"></div>
                         ) : (
                           <XMarkIcon className="h-4 w-4 text-gray-700 hover:text-red-500 transition-colors" />
                         )}
                       </button>
 
                       <Link href={`/products/${product.slug}`}>
-                        <div className="relative aspect-square overflow-hidden bg-gray-100">
+                        <div className="relative aspect-square overflow-hidden bg-gray-100 rounded-t-lg">
                           <Image
                             src={imageUrl}
                             alt={product.name}
                             fill
-                            className="object-cover hover:scale-110 transition-transform duration-500"
+                            className="object-cover group-hover:scale-110 transition-transform duration-500"
                             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                           />
+
+                          {/* Discount Badge */}
+                          {hasDiscount && (
+                            <div className="absolute top-3 left-3 bg-black text-white px-3 py-1 rounded-full text-xs font-bold">
+                              SALE
+                            </div>
+                          )}
 
                           {/* Out of Stock Overlay */}
                           {!product.inStock && (
@@ -196,26 +215,26 @@ export default function WishlistPage() {
                     </div>
 
                     {/* Product Info */}
-                    <div className="p-5 flex flex-col flex-grow">
+                    <div className="p-4 flex flex-col flex-grow">
                       {/* Category */}
                       {product.category && (
-                        <span className="inline-block text-xs font-bold text-rose-600 uppercase tracking-wider mb-2">
+                        <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
                           {product.category}
                         </span>
                       )}
 
                       {/* Name */}
                       <Link href={`/products/${product.slug}`}>
-                        <h3 className="text-base font-bold text-gray-900 mb-3 line-clamp-2 hover:text-rose-600 transition-colors leading-snug">
+                        <h3 className="text-base font-bold text-gray-900 mb-3 line-clamp-2 group-hover:text-gray-700 transition-colors leading-snug">
                           {product.name}
                         </h3>
                       </Link>
 
                       {/* Price */}
-                      <div className="flex items-center gap-2.5 mb-5">
+                      <div className="flex items-center gap-2 mb-4">
                         {hasDiscount ? (
                           <>
-                            <span className="text-2xl font-bold text-rose-600">
+                            <span className="text-xl font-bold text-gray-900">
                               {formatPrice(product.salePrice)}
                             </span>
                             <span className="text-sm text-gray-400 line-through">
@@ -223,7 +242,7 @@ export default function WishlistPage() {
                             </span>
                           </>
                         ) : (
-                          <span className="text-2xl font-bold text-gray-900">
+                          <span className="text-xl font-bold text-gray-900">
                             {formatPrice(product.price)}
                           </span>
                         )}
@@ -233,12 +252,12 @@ export default function WishlistPage() {
                       <button
                         onClick={() => handleAddToCart(product)}
                         disabled={addingToCartId === product.id || !product.inStock}
-                        className="mt-auto w-full py-3.5 px-6 rounded-xl font-bold text-base transition-all duration-200 flex items-center justify-center gap-2.5 disabled:opacity-60 disabled:cursor-not-allowed bg-gradient-to-r from-rose-500 to-rose-600 hover:from-rose-600 hover:to-rose-700 text-white shadow-md hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]"
+                        className="mt-auto btn-primary w-full disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                       >
                         {addingToCartId === product.id ? (
                           <>
-                            <div className="animate-spin h-5 w-5 border-3 border-white border-t-transparent rounded-full"></div>
-                            <span>Added to Cart!</span>
+                            <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"></div>
+                            <span>Added!</span>
                           </>
                         ) : (
                           <>
