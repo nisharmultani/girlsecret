@@ -10,15 +10,28 @@ const footerNavigation = {
   ],
   company: [
     { name: 'About Us', href: '/about' },
+    { name: 'Our Story', href: '/our-story' },
     { name: 'Contact', href: '/contact' },
-    // { name: 'FAQ', href: '/faq' },
-    // { name: 'Blog', href: '/blog' },
+    { name: 'Careers', href: '/careers' },
+  ],
+  customer: [
+    { name: 'Track My Order', href: '/track-order' },
+    { name: 'Size Guide', href: '/size-guide' },
+    { name: 'FAQ', href: '/faq' },
+    { name: 'Order Issues', href: '/order-issues' },
+  ],
+  programs: [
+    { name: 'Gift Cards', href: '/gift-cards' },
+    { name: 'Influencer Program', href: '/influencer-program' },
+    { name: 'Ambassador Program', href: '/ambassador-program' },
+    { name: 'Review Rewards', href: '/review-rewards' },
   ],
   legal: [
     { name: 'Privacy Policy', href: '/privacy' },
     { name: 'Terms of Service', href: '/terms' },
     { name: 'Shipping Policy', href: '/shipping' },
     { name: 'Return Policy', href: '/returns' },
+    { name: 'Cookie Policy', href: '/cookies' },
   ],
   social: [
     {
@@ -140,97 +153,125 @@ export default function Footer() {
               ))}
             </div>
           </div>
-          <div className="mt-16 grid grid-cols-2 gap-8 xl:col-span-2 xl:mt-0">
-            <div className="md:grid md:grid-cols-2 md:gap-8">
-              <div>
-                <h3 className="text-sm font-semibold leading-6 text-white">Shop</h3>
-                <ul role="list" className="mt-6 space-y-4">
-                  {footerNavigation.shop.map((item) => (
-                    <li key={item.name}>
-                      <Link
-                        href={item.href}
-                        className="text-sm leading-6 text-gray-300 hover:text-white transition-colors"
-                      >
-                        {item.name}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div className="mt-10 md:mt-0">
-                <h3 className="text-sm font-semibold leading-6 text-white">Company</h3>
-                <ul role="list" className="mt-6 space-y-4">
-                  {footerNavigation.company.map((item) => (
-                    <li key={item.name}>
-                      <Link
-                        href={item.href}
-                        className="text-sm leading-6 text-gray-300 hover:text-white transition-colors"
-                      >
-                        {item.name}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-            <div className="md:grid md:grid-cols-2 md:gap-8">
-              <div>
-                <h3 className="text-sm font-semibold leading-6 text-white">Legal</h3>
-                <ul role="list" className="mt-6 space-y-4">
-                  {footerNavigation.legal.map((item) => (
-                    <li key={item.name}>
-                      <Link
-                        href={item.href}
-                        className="text-sm leading-6 text-gray-300 hover:text-white transition-colors"
-                      >
-                        {item.name}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div className="mt-10 md:mt-0">
-                <h3 className="text-sm font-semibold leading-6 text-white">Newsletter</h3>
-                <p className="mt-2 text-sm leading-6 text-gray-300">
-                  Get the latest updates on new products and special offers.
-                </p>
-                <form onSubmit={handleNewsletterSubmit} className="mt-6 sm:flex sm:max-w-md">
-                  <label htmlFor="email-address" className="sr-only">
-                    Email address
-                  </label>
-                  <input
-                    type="email"
-                    name="email-address"
-                    id="email-address"
-                    autoComplete="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    disabled={isSubmitting}
-                    className="w-full min-w-0 appearance-none rounded-md border-0 bg-white/5 px-3 py-1.5 text-base text-white shadow-sm ring-1 ring-inset ring-white/10 placeholder:text-gray-500 focus:ring-2 focus:ring-inset focus:ring-gold-500 sm:w-56 sm:text-sm sm:leading-6 disabled:opacity-50"
-                    placeholder="Enter your email"
-                  />
-                  <div className="mt-4 sm:ml-4 sm:mt-0 sm:flex-shrink-0">
-                    <button
-                      type="submit"
-                      disabled={isSubmitting}
-                      className="flex w-full items-center justify-center rounded-md bg-gold-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gold-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-600 disabled:opacity-50 disabled:cursor-not-allowed"
+          <div className="mt-16 grid grid-cols-2 gap-8 xl:col-span-2 xl:mt-0 lg:grid-cols-4">
+            <div>
+              <h3 className="text-sm font-semibold leading-6 text-white">Shop</h3>
+              <ul role="list" className="mt-6 space-y-4">
+                {footerNavigation.shop.map((item) => (
+                  <li key={item.name}>
+                    <Link
+                      href={item.href}
+                      className="text-sm leading-6 text-gray-300 hover:text-white transition-colors"
                     >
-                      {isSubmitting ? 'Subscribing...' : 'Subscribe'}
-                    </button>
-                  </div>
-                </form>
-                {message.text && (
-                  <p
-                    className={`mt-2 text-sm ${
-                      message.type === 'success' ? 'text-green-400' : 'text-red-400'
-                    }`}
-                  >
-                    {message.text}
-                  </p>
-                )}
-              </div>
+                      {item.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             </div>
+            <div>
+              <h3 className="text-sm font-semibold leading-6 text-white">Company</h3>
+              <ul role="list" className="mt-6 space-y-4">
+                {footerNavigation.company.map((item) => (
+                  <li key={item.name}>
+                    <Link
+                      href={item.href}
+                      className="text-sm leading-6 text-gray-300 hover:text-white transition-colors"
+                    >
+                      {item.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <h3 className="text-sm font-semibold leading-6 text-white">Customer Service</h3>
+              <ul role="list" className="mt-6 space-y-4">
+                {footerNavigation.customer.map((item) => (
+                  <li key={item.name}>
+                    <Link
+                      href={item.href}
+                      className="text-sm leading-6 text-gray-300 hover:text-white transition-colors"
+                    >
+                      {item.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <h3 className="text-sm font-semibold leading-6 text-white">Programs</h3>
+              <ul role="list" className="mt-6 space-y-4">
+                {footerNavigation.programs.map((item) => (
+                  <li key={item.name}>
+                    <Link
+                      href={item.href}
+                      className="text-sm leading-6 text-gray-300 hover:text-white transition-colors"
+                    >
+                      {item.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div className="mt-16 grid grid-cols-1 gap-8 lg:grid-cols-2">
+          <div>
+            <h3 className="text-sm font-semibold leading-6 text-white">Legal</h3>
+            <ul role="list" className="mt-6 flex flex-wrap gap-x-4 gap-y-2">
+              {footerNavigation.legal.map((item) => (
+                <li key={item.name}>
+                  <Link
+                    href={item.href}
+                    className="text-sm leading-6 text-gray-300 hover:text-white transition-colors"
+                  >
+                    {item.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <h3 className="text-sm font-semibold leading-6 text-white">Newsletter</h3>
+            <p className="mt-2 text-sm leading-6 text-gray-300">
+              Get the latest updates on new products and special offers.
+            </p>
+            <form onSubmit={handleNewsletterSubmit} className="mt-6 sm:flex sm:max-w-md">
+              <label htmlFor="email-address" className="sr-only">
+                Email address
+              </label>
+              <input
+                type="email"
+                name="email-address"
+                id="email-address"
+                autoComplete="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                disabled={isSubmitting}
+                className="w-full min-w-0 appearance-none rounded-md border-0 bg-white/5 px-3 py-1.5 text-base text-white shadow-sm ring-1 ring-inset ring-white/10 placeholder:text-gray-500 focus:ring-2 focus:ring-inset focus:ring-gold-500 sm:w-56 sm:text-sm sm:leading-6 disabled:opacity-50"
+                placeholder="Enter your email"
+              />
+              <div className="mt-4 sm:ml-4 sm:mt-0 sm:flex-shrink-0">
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="flex w-full items-center justify-center rounded-md bg-gold-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gold-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isSubmitting ? 'Subscribing...' : 'Subscribe'}
+                </button>
+              </div>
+            </form>
+            {message.text && (
+              <p
+                className={`mt-2 text-sm ${
+                  message.type === 'success' ? 'text-green-400' : 'text-red-400'
+                }`}
+              >
+                {message.text}
+              </p>
+            )}
           </div>
         </div>
         <div className="mt-16 border-t border-white/10 pt-8 sm:mt-20 lg:mt-24">
