@@ -10,29 +10,6 @@ import {
 } from '@heroicons/react/24/outline';
 
 export default function OurStory() {
-  const milestones = [
-    {
-      year: '2023',
-      title: 'The Beginning',
-      description: 'A vision was born to create intimate apparel that doesn\'t compromise on comfort, style, or affordability.'
-    },
-    {
-      year: '2023',
-      title: 'First Collection',
-      description: 'Launched our first curated collection after months of research and testing to ensure the perfect balance.'
-    },
-    {
-      year: '2024',
-      title: 'Growing Community',
-      description: 'Reached thousands of happy customers and built a community of women who deserve to feel beautiful every day.'
-    },
-    {
-      year: '2024',
-      title: 'Expanding Range',
-      description: 'Continuously expanding our collection with new styles, sizes, and designs based on customer feedback.'
-    }
-  ];
-
   const values = [
     {
       icon: HeartIcon,
@@ -170,45 +147,6 @@ export default function OurStory() {
                   We make luxury accessible.
                 </p>
               </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Our Journey */}
-      <section className="py-16 md:py-24">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-serif font-bold text-gray-900 mb-4">
-              Our Journey
-            </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              From a vision to a growing community of empowered women
-            </p>
-          </div>
-
-          <div className="relative">
-            {/* Timeline line */}
-            <div className="hidden md:block absolute left-1/2 transform -translate-x-1/2 h-full w-0.5 bg-gradient-to-b from-pink-300 to-purple-300" />
-
-            <div className="space-y-12">
-              {milestones.map((milestone, index) => (
-                <div key={index} className={`flex flex-col md:flex-row gap-8 items-center ${index % 2 === 0 ? '' : 'md:flex-row-reverse'}`}>
-                  <div className="flex-1 md:text-right">
-                    <div className={`bg-white rounded-xl shadow-lg p-6 ${index % 2 === 0 ? '' : 'md:text-left'}`}>
-                      <div className="inline-block bg-gradient-to-r from-pink-500 to-purple-600 text-white px-4 py-2 rounded-full text-sm font-bold mb-3">
-                        {milestone.year}
-                      </div>
-                      <h3 className="text-2xl font-bold text-gray-900 mb-2">{milestone.title}</h3>
-                      <p className="text-gray-600">{milestone.description}</p>
-                    </div>
-                  </div>
-                  <div className="hidden md:block flex-shrink-0">
-                    <div className="w-4 h-4 rounded-full bg-gradient-to-r from-pink-500 to-purple-600 border-4 border-white shadow-lg" />
-                  </div>
-                  <div className="flex-1" />
-                </div>
-              ))}
             </div>
           </div>
         </div>
