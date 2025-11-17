@@ -1,9 +1,21 @@
 import { sendContactEmail } from '../../lib/email';
 import { createContactMessage } from '../../lib/airtable';
+import { protectPublicRoute, validateMethod, rateLimit } from '../../lib/apiMiddleware';
 
 export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+  // Apply CORS protection
+  if (!protectPublicRoute(req, res)) {
+    return; // Blocked by CORS
+  }
+
+  // Validate HTTP method
+  if (!validateMethod(req, res, 'POST')) {
+    return; // Method not allowed
+  }
+
+  // Apply rate limiting: 5 requests per 15 minutes per IP
+  if (!rateLimit(req, res, { maxRequests: 5, windowMs: 15 * 60 * 1000 })) {
+    return; // Rate limit exceeded
   }
 
   try {
@@ -40,7 +52,7 @@ export default async function handler(req, res) {
       });
     } catch (error) {
       // Log error but don't fail the request if Airtable fails
-      console.error('Failed to store contact message in Airtable:', error);
+      // TODO: Implement proper logging service (Winston, Pino, etc.)
     }
 
     // Send email notification to support team
@@ -58,13 +70,11 @@ export default async function handler(req, res) {
       });
     } else {
       // Email failed but we logged the message in Airtable
-      console.error('Failed to send contact email:', emailResult.error);
       return res.status(500).json({
         error: 'Failed to send message. Please try again or email us directly at support@girlsecretuk.com',
       });
     }
   } catch (error) {
-    console.error('Contact form error:', error);
     return res.status(500).json({
       error: 'An error occurred while processing your message. Please try again.',
     });

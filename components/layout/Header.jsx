@@ -61,7 +61,6 @@ export default function Header() {
           setInfoBanner(data.banners[0]);
         }
       } catch (error) {
-        console.error('Failed to fetch info banners:', error);
         // Fallback to default banner if API fails
         setInfoBanner({
           message: 'Free Shipping on Orders Over £50',

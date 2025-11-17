@@ -27,19 +27,17 @@ export function WishlistProvider({ children }) {
 
         if (response.ok) {
           const data = await response.json();
-          console.log('Loaded wishlist from Airtable:', data.productIds);
           setWishlistItems(data.productIds || []);
           setWishlistCount(data.productIds?.length || 0);
         }
       } else {
         // Load from localStorage for guests
         const localWishlist = getLocalWishlist();
-        console.log('Loaded wishlist from localStorage:', localWishlist);
         setWishlistItems(localWishlist);
         setWishlistCount(localWishlist.length);
       }
     } catch (error) {
-      console.error('Error loading wishlist:', error);
+      // Error loading wishlist
     } finally {
       setLoading(false);
     }
@@ -52,13 +50,10 @@ export function WishlistProvider({ children }) {
     const localWishlist = getLocalWishlist();
     if (localWishlist.length === 0) return;
 
-    console.log('Merging guest wishlist:', localWishlist);
-
     try {
       setLoading(true);
       // Add each item from local wishlist to Airtable
       const mergePromises = localWishlist.map(async (productId) => {
-        console.log(`Merging item ${productId} for user ${user.id}`);
         const response = await fetch('/api/wishlist/add', {
           method: 'POST',
           headers: {
@@ -68,31 +63,25 @@ export function WishlistProvider({ children }) {
         });
 
         const data = await response.json();
-        console.log(`Merge response for ${productId}:`, response.status, data);
 
         if (!response.ok) {
-          console.error(`Failed to merge ${productId}:`, data);
           throw new Error(data.error || 'Failed to add to wishlist');
         }
 
         return data;
       });
 
-      const results = await Promise.all(mergePromises);
-      console.log('Guest wishlist merged successfully. Results:', results);
+      await Promise.all(mergePromises);
 
       // Clear local wishlist after merge
       clearLocalWishlist();
 
       // Wait a moment for Airtable to commit the data
-      console.log('Waiting 500ms for Airtable to commit...');
       await new Promise(resolve => setTimeout(resolve, 500));
 
       // Reload wishlist from Airtable
-      console.log('Now reloading wishlist from Airtable...');
       await loadWishlist();
     } catch (error) {
-      console.error('Error merging wishlist:', error);
       setLoading(false);
     }
   }, [isAuthenticated, user, loadWishlist]);
@@ -104,7 +93,6 @@ export function WishlistProvider({ children }) {
       if (isAuthenticated && user) {
         const localWishlist = getLocalWishlist();
         if (localWishlist.length > 0) {
-          console.log('User logged in with guest wishlist, merging...');
           await mergeGuestWishlist();
         } else {
           await loadWishlist();
@@ -154,7 +142,6 @@ export function WishlistProvider({ children }) {
         return { success: true };
       }
     } catch (error) {
-      console.error('Error adding to wishlist:', error);
       return { success: false, error: error.message };
     }
   };
@@ -188,7 +175,6 @@ export function WishlistProvider({ children }) {
         return { success: true };
       }
     } catch (error) {
-      console.error('Error removing from wishlist:', error);
       return { success: false, error: error.message };
     }
   };

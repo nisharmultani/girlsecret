@@ -130,7 +130,7 @@ export default function OrderIssues() {
 
           <div className="grid md:grid-cols-3 gap-8">
             {issueTypes.map((issue, index) => (
-              <div key={index} className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+              <div key={issue.title} className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
                 <div className={`bg-gradient-to-r ${issue.color} p-6 text-white`}>
                   <issue.icon className="w-12 h-12 mb-4" />
                   <h3 className="text-2xl font-bold mb-2">{issue.title}</h3>
@@ -165,7 +165,7 @@ export default function OrderIssues() {
 
           <div className="space-y-6">
             {steps.lost.map((step, index) => (
-              <div key={index} className="bg-white rounded-lg shadow-md p-6 flex gap-6">
+              <div key={step.step} className="bg-white rounded-lg shadow-md p-6 flex gap-6">
                 <div className="flex-shrink-0">
                   <div className="w-12 h-12 rounded-full bg-red-600 text-white flex items-center justify-center text-xl font-bold">
                     {step.step}
@@ -196,7 +196,7 @@ export default function OrderIssues() {
 
           <div className="space-y-6">
             {steps.damaged.map((step, index) => (
-              <div key={index} className="bg-gray-50 rounded-lg shadow-md p-6 flex gap-6">
+              <div key={step.step} className="bg-gray-50 rounded-lg shadow-md p-6 flex gap-6">
                 <div className="flex-shrink-0">
                   <div className="w-12 h-12 rounded-full bg-orange-600 text-white flex items-center justify-center text-xl font-bold">
                     {step.step}
@@ -227,7 +227,7 @@ export default function OrderIssues() {
 
           <div className="space-y-6">
             {steps.delayed.map((step, index) => (
-              <div key={index} className="bg-white rounded-lg shadow-md p-6 flex gap-6">
+              <div key={step.step} className="bg-white rounded-lg shadow-md p-6 flex gap-6">
                 <div className="flex-shrink-0">
                   <div className="w-12 h-12 rounded-full bg-yellow-600 text-white flex items-center justify-center text-xl font-bold">
                     {step.step}

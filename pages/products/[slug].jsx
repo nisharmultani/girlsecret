@@ -229,7 +229,7 @@ export default function ProductDetail({ product, reviews = [] }) {
                 if (isPairEnd) return null;
 
                 return (
-                  <div key={index} className="relative w-full" data-image-index={index}>
+                  <div key={media.type === 'video' ? media.embedUrl : (media.url || media.thumbnails?.large?.url)} className="relative w-full" data-image-index={index}>
                     {isLarge ? (
                       // Large Full-Width Image or Video
                       media.type === 'video' ? (
@@ -492,7 +492,7 @@ export default function ProductDetail({ product, reviews = [] }) {
                       const parts = spec.split(':');
                       if (parts.length === 2) {
                         return (
-                          <div key={index} className="flex justify-between items-start py-2 border-b border-gray-200 last:border-0">
+                          <div key={`${parts[0].trim()}-${index}`} className="flex justify-between items-start py-2 border-b border-gray-200 last:border-0">
                             <span className="text-sm font-medium text-gray-700 flex-shrink-0 mr-4">
                               {parts[0].trim()}
                             </span>
@@ -503,7 +503,7 @@ export default function ProductDetail({ product, reviews = [] }) {
                         );
                       }
                       return (
-                        <div key={index} className="py-1">
+                        <div key={`spec-${spec}-${index}`} className="py-1">
                           <span className="text-sm text-gray-700">{spec}</span>
                         </div>
                       );
@@ -564,7 +564,7 @@ export default function ProductDetail({ product, reviews = [] }) {
 
                       return (
                         <button
-                          key={index}
+                          key={imageUrl}
                           onClick={() => {
                             setSelectedImage(index);
                             // Scroll to the corresponding image in the gallery
@@ -719,7 +719,7 @@ export default function ProductDetail({ product, reviews = [] }) {
                       {review.images && review.images.length > 0 && (
                         <div className="grid grid-cols-6 sm:grid-cols-8 gap-2 mb-3">
                           {review.images.slice(0, 4).map((image, index) => (
-                            <div key={index} className="relative aspect-square rounded-lg overflow-hidden bg-gray-200 shadow-sm">
+                            <div key={image.url || image.thumbnails?.large?.url} className="relative aspect-square rounded-lg overflow-hidden bg-gray-200 shadow-sm">
                               <Image
                                 src={image.url || image.thumbnails?.large?.url}
                                 alt={`Review image ${index + 1}`}
@@ -903,7 +903,6 @@ export async function getStaticProps({ params }) {
       revalidate: 60,
     };
   } catch (error) {
-    console.error('Error fetching product:', error);
     return { notFound: true };
   }
 }

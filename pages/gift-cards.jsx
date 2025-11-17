@@ -98,7 +98,7 @@ export default function GiftCards() {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {features.map((feature, index) => (
-              <div key={index} className="text-center p-6 bg-gray-50 rounded-xl hover:shadow-lg transition-shadow">
+              <div key={feature.title} className="text-center p-6 bg-gray-50 rounded-xl hover:shadow-lg transition-shadow">
                 <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-r from-pink-500 to-purple-600 mb-4">
                   <feature.icon className="w-8 h-8 text-white" />
                 </div>
@@ -304,7 +304,7 @@ export default function GiftCards() {
 
           <div className="space-y-4">
             {faqs.map((faq, index) => (
-              <div key={index} className="bg-white rounded-lg shadow-md p-6">
+              <div key={faq.question} className="bg-white rounded-lg shadow-md p-6">
                 <h3 className="font-bold text-lg text-gray-900 mb-2">{faq.question}</h3>
                 <p className="text-gray-600">{faq.answer}</p>
               </div>

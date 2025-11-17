@@ -1,33 +1,46 @@
 import { hashPassword, verifyPassword, generateToken } from '../../../../lib/auth';
+import { strictCorsMiddleware, validateMethod, rateLimit } from '../../../../lib/apiMiddleware';
 import crypto from 'crypto';
 
-// Default admin credentials (can be overridden via environment variables)
-const DEFAULT_ADMIN_EMAIL = 'girlsecretuk@gmail.com';
-const DEFAULT_ADMIN_PASSWORD = 'Abcd@3303';
-
-// Hash the default password on first use
+// Hash the admin password on first use
 let adminPasswordHash = null;
 function getAdminPasswordHash() {
   if (!adminPasswordHash) {
     // Check if custom admin password hash is provided in env
     if (process.env.ADMIN_PASSWORD_HASH) {
       adminPasswordHash = process.env.ADMIN_PASSWORD_HASH;
+    } else if (process.env.ADMIN_PASSWORD) {
+      // Hash the password from environment
+      adminPasswordHash = hashPassword(process.env.ADMIN_PASSWORD);
     } else {
-      // Use default password and hash it
-      const password = process.env.ADMIN_PASSWORD || DEFAULT_ADMIN_PASSWORD;
-      adminPasswordHash = hashPassword(password);
+      throw new Error('ADMIN_PASSWORD or ADMIN_PASSWORD_HASH must be set in environment variables');
     }
   }
   return adminPasswordHash;
 }
 
 function getAdminEmail() {
-  return process.env.ADMIN_EMAIL || DEFAULT_ADMIN_EMAIL;
+  if (!process.env.ADMIN_EMAIL) {
+    throw new Error('ADMIN_EMAIL must be set in environment variables');
+  }
+  return process.env.ADMIN_EMAIL;
 }
 
 export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+  // Apply strict CORS (same origin only)
+  if (!strictCorsMiddleware(req, res)) {
+    return; // Blocked by CORS
+  }
+
+  // Validate HTTP method
+  if (!validateMethod(req, res, 'POST')) {
+    return; // Method not allowed
+  }
+
+  // Apply rate limiting: 5 login attempts per 15 minutes per IP
+  // This prevents brute force attacks
+  if (!rateLimit(req, res, { maxRequests: 5, windowMs: 15 * 60 * 1000 })) {
+    return; // Rate limit exceeded
   }
 
   try {
@@ -50,24 +63,15 @@ export default async function handler(req, res) {
     const isValidPassword = verifyPassword(password, adminHash);
 
     if (!isValidPassword) {
-      // Log failed attempt (in production, implement rate limiting here)
-      console.warn('Failed admin login attempt:', {
-        email,
-        ip: req.headers['x-forwarded-for'] || req.connection.remoteAddress,
-        timestamp: new Date().toISOString(),
-      });
-
+      // Failed login attempt - rate limiting already applied above
+      // TODO: Implement proper audit logging for security events
       return res.status(401).json({ error: 'Invalid email or password' });
     }
 
     // Generate session token
     const token = generateToken();
 
-    // Log successful login
-    console.log('Admin logged in:', {
-      email,
-      timestamp: new Date().toISOString(),
-    });
+    // TODO: Implement proper audit logging for successful admin logins
 
     // Return success with token and admin info
     return res.status(200).json({
@@ -81,7 +85,6 @@ export default async function handler(req, res) {
       message: 'Login successful',
     });
   } catch (error) {
-    console.error('Admin login error:', error);
     return res.status(500).json({ error: 'An error occurred during login' });
   }
 }

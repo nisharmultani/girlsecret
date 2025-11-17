@@ -196,7 +196,7 @@ export default function AmbassadorProgram() {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {benefits.map((benefit, index) => (
-              <div key={index} className="bg-white rounded-xl p-8 hover:shadow-lg transition-shadow">
+              <div key={benefit.title} className="bg-white rounded-xl p-8 hover:shadow-lg transition-shadow">
                 <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 mb-4">
                   <benefit.icon className="w-6 h-6 text-white" />
                 </div>
@@ -227,7 +227,7 @@ export default function AmbassadorProgram() {
           <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl shadow-lg p-8">
             <ul className="space-y-4">
               {responsibilities.map((responsibility, index) => (
-                <li key={index} className="flex items-start gap-3">
+                <li key={responsibility} className="flex items-start gap-3">
                   <CheckIcon className="w-6 h-6 text-purple-600 flex-shrink-0 mt-0.5" />
                   <span className="text-gray-700">{responsibility}</span>
                 </li>
@@ -252,7 +252,7 @@ export default function AmbassadorProgram() {
           <div className="bg-white rounded-xl shadow-lg p-8">
             <ul className="space-y-4">
               {requirements.map((requirement, index) => (
-                <li key={index} className="flex items-start gap-3">
+                <li key={requirement} className="flex items-start gap-3">
                   <CheckIcon className="w-6 h-6 text-pink-600 flex-shrink-0 mt-0.5" />
                   <span className="text-gray-700">{requirement}</span>
                 </li>

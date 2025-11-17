@@ -1,9 +1,21 @@
 import { findUserByEmail } from '../../../lib/airtable';
 import { verifyPassword, generateToken } from '../../../lib/auth';
+import { protectPublicRoute, validateMethod, rateLimit } from '../../../lib/apiMiddleware';
 
 export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+  // Apply CORS protection
+  if (!protectPublicRoute(req, res)) {
+    return; // Blocked by CORS
+  }
+
+  // Validate HTTP method
+  if (!validateMethod(req, res, 'POST')) {
+    return; // Method not allowed
+  }
+
+  // Apply rate limiting: 10 login attempts per 15 minutes per IP
+  if (!rateLimit(req, res, { maxRequests: 10, windowMs: 15 * 60 * 1000 })) {
+    return; // Rate limit exceeded
   }
 
   try {
@@ -50,7 +62,6 @@ export default async function handler(req, res) {
       message: 'Login successful',
     });
   } catch (error) {
-    console.error('Login error:', error);
     res.status(500).json({ error: 'Server error during login' });
   }
 }

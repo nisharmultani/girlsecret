@@ -98,7 +98,6 @@ export default function Checkout() {
         }
       }
     } catch (error) {
-      console.error('Failed to fetch addresses:', error);
     }
   };
 
@@ -174,7 +173,6 @@ export default function Checkout() {
         setPaymentError(data.error || 'Failed to initialize payment');
       }
     } catch (error) {
-      console.error('Payment intent error:', error);
       setPaymentError('Failed to initialize payment. Please refresh the page.');
     }
   };
@@ -301,10 +299,8 @@ export default function Checkout() {
 
               if (registerResponse.ok) {
                 // Account created - they can log in later
-                console.log('Account created successfully');
               }
             } catch (error) {
-              console.error('Failed to create account:', error);
               // Don't fail the order if account creation fails
             }
           }
@@ -329,7 +325,6 @@ export default function Checkout() {
         }
       }, 5000);
     } catch (error) {
-      console.error('Order processing failed:', error);
       alert('Order processing failed. Please try again.');
       setIsProcessing(false);
     }

@@ -118,9 +118,9 @@ export default function TestimonialsCarousel() {
 
             {/* Dots */}
             <div className="flex gap-2">
-              {testimonials.map((_, index) => (
+              {testimonials.map((testimonial, index) => (
                 <button
-                  key={index}
+                  key={testimonial.id}
                   onClick={() => goToTestimonial(index)}
                   className={`transition-all duration-300 ${
                     index === currentIndex
@@ -152,7 +152,7 @@ function TestimonialCard({ testimonial }) {
       {/* Stars */}
       <div className="flex gap-1 mb-4">
         {[...Array(testimonial.rating)].map((_, i) => (
-          <StarIcon key={i} className="w-5 h-5 text-yellow-400" />
+          <StarIcon key={`star-${i}`} className="w-5 h-5 text-yellow-400" />
         ))}
       </div>
 
