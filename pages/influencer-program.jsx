@@ -370,7 +370,7 @@ export default function InfluencerProgram() {
                   value={formData.message}
                   onChange={handleChange}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
-                  placeholder="Tell us about yourself and why you'd be a great fit for our influencer program..."
+                  placeholder="Tell us about yourself and why you&apos;d be a great fit for our influencer program..."
                 />
               </div>
 

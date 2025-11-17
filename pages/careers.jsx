@@ -480,7 +480,7 @@ export default function Careers() {
                   value={formData.coverLetter}
                   onChange={handleChange}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent"
-                  placeholder="Tell us about yourself and why you'd be a great fit for our team..."
+                  placeholder="Tell us about yourself and why you&apos;d be a great fit for our team..."
                 />
               </div>
 

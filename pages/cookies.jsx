@@ -298,7 +298,7 @@ export default function CookiesPolicy() {
               regulatory, or operational reasons. We encourage you to review this page periodically.
             </p>
             <p className="text-gray-700">
-              The &apos;Last Updated&apos; date at the top of this page indicates when the policy was last revised.
+              The &quot;Last Updated&quot; date at the top of this page indicates when the policy was last revised.
             </p>
           </div>
         </div>

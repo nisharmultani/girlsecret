@@ -420,7 +420,7 @@ export default function AmbassadorProgram() {
                   value={formData.whyYou}
                   onChange={handleChange}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent"
-                  placeholder="Tell us why you'd be a great ambassador for our brand..."
+                  placeholder="Tell us why you&apos;d be a great ambassador for our brand..."
                 />
               </div>
 
