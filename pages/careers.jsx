@@ -298,7 +298,7 @@ export default function Careers() {
 
           <div className="mt-12 text-center">
             <p className="text-gray-600 mb-4">
-              Don't see the perfect role? We're always looking for talented individuals!
+              Don&apos;t see the perfect role? We&apos;re always looking for talented individuals!
             </p>
             <a
               href="#apply"
@@ -318,7 +318,7 @@ export default function Careers() {
               Life at GirlSecret
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              We're building more than just a company—we're building a community
+              We&apos;re building more than just a company—we&apos;re building a community
             </p>
           </div>
 

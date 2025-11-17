@@ -152,10 +152,10 @@ export default function InfluencerProgram() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-serif font-bold text-gray-900 mb-4">
-              What You'll Get
+              What You&apos;ll Get
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              As a GirlSecret influencer, you'll enjoy exclusive perks and earning opportunities
+              As a GirlSecret influencer, you&apos;ll enjoy exclusive perks and earning opportunities
             </p>
           </div>
 
@@ -185,7 +185,7 @@ export default function InfluencerProgram() {
               How It Works
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Getting started is easy! Here's how our program works
+              Getting started is easy! Here&apos;s how our program works
             </p>
           </div>
 
@@ -235,7 +235,7 @@ export default function InfluencerProgram() {
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-serif font-bold text-gray-900 mb-4">
-              Who We're Looking For
+              Who We&apos;re Looking For
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
               We partner with influencers who share our values and passion for quality intimate apparel
@@ -403,7 +403,7 @@ export default function InfluencerProgram() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-bold mb-4">Questions About Our Program?</h2>
           <p className="text-gray-300 mb-8 max-w-2xl mx-auto">
-            Have questions? We'd love to hear from you. Contact our partnership team for more information.
+            Have questions? We&apos;d love to hear from you. Contact our partnership team for more information.
           </p>
           <Link
             href="/contact"
