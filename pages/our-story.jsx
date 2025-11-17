@@ -115,7 +115,7 @@ export default function OurStory() {
               The GirlSecret Formula
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              We didn't just want to sell products. We wanted to create a new standard.
+              We didn&apos;t just want to sell products. We wanted to create a new standard.
             </p>
           </div>
 
@@ -143,7 +143,7 @@ export default function OurStory() {
                   you feel confident and amazing.
                 </p>
                 <p className="text-lg">
-                  <strong className="text-black">On Budget:</strong> Quality intimate apparel shouldn't break the bank.
+                  <strong className="text-black">On Budget:</strong> Quality intimate apparel shouldn&apos;t break the bank.
                   We make luxury accessible.
                 </p>
               </div>
