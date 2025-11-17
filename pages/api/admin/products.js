@@ -1,12 +1,19 @@
 import { getAllProducts } from '../../../lib/airtable';
+import { protectAdminRoute, validateMethod } from '../../../lib/apiMiddleware';
 
 export default async function handler(req, res) {
-  if (req.method !== 'GET') {
-    return res.status(405).json({ error: 'Method not allowed' });
+  // Validate HTTP method
+  if (!validateMethod(req, res, 'GET')) {
+    return; // Method not allowed
+  }
+
+  // Protect admin route with CORS and authentication
+  const admin = await protectAdminRoute(req, res);
+  if (!admin) {
+    return; // Blocked by CORS or authentication failed
   }
 
   try {
-    // TODO: Add admin authentication check here
     const products = await getAllProducts();
     return res.status(200).json({ products });
   } catch (error) {
