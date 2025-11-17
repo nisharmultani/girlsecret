@@ -298,7 +298,7 @@ export default function CookiesPolicy() {
               regulatory, or operational reasons. We encourage you to review this page periodically.
             </p>
             <p className="text-gray-700">
-              The "Last Updated" date at the top of this page indicates when the policy was last revised.
+              The &quot;Last Updated&quot; date at the top of this page indicates when the policy was last revised.
             </p>
           </div>
         </div>
@@ -309,7 +309,7 @@ export default function CookiesPolicy() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-bold mb-4">Questions About Cookies?</h2>
           <p className="text-gray-300 mb-8 max-w-2xl mx-auto">
-            If you have any questions about our use of cookies, please don't hesitate to contact us.
+            If you have any questions about our use of cookies, please don&apos;t hesitate to contact us.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link

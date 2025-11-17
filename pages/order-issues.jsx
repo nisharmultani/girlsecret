@@ -110,7 +110,7 @@ export default function OrderIssues() {
               Order Issues Help Center
             </h1>
             <p className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto">
-              Lost, damaged, or delayed package? We're here to help make it right.
+              Lost, damaged, or delayed package? We&apos;re here to help make it right.
             </p>
           </div>
         </div>
@@ -121,10 +121,10 @@ export default function OrderIssues() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-serif font-bold text-gray-900 mb-4">
-              What's Your Issue?
+              What&apos;s Your Issue?
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Select the issue you're experiencing for specific help
+              Select the issue you&apos;re experiencing for specific help
             </p>
           </div>
 
@@ -159,7 +159,7 @@ export default function OrderIssues() {
               Lost Package
             </h2>
             <p className="text-lg text-gray-600">
-              Follow these steps if your package hasn't arrived
+              Follow these steps if your package hasn&apos;t arrived
             </p>
           </div>
 
@@ -254,7 +254,7 @@ export default function OrderIssues() {
               </h2>
               <div className="text-lg space-y-4 max-w-2xl mx-auto">
                 <p>
-                  At GirlSecret, we stand behind every order. If something goes wrong with your delivery, we'll make it right.
+                  At GirlSecret, we stand behind every order. If something goes wrong with your delivery, we&apos;ll make it right.
                 </p>
                 <p>
                   <strong>Our Promise:</strong>
@@ -266,7 +266,7 @@ export default function OrderIssues() {
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-green-400 font-bold">✓</span>
-                    <span>Full refund if we can't resolve the issue</span>
+                    <span>Full refund if we can&apos;t resolve the issue</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-green-400 font-bold">✓</span>

@@ -169,10 +169,10 @@ export default function AmbassadorProgram() {
             </h2>
             <div className="text-lg text-gray-700 space-y-4 text-left">
               <p>
-                A GirlSecret Brand Ambassador is more than just a representative—you're a valued member of our community who genuinely loves and believes in our products.
+                A GirlSecret Brand Ambassador is more than just a representative—you&apos;re a valued member of our community who genuinely loves and believes in our products.
               </p>
               <p>
-                As an ambassador, you'll help us spread the word about GirlSecret's mission to provide comfortable, sexy, and affordable intimate apparel. Whether you're a student, working professional, or content creator, if you're passionate about our brand, we want you on our team!
+                As an ambassador, you&apos;ll help us spread the word about GirlSecret&apos;s mission to provide comfortable, sexy, and affordable intimate apparel. Whether you&apos;re a student, working professional, or content creator, if you&apos;re passionate about our brand, we want you on our team!
               </p>
               <p className="font-semibold text-black">
                 This is perfect for students, campus influencers, and anyone who loves building communities and sharing great products!
@@ -220,7 +220,7 @@ export default function AmbassadorProgram() {
               What We Expect
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Here's what you'll do as a GirlSecret ambassador
+              Here&apos;s what you&apos;ll do as a GirlSecret ambassador
             </p>
           </div>
 
@@ -245,7 +245,7 @@ export default function AmbassadorProgram() {
               Who Can Apply?
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              We're looking for passionate individuals who align with our brand values
+              We&apos;re looking for passionate individuals who align with our brand values
             </p>
           </div>
 
@@ -420,7 +420,7 @@ export default function AmbassadorProgram() {
                   value={formData.whyYou}
                   onChange={handleChange}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent"
-                  placeholder="Tell us why you'd be a great ambassador for our brand..."
+                  placeholder="Tell us why you&apos;d be a great ambassador for our brand..."
                 />
               </div>
 
@@ -469,7 +469,7 @@ export default function AmbassadorProgram() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-bold mb-4">Have Questions?</h2>
           <p className="text-gray-300 mb-8 max-w-2xl mx-auto">
-            Want to learn more about our ambassador program? We're here to help!
+            Want to learn more about our ambassador program? We&apos;re here to help!
           </p>
           <Link
             href="/contact"

@@ -242,7 +242,7 @@ export default function GiftCards() {
               </button>
 
               <p className="text-center text-sm text-gray-500">
-                In the meantime, please <Link href="/contact" className="text-purple-600 hover:underline font-semibold">contact us</Link> if you'd like to purchase a gift card.
+                In the meantime, please <Link href="/contact" className="text-purple-600 hover:underline font-semibold">contact us</Link> if you&apos;d like to purchase a gift card.
               </p>
             </form>
           </div>
