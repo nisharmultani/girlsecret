@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { useAuth } from './AuthContext';
+import toast from 'react-hot-toast';
 import {
   getLocalWishlist,
   addToLocalWishlist,
@@ -126,6 +127,11 @@ export function WishlistProvider({ children }) {
   }, [isAuthenticated, user, loadWishlist, mergeGuestWishlist]);
 
   const addToWishlist = async (productId) => {
+    // Optimistic update
+    setWishlistItems(prev => [...prev, productId]);
+    setWishlistCount(prev => prev + 1);
+    toast.success('Added to wishlist ❤️');
+
     try {
       if (isAuthenticated && user) {
         // Add to Airtable for authenticated users
@@ -138,11 +144,13 @@ export function WishlistProvider({ children }) {
         });
 
         if (response.ok) {
-          setWishlistItems(prev => [...prev, productId]);
-          setWishlistCount(prev => prev + 1);
           return { success: true };
         } else {
           const data = await response.json();
+          // Revert optimistic update on error
+          setWishlistItems(prev => prev.filter(id => id !== productId));
+          setWishlistCount(prev => prev - 1);
+          toast.error(data.error || 'Failed to add to wishlist');
           return { success: false, error: data.error };
         }
       } else {
@@ -155,11 +163,21 @@ export function WishlistProvider({ children }) {
       }
     } catch (error) {
       console.error('Error adding to wishlist:', error);
+      // Revert optimistic update on error
+      setWishlistItems(prev => prev.filter(id => id !== productId));
+      setWishlistCount(prev => prev - 1);
+      toast.error('Failed to add to wishlist');
       return { success: false, error: error.message };
     }
   };
 
   const removeFromWishlist = async (productId) => {
+    // Optimistic update
+    const prevItems = [...wishlistItems];
+    setWishlistItems(prev => prev.filter(id => id !== productId));
+    setWishlistCount(prev => prev - 1);
+    toast.success('Removed from wishlist');
+
     try {
       if (isAuthenticated && user) {
         // Remove from Airtable for authenticated users
@@ -172,11 +190,13 @@ export function WishlistProvider({ children }) {
         });
 
         if (response.ok) {
-          setWishlistItems(prev => prev.filter(id => id !== productId));
-          setWishlistCount(prev => prev - 1);
           return { success: true };
         } else {
           const data = await response.json();
+          // Revert optimistic update on error
+          setWishlistItems(prevItems);
+          setWishlistCount(prevItems.length);
+          toast.error(data.error || 'Failed to remove from wishlist');
           return { success: false, error: data.error };
         }
       } else {
@@ -189,6 +209,10 @@ export function WishlistProvider({ children }) {
       }
     } catch (error) {
       console.error('Error removing from wishlist:', error);
+      // Revert optimistic update on error
+      setWishlistItems(prevItems);
+      setWishlistCount(prevItems.length);
+      toast.error('Failed to remove from wishlist');
       return { success: false, error: error.message };
     }
   };

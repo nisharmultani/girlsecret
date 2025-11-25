@@ -6,6 +6,7 @@ import { getCart, updateCartQuantity, removeFromCart, getCartTotal } from '../li
 import { formatPrice } from '../utils/format';
 import { TrashIcon, ShoppingBagIcon, SparklesIcon } from '@heroicons/react/24/outline';
 import { useReferral } from '../hooks/useReferral';
+import toast from 'react-hot-toast';
 
 export default function Cart() {
   const router = useRouter();
@@ -39,13 +40,38 @@ export default function Cart() {
   };
 
   const handleUpdateQuantity = (productId, newQuantity, size, color) => {
+    // Optimistic update
+    const currentCart = [...cart];
     updateCartQuantity(productId, newQuantity, size, color);
-    loadCart();
+    setCart(getCart());
+
+    // Show toast for quantity changes
+    if (newQuantity === 0) {
+      toast.success('Item removed from cart');
+    }
   };
 
   const handleRemove = (productId, size, color) => {
+    // Optimistic update
+    const removedItem = cart.find(item =>
+      item.id === productId && item.size === size && item.color === color
+    );
+
     removeFromCart(productId, size, color);
-    loadCart();
+    setCart(getCart());
+
+    // Show toast with undo option
+    toast.success(
+      <div>
+        <span className="font-medium">Item removed from cart</span>
+        {removedItem && (
+          <div className="text-sm text-gray-300 mt-1">{removedItem.name}</div>
+        )}
+      </div>,
+      {
+        duration: 4000,
+      }
+    );
   };
 
   const subtotal = getCartTotal();
@@ -53,11 +79,13 @@ export default function Cart() {
   const handleApplyPromo = async (codeToApply = null) => {
     const code = codeToApply || promoCode;
     if (!code || !code.trim()) {
-      alert('Please enter a promo code');
+      toast.error('Please enter a promo code');
       return;
     }
 
     setIsValidating(true);
+    const toastId = toast.loading('Validating promo code...');
+
     try {
       const response = await fetch('/api/validate-promo', {
         method: 'POST',
@@ -69,20 +97,29 @@ export default function Cart() {
 
       if (data.valid) {
         setDiscount(data.discount);
-        // Don't show alert for auto-applied referral codes
+        // Don't show toast for auto-applied referral codes
         if (!codeToApply) {
-          alert(`Promo code applied! You saved ${formatPrice(data.discount)}`);
+          toast.success(
+            `Promo code applied! You saved ${formatPrice(data.discount)}`,
+            { id: toastId }
+          );
+        } else {
+          toast.dismiss(toastId);
         }
       } else {
         if (!codeToApply) {
-          alert(data.message || 'Invalid promo code');
+          toast.error(data.message || 'Invalid promo code', { id: toastId });
+        } else {
+          toast.dismiss(toastId);
         }
         setDiscount(0);
       }
     } catch (error) {
       console.error('Promo code error:', error);
       if (!codeToApply) {
-        alert('Failed to validate promo code. Please try again.');
+        toast.error('Failed to validate promo code. Please try again.', { id: toastId });
+      } else {
+        toast.dismiss(toastId);
       }
       setDiscount(0);
     } finally {
