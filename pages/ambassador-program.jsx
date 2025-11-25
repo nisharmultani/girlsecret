@@ -29,15 +29,10 @@ export default function AmbassadorProgram() {
     setSubmitMessage({ type: '', text: '' });
 
     try {
-      const response = await fetch('/api/contact', {
+      const response = await fetch('/api/ambassador/apply', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...formData,
-          subject: 'Brand Ambassador Application',
-          type: 'ambassador',
-          message: `Why You: ${formData.whyYou}\nExperience: ${formData.experience}\nCity: ${formData.city}\nUniversity: ${formData.university}`
-        }),
+        body: JSON.stringify(formData),
       });
 
       const data = await response.json();
@@ -45,7 +40,7 @@ export default function AmbassadorProgram() {
       if (data.success) {
         setSubmitMessage({
           type: 'success',
-          text: 'Thank you for applying! We\'ll review your application and contact you within 5 business days.',
+          text: `Thank you for applying! We'll review your application and contact you within 5 business days. Your unique referral code is: ${data.referralCode}`,
         });
         setFormData({
           name: '',
