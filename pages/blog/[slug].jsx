@@ -11,6 +11,7 @@ import {
   getBlogPostBySlug,
   getRelatedBlogPosts,
 } from '../../lib/airtable';
+import { generateArticleSchema } from '../../lib/seo';
 import {
   ClockIcon,
   CalendarIcon,
@@ -114,6 +115,15 @@ export default function BlogPostPage({ post, relatedPosts }) {
 
   const imageUrl = getImageUrl();
 
+  // Generate structured data for SEO
+  const articleSchema = generateArticleSchema({
+    title: title,
+    description: metaDescription || content.substring(0, 160),
+    image: imageUrl,
+    publishedAt: publishedDate,
+    updatedAt: publishedDate,
+  });
+
   return (
     <>
       <SEO
@@ -123,6 +133,16 @@ export default function BlogPostPage({ post, relatedPosts }) {
         image={imageUrl}
         type="article"
       />
+
+      <Head>
+        {/* Article Structured Data */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(articleSchema),
+          }}
+        />
+      </Head>
 
       <div className="min-h-screen bg-white">
         {/* Back to Blog Link */}
