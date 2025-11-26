@@ -1,25 +1,28 @@
-import { getAllProducts } from '../lib/airtable';
+import { getAllProducts, getAllBlogPosts } from '../lib/airtable';
 
 /**
  * Dynamic Sitemap Generator
  *
- * This generates a sitemap.xml file dynamically based on your products
- * and static pages. It helps search engines discover all your pages.
+ * This generates a sitemap.xml file dynamically based on your products,
+ * blog posts, and static pages. It helps search engines discover all your pages.
  *
  * The sitemap is regenerated on each request in production with ISR.
  */
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://girlsecret.com';
 
-function generateSiteMap(products) {
+function generateSiteMap(products, blogPosts) {
   const staticPages = [
     { url: '', changefreq: 'daily', priority: 1.0 },
     { url: '/shop', changefreq: 'daily', priority: 0.9 },
+    { url: '/blog', changefreq: 'daily', priority: 0.9 },
     { url: '/about', changefreq: 'monthly', priority: 0.7 },
     { url: '/contact', changefreq: 'monthly', priority: 0.7 },
     { url: '/faq', changefreq: 'monthly', priority: 0.6 },
     { url: '/privacy', changefreq: 'yearly', priority: 0.3 },
     { url: '/terms', changefreq: 'yearly', priority: 0.3 },
+    { url: '/shipping', changefreq: 'monthly', priority: 0.5 },
+    { url: '/returns', changefreq: 'monthly', priority: 0.5 },
   ];
 
   return `<?xml version="1.0" encoding="UTF-8"?>
@@ -61,17 +64,42 @@ function generateSiteMap(products) {
      `;
        })
        .join('')}
+     ${blogPosts
+       .map((post) => {
+         const imageUrl = Array.isArray(post.featuredImage)
+           ? post.featuredImage[0]?.url
+           : post.featuredImage;
+
+         const imageXml = imageUrl ? `
+           <image:image>
+               <image:loc>${imageUrl}</image:loc>
+               <image:title>${post.title}</image:title>
+           </image:image>` : '';
+
+         return `
+       <url>
+           <loc>${SITE_URL}/blog/${post.slug}</loc>
+           <lastmod>${new Date(post.publishedDate).toISOString()}</lastmod>
+           <changefreq>monthly</changefreq>
+           <priority>0.7</priority>${imageXml}
+       </url>
+     `;
+       })
+       .join('')}
    </urlset>
  `;
 }
 
 export async function getServerSideProps({ res }) {
   try {
-    // Fetch all products
-    const products = await getAllProducts();
+    // Fetch all products and blog posts
+    const [products, blogPosts] = await Promise.all([
+      getAllProducts(),
+      getAllBlogPosts()
+    ]);
 
     // Generate the XML sitemap
-    const sitemap = generateSiteMap(products);
+    const sitemap = generateSiteMap(products, blogPosts);
 
     res.setHeader('Content-Type', 'text/xml');
     res.setHeader(

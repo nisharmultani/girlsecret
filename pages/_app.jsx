@@ -6,6 +6,7 @@ import { AuthProvider } from '../context/AuthContext';
 import { WishlistProvider } from '../context/WishlistContext';
 import { useEffect } from 'react';
 import { useRouter } from 'next/router';
+import { Toaster } from 'react-hot-toast';
 
 export default function App({ Component, pageProps }) {
   const router = useRouter();
@@ -50,6 +51,33 @@ export default function App({ Component, pageProps }) {
     <AuthProvider>
       <WishlistProvider>
         <GoogleAnalytics />
+        <Toaster
+          position="top-center"
+          reverseOrder={false}
+          toastOptions={{
+            duration: 3000,
+            style: {
+              background: '#363636',
+              color: '#fff',
+              padding: '16px',
+              borderRadius: '8px',
+            },
+            success: {
+              duration: 3000,
+              iconTheme: {
+                primary: '#10b981',
+                secondary: '#fff',
+              },
+            },
+            error: {
+              duration: 4000,
+              iconTheme: {
+                primary: '#ef4444',
+                secondary: '#fff',
+              },
+            },
+          }}
+        />
         {getLayout(
           <>
             <SEO page={pageProps.seo} />

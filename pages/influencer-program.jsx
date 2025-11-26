@@ -27,14 +27,10 @@ export default function InfluencerProgram() {
     setSubmitMessage({ type: '', text: '' });
 
     try {
-      const response = await fetch('/api/contact', {
+      const response = await fetch('/api/influencer/apply', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...formData,
-          subject: 'Influencer Program Application',
-          type: 'influencer'
-        }),
+        body: JSON.stringify(formData),
       });
 
       const data = await response.json();
@@ -42,7 +38,7 @@ export default function InfluencerProgram() {
       if (data.success) {
         setSubmitMessage({
           type: 'success',
-          text: 'Thank you for your application! We\'ll review it and get back to you within 48 hours.',
+          text: `Thank you for your application! We'll review it and get back to you within 48 hours. Your unique referral code is: ${data.referralCode}`,
         });
         setFormData({
           name: '',
