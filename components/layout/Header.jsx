@@ -15,6 +15,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useWishlist } from '../../context/WishlistContext';
 import SearchModal from '../SearchModal';
 import InfoBanner from '../ui/InfoBanner';
+import Image from 'next/image';
 
 const navigation = [
   { name: 'Home', href: '/' },
@@ -111,9 +112,14 @@ export default function Header() {
           {/* Logo */}
           <div className="flex lg:flex-1">
             <Link href="/" className="-m-1.5 p-1.5">
-              <span className="text-2xl md:text-3xl font-serif font-bold text-gradient">
-                GirlSecret
-              </span>
+            <Image
+      src="/logoBlack.png"
+      alt="GirlSecret"
+      width={180}
+      height={52}
+      priority
+      className="h-14 w-auto"
+    />
             </Link>
           </div>
 
@@ -349,9 +355,13 @@ export default function Header() {
             <Dialog.Panel className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
               <div className="flex items-center justify-between">
                 <Link href="/" className="-m-1.5 p-1.5" onClick={() => setMobileMenuOpen(false)}>
-                  <span className="text-2xl font-serif font-bold text-gradient">
-                    GirlSecret
-                  </span>
+                <Image
+      src="/logoBlack.png"
+      alt="GirlSecret"
+      width={150}
+      height={45}
+      className="h-8 w-auto"
+    />
                 </Link>
                 <button
                   type="button"

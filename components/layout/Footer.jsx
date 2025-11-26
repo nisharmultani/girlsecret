@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { useState } from 'react';
+import Image from 'next/image';
 
 const footerNavigation = {
   shop: [
@@ -132,9 +133,13 @@ export default function Footer() {
       <div className="mx-auto max-w-7xl px-6 pb-8 pt-16 sm:pt-24 lg:px-8 lg:pt-32">
         <div className="xl:grid xl:grid-cols-3 xl:gap-8">
           <div className="space-y-8">
-            <span className="text-3xl font-serif font-bold text-white">
-              GirlSecret
-            </span>
+          <Image
+      src="/logoWhite.png"
+      alt="GirlSecret"
+  width={150}
+  height={45}
+  className="h-16 w-auto"
+/>
             <p className="text-sm leading-6 text-gray-300">
               Discover luxury beauty and lifestyle products that celebrate your unique beauty.
             </p>
