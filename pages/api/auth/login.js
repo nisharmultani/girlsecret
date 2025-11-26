@@ -17,7 +17,11 @@ export default async function handler(req, res) {
     // Find user
     const user = await findUserByEmail(email);
     if (!user) {
-      return res.status(401).json({ error: 'Invalid email or password' });
+      return res.status(401).json({
+        error: 'No account found with this email address',
+        suggestion: 'Please register first or check your email spelling',
+        action: 'register'
+      });
     }
 
     // Check if user is active
@@ -28,7 +32,11 @@ export default async function handler(req, res) {
     // Verify password
     const isValid = verifyPassword(password, user.passwordHash);
     if (!isValid) {
-      return res.status(401).json({ error: 'Invalid email or password' });
+      return res.status(401).json({
+        error: 'Incorrect password',
+        suggestion: 'Please check your password or use "Forgot Password" to reset it',
+        action: 'wrong_password'
+      });
     }
 
     // Generate session token
