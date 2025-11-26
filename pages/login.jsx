@@ -11,11 +11,15 @@ export default function Login() {
   const { register, handleSubmit, formState: { errors } } = useForm();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const [errorAction, setErrorAction] = useState(null);
+  const [suggestion, setSuggestion] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
   const onSubmit = async (data) => {
     setIsSubmitting(true);
     setError('');
+    setSuggestion('');
+    setErrorAction(null);
 
     const result = await login(data.email.toLowerCase().trim(), data.password, data.remember);
 
@@ -25,6 +29,8 @@ export default function Login() {
       router.push(returnUrl);
     } else {
       setError(result.error);
+      setSuggestion(result.suggestion || '');
+      setErrorAction(result.action || null);
       setIsSubmitting(false);
     }
   };
@@ -44,7 +50,26 @@ export default function Login() {
         <div className="bg-white rounded-2xl shadow-xl p-8">
           {error && (
             <div className="mb-6 bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg">
-              {error}
+              <p className="font-semibold">{error}</p>
+              {suggestion && (
+                <p className="text-sm mt-1 text-red-700">{suggestion}</p>
+              )}
+              {errorAction === 'register' && (
+                <Link
+                  href="/register"
+                  className="mt-3 inline-block text-sm font-medium text-red-900 hover:text-red-700 underline"
+                >
+                  → Register a new account
+                </Link>
+              )}
+              {errorAction === 'wrong_password' && (
+                <Link
+                  href="/forgot-password"
+                  className="mt-3 inline-block text-sm font-medium text-red-900 hover:text-red-700 underline"
+                >
+                  → Reset your password
+                </Link>
+              )}
             </div>
           )}
 
