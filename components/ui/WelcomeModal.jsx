@@ -7,6 +7,7 @@ export default function WelcomeModal() {
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [promoCode, setPromoCode] = useState('');
 
   useEffect(() => {
     // Check if modal has been shown before
@@ -41,11 +42,14 @@ export default function WelcomeModal() {
         body: JSON.stringify({ email }),
       });
 
-      if (response.ok) {
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        setPromoCode(data.promoCode || 'WELCOME15');
         setSubmitted(true);
         setTimeout(() => {
           handleClose();
-        }, 2000);
+        }, 5000); // Give them more time to see the code
       }
     } catch (error) {
       console.error('Newsletter subscription error:', error);
@@ -154,9 +158,23 @@ export default function WelcomeModal() {
                   <h3 className="text-2xl font-serif font-bold text-gray-900 mb-2">
                     You&apos;re In!
                   </h3>
-                  <p className="text-gray-600">
-                    Check your inbox for your exclusive 15% discount code.
+                  <p className="text-gray-600 mb-4">
+                    Check your inbox for your welcome email!
                   </p>
+
+                  {/* Show the promo code immediately */}
+                  <div className="bg-gradient-to-r from-purple-50 to-pink-50 border-2 border-dashed border-purple-300 rounded-xl p-6 mt-4">
+                    <p className="text-sm text-gray-600 mb-2">Your Exclusive Code:</p>
+                    <div className="text-3xl font-bold text-purple-600 font-mono tracking-wider mb-2">
+                      {promoCode}
+                    </div>
+                    <p className="text-sm font-semibold text-gray-700">
+                      15% OFF Your First Order!
+                    </p>
+                    <p className="text-xs text-gray-500 mt-2">
+                      Code will be auto-applied when you shop
+                    </p>
+                  </div>
                 </div>
               )}
             </div>

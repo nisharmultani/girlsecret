@@ -220,6 +220,9 @@ export default function Checkout() {
           postcode: data.postcode,
           country: data.country || 'United Kingdom',
         },
+        isGift: data.isGift || false,
+        giftMessage: data.giftMessage || '',
+        orderNotes: data.orderNotes || '',
       };
 
       // Add referral code if present
@@ -682,6 +685,65 @@ export default function Checkout() {
                     Edit address
                   </button>
                 )}
+              </div>
+
+              {/* Gift Options & Order Notes */}
+              <div className="bg-white rounded-xl shadow-sm p-6">
+                <h2 className="text-xl font-semibold mb-4">Additional Options</h2>
+
+                <div className="space-y-4">
+                  {/* Gift Option */}
+                  <div className="border border-gray-200 rounded-lg p-4">
+                    <div className="flex items-start">
+                      <input
+                        id="isGift"
+                        type="checkbox"
+                        {...register('isGift')}
+                        className="w-4 h-4 mt-1 border border-gray-300 rounded bg-white focus:ring-3 focus:ring-luxury-300"
+                      />
+                      <label htmlFor="isGift" className="ml-3">
+                        <span className="text-sm font-medium text-gray-900">
+                          🎁 This is a gift
+                        </span>
+                        <p className="text-xs text-gray-500 mt-1">
+                          We&apos;ll exclude pricing information from the package
+                        </p>
+                      </label>
+                    </div>
+
+                    {/* Gift Message */}
+                    <div className="mt-4 ml-7">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Gift Message (Optional)
+                      </label>
+                      <textarea
+                        {...register('giftMessage')}
+                        rows={3}
+                        className="input-field"
+                        placeholder="Add a personal message for the recipient..."
+                        maxLength={200}
+                      />
+                      <p className="text-xs text-gray-500 mt-1">Maximum 200 characters</p>
+                    </div>
+                  </div>
+
+                  {/* Order Notes */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Order Notes (Optional)
+                    </label>
+                    <textarea
+                      {...register('orderNotes')}
+                      rows={3}
+                      className="input-field"
+                      placeholder="Special delivery instructions, preferences, or any other notes..."
+                      maxLength={500}
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      E.g., &quot;Please deliver before 6 PM&quot; or &quot;Leave with neighbor at #12&quot;
+                    </p>
+                  </div>
+                </div>
               </div>
 
               {/* Payment Information */}

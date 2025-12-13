@@ -158,6 +158,26 @@ export default function WishlistPage() {
               </button>
             </div>
 
+            {/* Promotional Banner */}
+            <div className="bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl p-6 mb-6">
+              <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                <div>
+                  <h3 className="text-xl font-bold mb-2">
+                    💝 Your Wishlist is Calling!
+                  </h3>
+                  <p className="text-purple-100">
+                    Complete your look today! Free shipping on orders over £50.
+                  </p>
+                </div>
+                <Link
+                  href="/shop"
+                  className="bg-white text-purple-600 hover:bg-purple-50 px-6 py-3 rounded-full font-semibold transition-colors whitespace-nowrap"
+                >
+                  Continue Shopping
+                </Link>
+              </div>
+            </div>
+
             {/* Wishlist Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
               {wishlistProducts.map((product) => {
