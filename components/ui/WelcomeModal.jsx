@@ -90,7 +90,10 @@ export default function WelcomeModal() {
                 src="https://images.unsplash.com/photo-1559582930-2e3ec4f325fd?w=800&h=800&fit=crop"
                 alt="Welcome to GirlSecret"
                 fill
+                sizes="(max-width: 768px) 100vw, 50vw"
                 className="object-cover opacity-80"
+                priority
+                quality={85}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
               <div className="absolute bottom-6 left-6 right-6">

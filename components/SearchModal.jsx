@@ -175,7 +175,10 @@ export default function SearchModal({ isOpen, onClose }) {
                               src={getProductImage(product)}
                               alt={product.name}
                               fill
+                              sizes="64px"
                               className="object-cover"
+                              loading="lazy"
+                              quality={75}
                             />
                           </div>
                           <div className="flex-1 min-w-0">

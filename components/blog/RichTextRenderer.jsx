@@ -127,11 +127,13 @@ export default function RichTextRenderer({ content, className = '' }) {
         <span className="block my-6">
           <Image
             src={src}
-            height={2}
-            width={2}
+            width={1200}
+            height={800}
             alt={alt || ''}
             className="rounded-lg max-w-full h-auto mx-auto shadow-md"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
             loading="lazy"
+            quality={85}
           />
           {alt && (
             <span className="block text-center text-sm text-gray-600 mt-2 italic">

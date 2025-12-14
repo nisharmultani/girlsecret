@@ -47,9 +47,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         {/* Resource Hints for Performance */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link rel="dns-prefetch" href="https://dl.airtable.com" />
-        <link rel="dns-prefetch" href="https://v5.airtableusercontent.com" />
+
+        {/* Preconnect to Image CDNs for faster loading */}
+        <link rel="preconnect" href="https://dl.airtable.com" />
+        <link rel="preconnect" href="https://v5.airtableusercontent.com" />
+        <link rel="preconnect" href="https://images.unsplash.com" />
         <link rel="dns-prefetch" href="https://res.cloudinary.com" />
+        <link rel="dns-prefetch" href="https://unsplash.com" />
 
         {/* Preload Critical Images */}
         <link

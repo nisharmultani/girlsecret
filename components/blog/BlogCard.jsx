@@ -54,14 +54,13 @@ export default function BlogCard({ post }) {
         {/* Featured Image */}
         <div className="relative h-56 bg-gray-200 overflow-hidden">
           <Image
-          height={4}
-          width={4}
+            fill
             src={getImageUrl()}
             alt={title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-            onError={(e) => {
-              e.target.src = '/images/blog-placeholder.jpg';
-            }}
+            className="object-cover group-hover:scale-105 transition-transform duration-300"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            loading="lazy"
+            quality={85}
           />
 
           {/* Category Badge */}
