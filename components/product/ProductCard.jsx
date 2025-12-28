@@ -57,7 +57,7 @@ export default function ProductCard({ product }) {
         onMouseLeave={() => setIsHovered(false)}
       >
         {/* Image Container - Proper cover with overflow hidden */}
-        <div className="relative aspect-[3/4] overflow-hidden bg-gray-50 mb-3 rounded-sm">
+        <div className="relative aspect-[3/4] overflow-hidden bg-gray-50 mb-3 shadow-sm group-hover:shadow-xl transition-shadow duration-500">
           {/* Loading Skeleton */}
           {!imageLoaded && (
             <div className={`absolute inset-0 ${imageSkeletonClass}`} />
@@ -68,17 +68,17 @@ export default function ProductCard({ product }) {
             src={displayImageUrl}
             alt={product.name}
             fill
-            className={`object-cover group-hover:scale-110 transition-all duration-700 ease-out ${
+            className={`object-cover group-hover:scale-105 transition-all duration-700 ease-out ${
               imageLoaded ? 'opacity-100' : 'opacity-0'
             }`}
             sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
             loading="lazy"
             onLoad={() => setImageLoaded(true)}
-            quality={85}
+            quality={90}
           />
 
-          {/* Subtle gradient overlay on hover */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          {/* Enhanced gradient overlay on hover */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
           {/* Badges Container - Top Left */}
           <div className="absolute top-2 left-2 flex flex-col gap-1.5 z-10">
@@ -107,14 +107,26 @@ export default function ProductCard({ product }) {
           <button
             onClick={toggleWishlist}
             disabled={isTogglingWishlist}
-            className="absolute top-2 right-2 bg-white/95 hover:bg-white p-2.5 rounded-full transition-all opacity-0 group-hover:opacity-100 disabled:opacity-50 shadow-lg hover:shadow-xl transform hover:scale-110"
+            className="absolute top-3 right-3 bg-white/95 hover:bg-white p-2.5 rounded-full transition-all opacity-0 group-hover:opacity-100 disabled:opacity-50 shadow-xl hover:shadow-2xl transform hover:scale-110 z-10"
             aria-label={inWishlist ? "Remove from wishlist" : "Add to wishlist"}
           >
             {inWishlist ? (
-              <HeartSolidIcon className="h-4 w-4 text-black" />
+              <HeartSolidIcon className="h-5 w-5 text-black" />
             ) : (
-              <HeartIcon className="h-4 w-4 text-black" />
+              <HeartIcon className="h-5 w-5 text-black" />
             )}
+          </button>
+
+          {/* Quick View Button - Centered, appears on hover */}
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              // Quick view functionality to be implemented
+              console.log('Quick view:', product.slug);
+            }}
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white hover:bg-gray-50 px-6 py-3 text-sm font-semibold text-black shadow-xl opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-105 z-10"
+          >
+            Quick View
           </button>
         </div>
 

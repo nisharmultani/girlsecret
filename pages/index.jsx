@@ -7,6 +7,10 @@ import ShopByCategory from '../components/home/ShopByCategory';
 import TestimonialsCarousel from '../components/home/TestimonialsCarousel';
 import Banner from '../components/ui/Banner';
 import SectionDivider from '../components/ui/SectionDivider';
+import CollectionSpotlight from '../components/home/CollectionSpotlight';
+import LifestyleGrid from '../components/home/LifestyleGrid';
+import ImageBanner from '../components/home/ImageBanner';
+import BrandStory from '../components/home/BrandStory';
 import { ArrowRightIcon, SparklesIcon, TruckIcon, ShieldCheckIcon, HeartIcon } from '@heroicons/react/24/outline';
 
 export default function Home({ featuredProducts, newArrivals, bestSellers, heroSlides, promoBanners }) {
@@ -60,8 +64,17 @@ export default function Home({ featuredProducts, newArrivals, bestSellers, heroS
       {/* Shop by Category */}
       <ShopByCategory />
 
-      {/* Decorative Divider */}
-      {/* <SectionDivider variant="pattern" /> */}
+      {/* Collection Spotlight - Lace Collection */}
+      <CollectionSpotlight
+        title="The Lace Collection"
+        subtitle="New Arrivals"
+        description="Indulge in timeless elegance with our exquisite lace collection. Delicate patterns meet modern design for pieces that make you feel absolutely stunning."
+        imageSrc="https://images.unsplash.com/photo-1583033117486-c930de1eb982?w=1920&h=1080&fit=crop"
+        ctaText="Explore Collection"
+        ctaLink="/shop?category=Lingerie"
+        imagePosition="left"
+        theme="light"
+      />
 
       {/* Featured Products Section */}
       <section className="py-16 md:py-20 bg-white">
@@ -84,6 +97,20 @@ export default function Home({ featuredProducts, newArrivals, bestSellers, heroS
         </div>
       </section>
 
+      {/* Image Banner - Campaign Promo */}
+      <ImageBanner
+        imageSrc="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1920&h=800&fit=crop"
+        imageAlt="Confidence Campaign"
+        title="Confidence is Beautiful"
+        subtitle="Limited Time Offer"
+        ctaText="Shop Sale"
+        ctaLink="/shop"
+        height="h-[400px] md:h-[500px]"
+        overlay="medium"
+        textPosition="center"
+        textColor="white"
+      />
+
       {/* Promotional Banners from Airtable */}
       {promoBanners && promoBanners.length > 0 && promoBanners.map((banner) => (
         <Banner
@@ -97,9 +124,6 @@ export default function Home({ featuredProducts, newArrivals, bestSellers, heroS
           height={banner.height}
         />
       ))}
-
-      {/* Decorative Divider */}
-      {/* <SectionDivider variant="dots" /> */}
 
       {/* New Arrivals Section */}
       {newArrivals.length > 0 && (
@@ -133,8 +157,17 @@ export default function Home({ featuredProducts, newArrivals, bestSellers, heroS
         </section>
       )}
 
-      {/* Decorative Divider */}
-      {/* <SectionDivider variant="simple" /> */}
+      {/* Collection Spotlight - Comfort Collection */}
+      <CollectionSpotlight
+        title="Cotton Comfort"
+        subtitle="Everyday Essentials"
+        description="Experience all-day comfort with our premium cotton collection. Breathable, soft, and designed for your active lifestyle."
+        imageSrc="https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=1920&h=1080&fit=crop"
+        ctaText="Shop Essentials"
+        ctaLink="/shop?category=Bras"
+        imagePosition="right"
+        theme="light"
+      />
 
       {/* Value Proposition / Why Choose Us */}
       <section className="py-16 md:py-20 bg-white">
@@ -212,14 +245,14 @@ export default function Home({ featuredProducts, newArrivals, bestSellers, heroS
         </section>
       )}
 
-      {/* Decorative Divider */}
-      {/* <SectionDivider variant="pattern" /> */}
+      {/* Brand Story Section */}
+      <BrandStory />
+
+      {/* Lifestyle Grid - Instagram Feed */}
+      <LifestyleGrid />
 
       {/* Customer Testimonials */}
       <TestimonialsCarousel />
-
-      {/* Decorative Divider */}
-      {/* <SectionDivider variant="dots" /> */}
 
       {/* Newsletter Section */}
       <section className="py-16 md:py-20 bg-white">

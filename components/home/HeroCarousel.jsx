@@ -106,7 +106,7 @@ export default function HeroCarousel({ slides: propSlides }) {
 
   return (
     <section
-      className="relative h-[600px] md:h-[700px] lg:h-[800px] overflow-hidden"
+      className="relative h-[70vh] md:h-[80vh] lg:h-[90vh] min-h-[600px] max-h-[1000px] overflow-hidden"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
@@ -126,13 +126,13 @@ export default function HeroCarousel({ slides: propSlides }) {
               alt={slide.title || 'Hero Banner'}
               fill
               priority={index === 0}
-              className="object-cover"
+              className="object-cover object-center"
               sizes="100vw"
-              quality={90}
+              quality={95}
             />
-            {/* Dark Overlay for better text readability - Only show if there's text content */}
+            {/* Enhanced gradient overlay - Only show if there's text content */}
             {(slide.subtitle || slide.title || slide.description || slide.cta) && (
-              <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/30" />
+              <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-transparent" />
             )}
           </div>
 
@@ -150,7 +150,7 @@ export default function HeroCarousel({ slides: propSlides }) {
 
                   {/* Title */}
                   {slide.title && (
-                    <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-serif font-bold text-white mb-6 leading-tight animate-slide-up">
+                    <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-serif font-bold text-white mb-6 leading-[0.9] animate-slide-up tracking-tight">
                       {slide.title}
                     </h1>
                   )}
@@ -166,11 +166,11 @@ export default function HeroCarousel({ slides: propSlides }) {
                   {slide.cta && slide.ctaLink && (
                     <Link
                       href={slide.ctaLink}
-                      className="inline-flex items-center justify-center px-8 py-4 text-base sm:text-lg font-semibold text-black bg-white rounded-xl hover:bg-gray-100 transition-all duration-300 hover:scale-105 active:scale-95 shadow-xl hover:shadow-2xl animate-fade-in"
+                      className="inline-flex items-center justify-center px-10 py-5 text-base sm:text-lg font-bold text-black bg-white hover:bg-gray-100 transition-all duration-300 hover:scale-105 active:scale-95 shadow-2xl hover:shadow-[0_20px_50px_rgba(255,255,255,0.3)] animate-fade-in uppercase tracking-wider"
                     >
                       {slide.cta}
                       <svg
-                        className="ml-2 w-5 h-5"
+                        className="ml-3 w-5 h-5"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -178,7 +178,7 @@ export default function HeroCarousel({ slides: propSlides }) {
                         <path
                           strokeLinecap="round"
                           strokeLinejoin="round"
-                          strokeWidth={2}
+                          strokeWidth={2.5}
                           d="M17 8l4 4m0 0l-4 4m4-4H3"
                         />
                       </svg>
@@ -228,6 +228,24 @@ export default function HeroCarousel({ slides: propSlides }) {
         <span className="text-white text-lg md:text-xl">{currentSlide + 1}</span>
         <span className="mx-1">/</span>
         <span>{slides.length}</span>
+      </div>
+
+      {/* Scroll Indicator - Centered bottom */}
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 hidden md:flex flex-col items-center gap-2 animate-bounce">
+        <span className="text-white/80 text-xs uppercase tracking-wider font-medium">Scroll</span>
+        <svg
+          className="w-5 h-5 text-white/80"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M19 14l-7 7m0 0l-7-7m7 7V3"
+          />
+        </svg>
       </div>
     </section>
   );
