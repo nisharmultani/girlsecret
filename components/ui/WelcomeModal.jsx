@@ -36,10 +36,10 @@ export default function WelcomeModal() {
 
     try {
       // Submit to newsletter API
-      const response = await fetch('/api/newsletter/subscribe', {
+      const response = await fetch('/api/newsletter', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, source: 'Website Modal', wantsPromoCode: true }),
       });
 
       const data = await response.json();
