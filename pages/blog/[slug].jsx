@@ -7,7 +7,6 @@ import SEO from '../../components/SEO';
 import RichTextRenderer from '../../components/blog/RichTextRenderer';
 import BlogCard from '../../components/blog/BlogCard';
 import {
-  getAllBlogPosts,
   getBlogPostBySlug,
   getRelatedBlogPosts,
 } from '../../lib/airtable';
@@ -288,25 +287,14 @@ export default function BlogPostPage({ post, relatedPosts }) {
   );
 }
 
-// Generate static paths for all blog posts
+// Don't pre-render every post at build time (that means one Airtable
+// round-trip per post, which doesn't scale as the blog grows). Pages are
+// generated on first request instead and cached from then on.
 export async function getStaticPaths() {
-  try {
-    const posts = await getAllBlogPosts();
-    const paths = posts.map((post) => ({
-      params: { slug: post.slug },
-    }));
-
-    return {
-      paths,
-      fallback: true, // Enable ISR for new posts
-    };
-  } catch (error) {
-    console.error('Error generating static paths:', error);
-    return {
-      paths: [],
-      fallback: true,
-    };
-  }
+  return {
+    paths: [],
+    fallback: 'blocking',
+  };
 }
 
 // Fetch post data for each page

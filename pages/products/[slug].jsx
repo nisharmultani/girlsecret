@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 import Link from 'next/link';
-import { getAllProducts, getProductBySlug, getProductReviews } from '../../lib/airtable';
+import { getProductBySlug, getProductReviews } from '../../lib/airtable';
 import { addToCart } from '../../lib/cart';
 import { formatPrice, formatDiscount } from '../../utils/format';
 import { generateProductSchema, generateBreadcrumbSchema } from '../../lib/seo';
@@ -855,22 +855,13 @@ export default function ProductDetail({ product, reviews = [] }) {
 }
 
 export async function getStaticPaths() {
-  try {
-    const products = await getAllProducts();
-    const paths = products.map(product => ({
-      params: { slug: product.slug },
-    }));
-
-    return {
-      paths,
-      fallback: true,
-    };
-  } catch (error) {
-    return {
-      paths: [],
-      fallback: true,
-    };
-  }
+  // Don't pre-render every product at build time (that means one Airtable
+  // round-trip per product, which doesn't scale as the catalog grows).
+  // Pages are generated on first request instead and cached from then on.
+  return {
+    paths: [],
+    fallback: 'blocking',
+  };
 }
 
 export async function getStaticProps({ params }) {
