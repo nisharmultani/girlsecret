@@ -1,6 +1,6 @@
 // Newsletter subscription API endpoint
 import { subscribeToNewsletter, unsubscribeFromNewsletter } from '../../lib/airtable';
-import { sendWelcomeEmail } from '../../lib/email';
+import { sendWelcomeEmail, sendWelcomeCodeEmail } from '../../lib/email';
 
 export default async function handler(req, res) {
   if (req.method === 'POST') {
@@ -18,7 +18,7 @@ export default async function handler(req, res) {
 // Handle newsletter subscription
 async function handleSubscribe(req, res) {
   try {
-    const { email, firstName, source = 'footer' } = req.body;
+    const { email, firstName, source = 'footer', wantsPromoCode = false } = req.body;
 
     // Validate email
     if (!email) {
@@ -37,12 +37,16 @@ async function handleSubscribe(req, res) {
       });
     }
 
+    // The welcome modal opts in to a fixed 15%-off code alongside subscribing
+    const promoCode = wantsPromoCode ? 'WELCOME15' : undefined;
+
     // Subscribe to newsletter
     const result = await subscribeToNewsletter({
       email: email.toLowerCase().trim(),
       firstName: firstName || '',
       source,
       isActive: true,
+      ...(promoCode ? { promoCode } : {}),
     });
 
     if (!result.success) {
@@ -52,6 +56,7 @@ async function handleSubscribe(req, res) {
           success: true,
           message: 'You are already subscribed to our newsletter',
           alreadySubscribed: true,
+          ...(promoCode ? { promoCode } : {}),
         });
       }
 
@@ -63,7 +68,11 @@ async function handleSubscribe(req, res) {
 
     // Send welcome email
     try {
-      await sendWelcomeEmail(email, firstName);
+      if (promoCode) {
+        await sendWelcomeCodeEmail(email, promoCode);
+      } else {
+        await sendWelcomeEmail(email, firstName);
+      }
     } catch (emailError) {
       console.error('Failed to send welcome email:', emailError);
       // Don't fail the subscription if email fails
@@ -73,6 +82,7 @@ async function handleSubscribe(req, res) {
       success: true,
       message: 'Successfully subscribed to newsletter',
       subscriber: result.subscriber,
+      ...(promoCode ? { promoCode } : {}),
     });
 
   } catch (error) {
