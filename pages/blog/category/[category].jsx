@@ -125,25 +125,14 @@ export default function CategoryPage({ category, posts, allCategories }) {
   );
 }
 
-// Generate static paths for all categories
+// Don't pre-render every category at build time (avoids an Airtable
+// round-trip during the build). Pages are generated on first request
+// instead and cached from then on.
 export async function getStaticPaths() {
-  try {
-    const categories = await getBlogCategories();
-    const paths = categories.map((category) => ({
-      params: { category: category.toLowerCase() },
-    }));
-
-    return {
-      paths,
-      fallback: true,
-    };
-  } catch (error) {
-    console.error('Error generating category paths:', error);
-    return {
-      paths: [],
-      fallback: true,
-    };
-  }
+  return {
+    paths: [],
+    fallback: 'blocking',
+  };
 }
 
 // Fetch posts for each category
