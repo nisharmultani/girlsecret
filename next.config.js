@@ -1,6 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  // Airtable-backed pages (products, blog) hit a live API during static
+  // generation; the default 60s budget can be too tight under Airtable's
+  // rate limiting when many pages build in parallel.
+  staticPageGenerationTimeout: 180,
   images: {
     domains: [
       'dl.airtable.com',
