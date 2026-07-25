@@ -266,7 +266,11 @@ export default function Home({ featuredProducts, newArrivals, bestSellers, heroS
   );
 }
 
-export async function getStaticProps() {
+// Runs per-request instead of at build time, since this page depends on
+// live Airtable data that can be too slow/unreliable to wait on during
+// `next build`. The in-memory cache in lib/airtable.js keeps repeat
+// requests cheap.
+export async function getServerSideProps() {
   try {
     // Fetch all data in parallel for better performance
     const [allProducts, reviewStats, heroSlides, promoBanners] = await Promise.all([
@@ -321,7 +325,6 @@ export async function getStaticProps() {
           path: '/',
         },
       },
-      revalidate: 60,
     };
   } catch (error) {
     console.error('Error fetching products:', error);
@@ -337,7 +340,6 @@ export async function getStaticProps() {
           path: '/',
         },
       },
-      revalidate: 60,
     };
   }
 }

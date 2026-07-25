@@ -371,7 +371,8 @@ export default function Shop({ products: initialProducts, categories }) {
   );
 }
 
-export async function getStaticProps() {
+// Runs per-request instead of at build time; see pages/index.jsx for why.
+export async function getServerSideProps() {
   try {
     const products = await getAllProducts();
     const reviewStats = await getAllReviewStats();
@@ -392,7 +393,6 @@ export async function getStaticProps() {
         products: productsWithReviews,
         categories,
       },
-      revalidate: 60,
     };
   } catch (error) {
     console.error('Error fetching products:', error);
@@ -401,7 +401,6 @@ export async function getStaticProps() {
         products: [],
         categories: [],
       },
-      revalidate: 60,
     };
   }
 }

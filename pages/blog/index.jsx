@@ -282,7 +282,8 @@ export default function BlogPage({ initialPosts, categories, tags }) {
 }
 
 // Server-side data fetching
-export async function getStaticProps() {
+// Runs per-request instead of at build time; see pages/index.jsx for why.
+export async function getServerSideProps() {
   try {
     const [posts, categories, tags] = await Promise.all([
       getAllBlogPosts(),
@@ -296,7 +297,6 @@ export async function getStaticProps() {
         categories,
         tags,
       },
-      revalidate: 3600, // Revalidate every hour
     };
   } catch (error) {
     console.error('Error fetching blog data:', error);
@@ -306,7 +306,6 @@ export async function getStaticProps() {
         categories: [],
         tags: [],
       },
-      revalidate: 60,
     };
   }
 }
