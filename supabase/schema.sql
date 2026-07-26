@@ -144,6 +144,13 @@ create table orders (
   total numeric(10, 2) not null default 0,
   status text not null default 'Pending'
     check (status in ('Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled')),
+  -- Set by the Stripe webhook (pages/api/payment/webhook.js), independent
+  -- of `status` above: a paid order can still be Pending fulfillment.
+  payment_status text,
+  payment_intent_id text,
+  payment_method text,
+  amount_received numeric(10, 2),
+  payment_error text,
   shipping_address jsonb,
   billing_address jsonb,
   promo_code text,
@@ -170,9 +177,12 @@ create table order_items (
   id uuid primary key default gen_random_uuid(),
   order_id uuid not null references orders (id) on delete cascade,
   product_id uuid references products (id) on delete set null,
-  -- Snapshot of the product name/price at purchase time, so historical
-  -- orders stay accurate even if the product is later renamed/repriced/deleted.
+  -- Snapshot of the product name/price/image at purchase time, so
+  -- historical orders stay accurate (and still render a thumbnail) even if
+  -- the product is later renamed/repriced/deleted.
   product_name text,
+  product_slug text,
+  image text,
   quantity integer not null default 1,
   unit_price numeric(10, 2) not null default 0,
   size text,
@@ -226,6 +236,11 @@ create table contact_messages (
 -- ===========================================================================
 -- PROMO CODES
 -- ===========================================================================
+-- Note: the Airtable version had a latent bug here - the admin create/edit
+-- API wrote ValidFrom/ValidUntil, but the customer-facing validatePromoCode
+-- checked a separate, never-written ExpiryDate field, so admin-set expiry
+-- dates were silently ignored at checkout. Unified to valid_from/valid_until
+-- here; lib/db.js's validatePromoCode checks both.
 create table promo_codes (
   id uuid primary key default gen_random_uuid(),
   code text not null unique,
@@ -233,7 +248,10 @@ create table promo_codes (
   discount_value numeric(10, 2) not null,
   min_purchase numeric(10, 2) not null default 0,
   max_discount numeric(10, 2),
-  expiry_date date,
+  valid_from timestamptz,
+  valid_until timestamptz,
+  description text,
+  usage_count integer not null default 0,
   active boolean not null default true,
   created_at timestamptz not null default now()
 );
@@ -243,9 +261,13 @@ create index idx_promo_codes_code on promo_codes (code);
 -- ===========================================================================
 -- REFERRALS (influencer / ambassador program)
 -- ===========================================================================
+-- This table covers two distinct features that shared one Airtable table:
+-- influencer/ambassador referral codes (referral_code + influencer_* +
+-- totals), and simple customer "refer a friend" pairs (referrer_email /
+-- referred_email, no code). A row belongs to one or the other, not both.
 create table referrals (
   id uuid primary key default gen_random_uuid(),
-  referral_code text not null unique,
+  referral_code text unique,
   influencer_name text,
   influencer_email text,
   promo_code text,
@@ -256,10 +278,58 @@ create table referrals (
   total_commission numeric(10, 2) not null default 0,
   is_active boolean not null default true,
   type text not null default 'Influencer' check (type in ('Influencer', 'Ambassador')),
+  -- Customer refer-a-friend pair (no referral_code involved).
+  referrer_email text,
+  referred_email text,
+  status text default 'Pending' check (status in ('Pending', 'Converted')),
   created_at timestamptz not null default now()
 );
 
-create index idx_referrals_referral_code on referrals (referral_code);
+create index idx_referrals_referral_code on referrals (referral_code) where referral_code is not null;
+
+-- ===========================================================================
+-- INFLUENCER / AMBASSADOR APPLICATIONS
+-- ===========================================================================
+-- Separate "apply to join the program" forms, distinct from the referrals
+-- table above (which tracks accepted/active codes). There's no existing
+-- admin review flow for these in the app - applications just land here
+-- for now.
+create table influencer_applications (
+  id uuid primary key default gen_random_uuid(),
+  name text,
+  email text,
+  instagram text,
+  follower_count text,
+  niche text,
+  message text,
+  status text not null default 'Pending' check (status in ('Pending', 'Approved', 'Rejected')),
+  referral_code text unique,
+  applied_date timestamptz not null default now(),
+  total_clicks integer not null default 0,
+  total_sales integer not null default 0,
+  total_revenue numeric(10, 2) not null default 0,
+  commission_earned numeric(10, 2) not null default 0,
+  commission_rate numeric(5, 2) not null default 15
+);
+
+create table ambassador_applications (
+  id uuid primary key default gen_random_uuid(),
+  name text,
+  email text,
+  phone text,
+  city text,
+  university text,
+  why_you text,
+  experience text,
+  status text not null default 'Pending' check (status in ('Pending', 'Approved', 'Rejected')),
+  referral_code text unique,
+  applied_date timestamptz not null default now(),
+  total_clicks integer not null default 0,
+  total_sales integer not null default 0,
+  total_revenue numeric(10, 2) not null default 0,
+  commission_earned numeric(10, 2) not null default 0,
+  commission_rate numeric(5, 2) not null default 10
+);
 
 -- ===========================================================================
 -- BLOG POSTS
