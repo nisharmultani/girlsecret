@@ -295,10 +295,9 @@ NEXT_PUBLIC_GTM_ID=GTM-XXXXXXX
 NEXT_PUBLIC_ADSENSE_CLIENT_ID=ca-pub-xxxxxxxxxxxxxxxx
 NEXT_PUBLIC_GOOGLE_SEARCH_CONSOLE_VERIFICATION=your_verification_code
 
-# Airtable (your existing config)
-NEXT_PUBLIC_AIRTABLE_API_KEY=your_key
-NEXT_PUBLIC_AIRTABLE_BASE_ID=your_base_id
-NEXT_PUBLIC_AIRTABLE_TABLE_NAME=Products
+# Supabase (your existing config)
+NEXT_PUBLIC_SUPABASE_URL=your_project_url
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 ```
 
 ---
