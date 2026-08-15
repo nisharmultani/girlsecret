@@ -259,11 +259,11 @@ Description: Launch day special - 25% off everything!
 
 If promo codes still aren't working after following this guide:
 
-1. **Check Airtable Connection**
+1. **Check Supabase Connection**
    ```bash
    # Verify these environment variables are set:
-   NEXT_PUBLIC_AIRTABLE_API_KEY=your_key
-   NEXT_PUBLIC_AIRTABLE_BASE_ID=your_base_id
+   NEXT_PUBLIC_SUPABASE_URL=your_project_url
+   SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
    ```
 
 2. **Check Browser Console**

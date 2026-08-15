@@ -40,7 +40,7 @@ export function getOptimizedImagePath(imagePath) {
 export function getBlurDataURL(imagePath) {
   if (!imagePath) return undefined;
 
-  // Try to load from server-side blur data first (for Cloudinary/Airtable images)
+  // Try to load from server-side blur data first (for Cloudinary images)
   if (serverBlurData && typeof window === 'undefined') {
     const dynamicData = serverBlurData();
     const key = getImageKey(imagePath);
@@ -63,14 +63,6 @@ function getImageKey(imagePath) {
   // For Cloudinary URLs
   if (imagePath.includes('cloudinary.com')) {
     const match = imagePath.match(/\/([^/]+)\.(jpg|jpeg|png|webp|avif)$/i);
-    if (match) {
-      return match[1];
-    }
-  }
-
-  // For Airtable URLs
-  if (imagePath.includes('airtable')) {
-    const match = imagePath.match(/\/([^/?]+)(\?|$)/);
     if (match) {
       return match[1];
     }
