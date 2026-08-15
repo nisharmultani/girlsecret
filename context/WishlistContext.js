@@ -23,12 +23,12 @@ export function WishlistProvider({ children }) {
     try {
       setLoading(true);
       if (isAuthenticated && user) {
-        // Load from Airtable for authenticated users
-        const response = await fetch(`/api/wishlist?userId=${user.email}&idsOnly=true`);
+        // Load from the database for authenticated users
+        const response = await fetch(`/api/wishlist?userId=${user.id}&idsOnly=true`);
 
         if (response.ok) {
           const data = await response.json();
-          console.log('Loaded wishlist from Airtable:', data.productIds);
+          console.log('Loaded wishlist:', data.productIds);
           setWishlistItems(data.productIds || []);
           setWishlistCount(data.productIds?.length || 0);
         }
