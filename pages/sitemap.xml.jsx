@@ -1,4 +1,4 @@
-import { getAllProducts, getAllBlogPosts } from '../lib/airtable';
+import { getAllProducts, getAllBlogPosts } from '../lib/db';
 
 /**
  * Dynamic Sitemap Generator

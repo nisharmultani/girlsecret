@@ -1,4 +1,4 @@
-import { findUserByResetToken, updateUserPassword } from '../../../lib/airtable';
+import { findUserByResetToken, updateUserPassword } from '../../../lib/db';
 import { hashPassword, isValidPassword } from '../../../lib/auth';
 
 export default async function handler(req, res) {

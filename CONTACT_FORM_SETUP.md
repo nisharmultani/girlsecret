@@ -301,7 +301,7 @@ export default function ContactMessages() {
 
 **API:** Create `/pages/api/admin/contact-messages.js`:
 ```javascript
-import { getContactMessages } from '../../../lib/airtable';
+import { getContactMessages } from '../../../lib/db';
 
 export default async function handler(req, res) {
   // TODO: Add admin authentication check
@@ -402,7 +402,7 @@ Your contact form is now fully functional! Customers can reach you directly from
 **Support:**
 - Check `/lib/email.js` for email template customization
 - Check `/pages/api/contact.js` for API logic
-- Check `/lib/airtable.js` for database functions
+- Check `/lib/db.js` for database functions
 - Check `/pages/contact.jsx` for frontend form
 
 **Next Steps:**

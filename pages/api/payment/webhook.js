@@ -1,5 +1,5 @@
 import { constructWebhookEvent } from '../../../lib/stripe';
-import { updateOrderPaymentStatus } from '../../../lib/airtable';
+import { updateOrderPaymentStatus } from '../../../lib/db';
 
 // Disable body parsing, we need the raw body for webhook verification
 export const config = {

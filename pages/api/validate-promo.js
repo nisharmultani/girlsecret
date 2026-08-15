@@ -1,4 +1,4 @@
-import { validatePromoCode } from '../../lib/airtable';
+import { validatePromoCode } from '../../lib/db';
 import { applyPromoCode } from '../../lib/cart';
 
 export default async function handler(req, res) {

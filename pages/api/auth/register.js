@@ -1,4 +1,4 @@
-import { createUser, findUserByEmail } from '../../../lib/airtable';
+import { createUser, findUserByEmail } from '../../../lib/db';
 import { hashPassword, generateToken, isValidEmail, isValidPassword, generateVerificationToken, getVerificationTokenExpiry } from '../../../lib/auth';
 import { sendVerificationEmail } from '../../../lib/email';
 

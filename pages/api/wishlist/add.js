@@ -1,4 +1,4 @@
-import { addToWishlist } from '../../../lib/airtable';
+import { addToWishlist } from '../../../lib/db';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {

@@ -1,6 +1,4 @@
-import airtableLib from '../../lib/airtable';
-
-const { getAllProducts } = airtableLib;
+import { getAllProducts } from '../../lib/db';
 
 export default async function handler(req, res) {
   if (req.method !== 'GET') {

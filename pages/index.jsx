@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { useState } from 'react';
-import { getAllProducts, getAllReviewStats, getActiveHeroBanners, getActivePromoBanners } from '../lib/airtable';
+import { getAllProducts, getAllReviewStats, getActiveHeroBanners, getActivePromoBanners } from '../lib/db';
 import ProductGrid from '../components/product/ProductGrid';
 import HeroCarousel from '../components/home/HeroCarousel';
 import ShopByCategory from '../components/home/ShopByCategory';
@@ -267,9 +267,8 @@ export default function Home({ featuredProducts, newArrivals, bestSellers, heroS
 }
 
 // Runs per-request instead of at build time, since this page depends on
-// live Airtable data that can be too slow/unreliable to wait on during
-// `next build`. The in-memory cache in lib/airtable.js keeps repeat
-// requests cheap.
+// data that can change often. The in-memory cache in lib/db.js keeps
+// repeat requests cheap.
 export async function getServerSideProps() {
   try {
     // Fetch all data in parallel for better performance

@@ -1,5 +1,5 @@
 // Newsletter subscription API endpoint
-import { subscribeToNewsletter, unsubscribeFromNewsletter } from '../../lib/airtable';
+import { subscribeToNewsletter, unsubscribeFromNewsletter } from '../../lib/db';
 import { sendWelcomeEmail, sendWelcomeCodeEmail } from '../../lib/email';
 
 export default async function handler(req, res) {

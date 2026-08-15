@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
-import { getAllProducts, getAllReviewStats } from '../lib/airtable';
+import { getAllProducts, getAllReviewStats } from '../lib/db';
 import ProductGrid from '../components/product/ProductGrid';
 import FilterBar from '../components/product/FilterBar';
 import MobileFilterDrawer from '../components/product/MobileFilterDrawer';

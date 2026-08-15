@@ -3,7 +3,7 @@ import {
   createAddress,
   updateAddress,
   deleteAddress
-} from '../../../lib/airtable';
+} from '../../../lib/db';
 
 export default async function handler(req, res) {
   // GET - Fetch user addresses

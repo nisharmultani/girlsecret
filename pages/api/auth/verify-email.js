@@ -1,4 +1,4 @@
-import { findUserByVerificationToken, verifyUserEmail } from '../../../lib/airtable';
+import { findUserByVerificationToken, verifyUserEmail } from '../../../lib/db';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {

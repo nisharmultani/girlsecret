@@ -1,6 +1,4 @@
-import { getBase } from '../../../lib/airtable';
-
-const AMBASSADORS_TABLE = 'Ambassadors';
+import { createAmbassadorApplication } from '../../../lib/db';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -15,33 +13,24 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Required fields are missing' });
     }
 
-    const base = getBase();
-    if (!base) {
-      console.error('Airtable not configured');
-      return res.status(500).json({ error: 'Database not configured' });
-    }
-
     // Generate unique referral code
     const referralCode = generateReferralCode(name);
 
-    // Create ambassador record
-    const record = await base(AMBASSADORS_TABLE).create({
-      Name: name,
-      Email: email,
-      Phone: phone,
-      City: city,
-      University: university || '',
-      WhyYou: whyYou,
-      Experience: experience,
-      Status: 'Pending',
-      ReferralCode: referralCode,
-      AppliedDate: new Date().toISOString(),
-      TotalClicks: 0,
-      TotalSales: 0,
-      TotalRevenue: 0,
-      CommissionEarned: 0,
-      CommissionRate: 10, // Default 10% for ambassadors
+    const result = await createAmbassadorApplication({
+      name,
+      email,
+      phone,
+      city,
+      university,
+      whyYou,
+      experience,
+      referralCode,
     });
+
+    if (!result.success) {
+      console.error('Error creating ambassador application:', result.error);
+      return res.status(500).json({ error: 'Database not configured' });
+    }
 
     // Also send to contact messages for notification
     try {

@@ -1,4 +1,4 @@
-import { getUserOrders, createOrder } from '../../../lib/airtable';
+import { getUserOrders, createOrder } from '../../../lib/db';
 import { sendOrderConfirmationEmail } from '../../../lib/email';
 
 export default async function handler(req, res) {

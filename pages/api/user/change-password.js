@@ -1,4 +1,4 @@
-import { getUserById, updateUserPassword } from '../../../lib/airtable';
+import { getUserById, updateUserPassword } from '../../../lib/db';
 import { hashPassword, verifyPassword, isValidPassword } from '../../../lib/auth';
 import { getSession } from '../../../lib/auth';
 

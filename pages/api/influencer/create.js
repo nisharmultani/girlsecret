@@ -1,4 +1,4 @@
-import { createInfluencerReferral } from '../../../lib/airtable';
+import { createInfluencerReferral } from '../../../lib/db';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {

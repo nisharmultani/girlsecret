@@ -1,4 +1,4 @@
-import { getReferralByCode } from '../../../lib/airtable';
+import { getReferralByCode } from '../../../lib/db';
 
 export default async function handler(req, res) {
   if (req.method !== 'GET') {

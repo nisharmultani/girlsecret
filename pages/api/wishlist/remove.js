@@ -1,4 +1,4 @@
-import { removeFromWishlist } from '../../../lib/airtable';
+import { removeFromWishlist } from '../../../lib/db';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {

@@ -1,4 +1,4 @@
-import { getAllBlogPosts } from '../../../lib/airtable';
+import { getAllBlogPosts } from '../../../lib/db';
 
 export default async function handler(req, res) {
   if (req.method !== 'GET') {
