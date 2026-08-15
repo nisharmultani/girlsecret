@@ -155,11 +155,15 @@ async function sendOrderUpdateEmail(order) {
     </html>
   `;
 
+  const trackingText = TrackingNumber ? `\nTracking Number: ${TrackingNumber}\nCarrier: ${Carrier || 'N/A'}\n` : '';
+  const text = `Hi ${CustomerName},\n\n${statusMessage}\n\nOrder Number: ${OrderNumber}\nStatus: ${Status}\n${trackingText}\nTrack your order: ${process.env.NEXT_PUBLIC_BASE_URL || 'https://girlsecret.com'}/track-order\n\nThe GirlSecret Team`;
+
   try {
     await sendEmail({
       to: CustomerEmail,
       subject,
-      html
+      html,
+      text,
     });
     console.log(`Order update email sent to ${CustomerEmail}`);
   } catch (error) {
