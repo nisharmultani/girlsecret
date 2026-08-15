@@ -1,4 +1,4 @@
-import { updateOrder } from '../../../../lib/airtable';
+import { updateOrder } from '../../../../lib/db';
 import { sendEmail } from '../../../../lib/email';
 
 export default async function handler(req, res) {
@@ -15,9 +15,7 @@ export default async function handler(req, res) {
     }
 
     // Prepare update data
-    const updateData = {
-      UpdatedAt: new Date().toISOString()
-    };
+    const updateData = {};
 
     if (status) updateData.Status = status;
     if (trackingNumber) updateData.TrackingNumber = trackingNumber;
@@ -25,26 +23,24 @@ export default async function handler(req, res) {
     if (aliexpressStatus) updateData.AliExpressStatus = aliexpressStatus;
     if (notes) updateData.Notes = notes;
 
-    // Update order in Airtable using the lib function
     const result = await updateOrder(orderId, updateData);
 
     if (!result.success) {
       return res.status(500).json({ error: result.error || 'Failed to update order' });
     }
 
-    const record = result.order;
+    const order = result.order;
 
     // Get full order details for email
     const orderData = {
-      OrderNumber: record.fields.OrderNumber || record.get('OrderNumber'),
-      CustomerName: record.fields.CustomerName || record.get('CustomerName'),
-      CustomerEmail: record.fields.CustomerEmail || record.get('CustomerEmail'),
-      Status: record.fields.Status || record.get('Status'),
-      TrackingNumber: record.fields.TrackingNumber || record.get('TrackingNumber'),
-      Carrier: record.fields.Carrier || record.get('Carrier'),
-      AliExpressStatus: record.fields.AliExpressStatus || record.get('AliExpressStatus'),
-      Total: record.fields.Total || record.get('Total'),
-      Items: record.fields.Items || record.get('Items')
+      OrderNumber: order.orderNumber,
+      CustomerName: order.customerName,
+      CustomerEmail: order.customerEmail,
+      Status: order.status,
+      TrackingNumber: order.trackingNumber,
+      Carrier: order.carrier,
+      AliExpressStatus: order.supplierStatus,
+      Total: order.total,
     };
 
     // Send notification email to customer

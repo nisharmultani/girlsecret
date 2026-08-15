@@ -1,4 +1,4 @@
-import { findUserByEmail, updateUserProfile } from '../../../lib/airtable';
+import { findUserByEmail, updateUserProfile } from '../../../lib/db';
 import { isValidEmail } from '../../../lib/auth';
 
 export default async function handler(req, res) {

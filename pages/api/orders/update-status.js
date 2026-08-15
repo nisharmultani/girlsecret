@@ -1,4 +1,4 @@
-import { getOrderByNumber, updateOrderStatus, updateOrderTracking } from '../../../lib/airtable';
+import { getOrderByNumber, updateOrderStatus, updateOrderTracking } from '../../../lib/db';
 import { sendOrderStatusEmail, sendShippingNotificationEmail } from '../../../lib/email';
 
 export default async function handler(req, res) {

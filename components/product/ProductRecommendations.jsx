@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import ProductGrid from './ProductGrid';
-import { getAllProducts, getAllReviewStats } from '../../lib/airtable';
+import { getAllProducts, getAllReviewStats } from '../../lib/db';
 
 export default function ProductRecommendations({ currentProduct, maxItems = 4 }) {
   const [recommendations, setRecommendations] = useState([]);

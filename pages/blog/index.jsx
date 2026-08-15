@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import BlogCard, { BlogCardSkeleton } from '../../components/blog/BlogCard';
 import SEO from '../../components/SEO';
-import { getAllBlogPosts, getBlogCategories, getBlogTags } from '../../lib/airtable';
+import { getAllBlogPosts, getBlogCategories, getBlogTags } from '../../lib/db';
 import { MagnifyingGlassIcon, FunnelIcon, XMarkIcon } from '@heroicons/react/24/outline';
 
 export default function BlogPage({ initialPosts, categories, tags }) {

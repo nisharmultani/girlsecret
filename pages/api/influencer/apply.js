@@ -1,6 +1,4 @@
-import { getBase } from '../../../lib/airtable';
-
-const INFLUENCERS_TABLE = 'Influencers';
+import { createInfluencerApplication } from '../../../lib/db';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -15,32 +13,23 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'All fields are required' });
     }
 
-    const base = getBase();
-    if (!base) {
-      console.error('Airtable not configured');
-      return res.status(500).json({ error: 'Database not configured' });
-    }
-
     // Generate unique referral code
     const referralCode = generateReferralCode(name);
 
-    // Create influencer record
-    const record = await base(INFLUENCERS_TABLE).create({
-      Name: name,
-      Email: email,
-      Instagram: instagram,
-      FollowerCount: followers,
-      Niche: niche,
-      Message: message,
-      Status: 'Pending',
-      ReferralCode: referralCode,
-      AppliedDate: new Date().toISOString(),
-      TotalClicks: 0,
-      TotalSales: 0,
-      TotalRevenue: 0,
-      CommissionEarned: 0,
-      CommissionRate: 15, // Default 15%
+    const result = await createInfluencerApplication({
+      name,
+      email,
+      instagram,
+      followers,
+      niche,
+      message,
+      referralCode,
     });
+
+    if (!result.success) {
+      console.error('Error creating influencer application:', result.error);
+      return res.status(500).json({ error: 'Database not configured' });
+    }
 
     // Also send to contact messages for notification
     try {

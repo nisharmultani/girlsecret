@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import BlogCard, { BlogCardSkeleton } from '../../../components/blog/BlogCard';
 import SEO from '../../../components/SEO';
-import { getAllBlogPosts, getBlogCategories } from '../../../lib/airtable';
+import { getAllBlogPosts, getBlogCategories } from '../../../lib/db';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 
 export default function CategoryPage({ category, posts, allCategories }) {

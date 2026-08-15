@@ -83,10 +83,12 @@ create table products (
   category text,
   slug text not null unique,
   images jsonb not null default '[]',
-  -- Kept for parity with Airtable's "Available_Products" link field; its
-  -- purpose was never referenced by any app code we found, so it isn't
-  -- foreign-keyed. Safe to drop later if it stays unused.
-  available_product_ids uuid[] default '{}',
+  -- Despite the name (and despite being a linked-record field in
+  -- Airtable), this isn't a reference to other product rows - it's a
+  -- second gallery of variant/style images for THIS product, used for the
+  -- ProductCard hover-swap and the extended gallery on the product page.
+  -- Same shape as `images`.
+  available_product_images jsonb not null default '[]',
   in_stock boolean not null default true,
   featured boolean not null default false,
   keywords text,

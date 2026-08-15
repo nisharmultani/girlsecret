@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 import Link from 'next/link';
-import { getProductBySlug, getProductReviews } from '../../lib/airtable';
+import { getProductBySlug, getProductReviews } from '../../lib/db';
 import { addToCart } from '../../lib/cart';
 import { formatPrice, formatDiscount } from '../../utils/format';
 import { generateProductSchema, generateBreadcrumbSchema } from '../../lib/seo';

@@ -7,7 +7,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useWishlist } from '../../context/WishlistContext';
 import { addToCart } from '../../lib/cart';
 import { formatPrice } from '../../utils/format';
-import { getAllProducts } from '../../lib/airtable';
+import { getAllProducts } from '../../lib/db';
 import { getLocalWishlist } from '../../lib/wishlist';
 
 export default function WishlistPage() {

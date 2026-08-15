@@ -9,7 +9,7 @@ import BlogCard from '../../components/blog/BlogCard';
 import {
   getBlogPostBySlug,
   getRelatedBlogPosts,
-} from '../../lib/airtable';
+} from '../../lib/db';
 import { generateArticleSchema } from '../../lib/seo';
 import {
   ClockIcon,

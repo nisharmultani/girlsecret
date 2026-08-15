@@ -1,4 +1,4 @@
-import { findUserByEmail, storeResetToken } from '../../../lib/airtable';
+import { findUserByEmail, storeResetToken } from '../../../lib/db';
 import { generateResetToken, getResetTokenExpiry, isValidEmail } from '../../../lib/auth';
 
 export default async function handler(req, res) {
