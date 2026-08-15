@@ -206,7 +206,7 @@ export default function OrderManagement() {
                       Tracking
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      AliExpress Status
+                      Supplier Tracking (internal)
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Actions
@@ -295,9 +295,12 @@ export default function OrderManagement() {
 
               <div className="space-y-4">
                 {/* Order Status */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                <div className="border-2 border-pink-200 bg-pink-50 rounded-lg p-4">
+                  <label className="flex items-center gap-2 text-sm font-semibold text-gray-900 mb-2">
                     Order Status
+                    <span className="text-xs font-normal text-pink-700 bg-pink-100 px-2 py-0.5 rounded-full">
+                      Customer sees this
+                    </span>
                   </label>
                   <select
                     value={updateForm.status}
@@ -310,6 +313,10 @@ export default function OrderManagement() {
                     <option value="Delivered">Delivered</option>
                     <option value="Cancelled">Cancelled</option>
                   </select>
+                  <p className="text-xs text-gray-500 mt-2">
+                    This is the status shown on the customer&apos;s order page and tracking page.
+                    Change this to update what the customer sees.
+                  </p>
                 </div>
 
                 {/* Tracking Number */}
@@ -348,17 +355,20 @@ export default function OrderManagement() {
                   </select>
                 </div>
 
-                {/* AliExpress Status */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    AliExpress Status
+                {/* AliExpress Status - internal supplier tracking, not customer-facing */}
+                <div className="border border-gray-200 bg-gray-50 rounded-lg p-4">
+                  <label className="flex items-center gap-2 text-sm font-medium text-gray-600 mb-2">
+                    Supplier / Fulfillment Tracking
+                    <span className="text-xs font-normal text-gray-500 bg-gray-200 px-2 py-0.5 rounded-full">
+                      Internal only
+                    </span>
                   </label>
                   <select
                     value={updateForm.aliexpressStatus}
                     onChange={(e) => setUpdateForm({ ...updateForm, aliexpressStatus: e.target.value })}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
                   >
-                    <option value="">Select AliExpress status</option>
+                    <option value="">Select status</option>
                     <option value="Order Placed">Order Placed</option>
                     <option value="Awaiting Payment">Awaiting Payment</option>
                     <option value="Payment Received">Payment Received</option>
@@ -371,6 +381,10 @@ export default function OrderManagement() {
                     <option value="Delivered">Delivered</option>
                     <option value="Cancelled">Cancelled</option>
                   </select>
+                  <p className="text-xs text-gray-500 mt-2">
+                    For your own tracking of the supplier/courier handoff only.
+                    The customer never sees this - it does not change the Order Status above.
+                  </p>
                 </div>
 
                 {/* Notes */}
