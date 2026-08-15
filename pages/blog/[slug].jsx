@@ -219,6 +219,9 @@ export default function BlogPostPage({ post, relatedPosts }) {
                   width={3}
                   className="w-full h-full object-cover"
                   onError={(e) => {
+                    // Guard against looping forever if the placeholder
+                    // itself is also missing - only try the fallback once.
+                    if (e.target.src.endsWith('/images/blog-placeholder.jpg')) return;
                     e.target.src = '/images/blog-placeholder.jpg';
                   }}
                 />
