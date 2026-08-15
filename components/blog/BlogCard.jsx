@@ -60,6 +60,9 @@ export default function BlogCard({ post }) {
             alt={title}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             onError={(e) => {
+              // Guard against looping forever if the placeholder itself is
+              // also missing - only ever try the fallback once.
+              if (e.target.src.endsWith('/images/blog-placeholder.jpg')) return;
               e.target.src = '/images/blog-placeholder.jpg';
             }}
           />

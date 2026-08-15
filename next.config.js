@@ -9,7 +9,13 @@ const nextConfig = {
       'images.unsplash.com',
       'unsplash.com',
       'res.cloudinary.com', // For demo images
-      'picsum.photos' // Placeholder images used by supabase/seed.sql
+      'picsum.photos', // Placeholder images used by supabase/seed.sql
+      // Temporary: some product rows still carry old Airtable attachment
+      // URLs, which are signed and expire - these are already failing to
+      // load and need re-uploading somewhere permanent (e.g. Cloudinary).
+      // Remove this once no product/review images reference Airtable.
+      'v5.airtableusercontent.com',
+      'dl.airtable.com',
     ],
     formats: ['image/avif', 'image/webp'],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],

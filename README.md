@@ -60,6 +60,12 @@ E-commerce site for the GirlSecret brand, built with Next.js (Pages Router) and 
   sides need updating together. See `ADMIN_LOGIN_SETUP.md`.
 - **Default admin password is in source control** (`pages/api/admin/auth/login.js`).
   Set `ADMIN_EMAIL` / `ADMIN_PASSWORD_HASH` before deploying.
-- A few referenced image assets don't exist in `public/`: PWA icons
-  (see `public/icons/README.md`), `public/og-image.jpg`, and
-  `public/images/blog-placeholder.jpg`.
+- **Checkout doesn't actually require successful payment.** `pages/checkout.jsx`
+  creates the order and shows a success screen after a fixed delay,
+  regardless of whether the Stripe payment intent succeeded (still marked
+  "demo mode" in the code). Fix before taking real orders.
+- A couple of referenced image assets still don't exist in `public/`: PWA
+  icons (see `public/icons/README.md`) and `public/og-image.jpg`. These are
+  needed for real branding, not something that can be filled in
+  automatically. (`public/images/blog-placeholder.jpg` now has a plain
+  neutral placeholder.)
