@@ -19,7 +19,6 @@ export default function OrderManagement() {
     status: '',
     trackingNumber: '',
     carrier: '',
-    aliexpressStatus: '',
     notes: ''
   });
 
@@ -50,7 +49,6 @@ export default function OrderManagement() {
       status: order.Status || '',
       trackingNumber: order.TrackingNumber || '',
       carrier: order.Carrier || '',
-      aliexpressStatus: order.AliExpressStatus || '',
       notes: order.Notes || ''
     });
     setShowUpdateModal(true);
@@ -206,9 +204,6 @@ export default function OrderManagement() {
                       Tracking
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Supplier Tracking (internal)
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
@@ -216,7 +211,7 @@ export default function OrderManagement() {
                 <tbody className="bg-white divide-y divide-gray-200">
                   {filteredOrders.length === 0 ? (
                     <tr>
-                      <td colSpan="8" className="px-6 py-12 text-center text-gray-500">
+                      <td colSpan="7" className="px-6 py-12 text-center text-gray-500">
                         No orders found
                       </td>
                     </tr>
@@ -252,9 +247,6 @@ export default function OrderManagement() {
                           ) : (
                             <span className="text-gray-400">Not available</span>
                           )}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {order.AliExpressStatus || 'N/A'}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                           <button
@@ -347,44 +339,10 @@ export default function OrderManagement() {
                     <option value="Royal Mail">Royal Mail</option>
                     <option value="DHL">DHL</option>
                     <option value="DPD">DPD</option>
+                    <option value="Evri">Evri</option>
                     <option value="Hermes">Hermes</option>
                     <option value="Yodel">Yodel</option>
-                    <option value="AliExpress Standard Shipping">AliExpress Standard Shipping</option>
-                    <option value="China Post">China Post</option>
-                    <option value="ePacket">ePacket</option>
                   </select>
-                </div>
-
-                {/* AliExpress Status - internal supplier tracking, not customer-facing */}
-                <div className="border border-gray-200 bg-gray-50 rounded-lg p-4">
-                  <label className="flex items-center gap-2 text-sm font-medium text-gray-600 mb-2">
-                    Supplier / Fulfillment Tracking
-                    <span className="text-xs font-normal text-gray-500 bg-gray-200 px-2 py-0.5 rounded-full">
-                      Internal only
-                    </span>
-                  </label>
-                  <select
-                    value={updateForm.aliexpressStatus}
-                    onChange={(e) => setUpdateForm({ ...updateForm, aliexpressStatus: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
-                  >
-                    <option value="">Select status</option>
-                    <option value="Order Placed">Order Placed</option>
-                    <option value="Awaiting Payment">Awaiting Payment</option>
-                    <option value="Payment Received">Payment Received</option>
-                    <option value="Processing">Processing</option>
-                    <option value="Awaiting Shipment">Awaiting Shipment</option>
-                    <option value="Shipped">Shipped</option>
-                    <option value="In Transit">In Transit</option>
-                    <option value="Arrived at Destination Country">Arrived at Destination Country</option>
-                    <option value="Out for Delivery">Out for Delivery</option>
-                    <option value="Delivered">Delivered</option>
-                    <option value="Cancelled">Cancelled</option>
-                  </select>
-                  <p className="text-xs text-gray-500 mt-2">
-                    For your own tracking of the supplier/courier handoff only.
-                    The customer never sees this - it does not change the Order Status above.
-                  </p>
                 </div>
 
                 {/* Notes */}
