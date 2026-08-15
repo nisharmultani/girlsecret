@@ -24,6 +24,18 @@ const nextConfig = {
     dangerouslyAllowSVG: true,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
+  // Pre-launch: only one product is ready, so send all homepage traffic
+  // straight to its dedicated page instead of a thin/empty homepage.
+  // Temporary redirect (302) - remove once there's more to show on "/".
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/products/body-clothing-tape',
+        permanent: false,
+      },
+    ];
+  },
   swcMinify: true,
   // Optimize production builds
   compiler: {
