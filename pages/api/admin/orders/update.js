@@ -8,7 +8,7 @@ export default async function handler(req, res) {
 
   try {
     // TODO: Add admin authentication check here
-    const { orderId, status, trackingNumber, carrier, aliexpressStatus, notes } = req.body;
+    const { orderId, status, trackingNumber, carrier, notes } = req.body;
 
     if (!orderId) {
       return res.status(400).json({ error: 'Order ID is required' });
@@ -20,7 +20,6 @@ export default async function handler(req, res) {
     if (status) updateData.Status = status;
     if (trackingNumber) updateData.TrackingNumber = trackingNumber;
     if (carrier) updateData.Carrier = carrier;
-    if (aliexpressStatus) updateData.AliExpressStatus = aliexpressStatus;
     if (notes) updateData.Notes = notes;
 
     const result = await updateOrder(orderId, updateData);
@@ -39,7 +38,6 @@ export default async function handler(req, res) {
       Status: order.status,
       TrackingNumber: order.trackingNumber,
       Carrier: order.carrier,
-      AliExpressStatus: order.supplierStatus,
       Total: order.total,
     };
 
@@ -58,7 +56,7 @@ export default async function handler(req, res) {
 }
 
 async function sendOrderUpdateEmail(order) {
-  const { CustomerEmail, CustomerName, OrderNumber, Status, TrackingNumber, Carrier, AliExpressStatus } = order;
+  const { CustomerEmail, CustomerName, OrderNumber, Status, TrackingNumber, Carrier } = order;
 
   let statusMessage = '';
   let subject = '';
@@ -95,14 +93,6 @@ async function sendOrderUpdateEmail(order) {
     `
     : '';
 
-  const aliexpressInfo = AliExpressStatus
-    ? `
-      <div style="margin: 20px 0; padding: 15px; background-color: #fef3c7; border-radius: 8px;">
-        <p style="margin: 0;"><strong>AliExpress Status:</strong> ${AliExpressStatus}</p>
-      </div>
-    `
-    : '';
-
   const html = `
     <!DOCTYPE html>
     <html>
@@ -130,7 +120,6 @@ async function sendOrderUpdateEmail(order) {
         </div>
 
         ${trackingInfo}
-        ${aliexpressInfo}
 
         <p style="margin-top: 30px;">
           You can track your order anytime by visiting our
@@ -155,11 +144,15 @@ async function sendOrderUpdateEmail(order) {
     </html>
   `;
 
+  const trackingText = TrackingNumber ? `\nTracking Number: ${TrackingNumber}\nCarrier: ${Carrier || 'N/A'}\n` : '';
+  const text = `Hi ${CustomerName},\n\n${statusMessage}\n\nOrder Number: ${OrderNumber}\nStatus: ${Status}\n${trackingText}\nTrack your order: ${process.env.NEXT_PUBLIC_BASE_URL || 'https://girlsecret.com'}/track-order\n\nThe GirlSecret Team`;
+
   try {
     await sendEmail({
       to: CustomerEmail,
       subject,
-      html
+      html,
+      text,
     });
     console.log(`Order update email sent to ${CustomerEmail}`);
   } catch (error) {
