@@ -320,22 +320,7 @@ export default function OrderManagement() {
                   <input
                     type="text"
                     value={updateForm.trackingNumber}
-                    onChange={(e) => {
-                      const trackingNumber = e.target.value;
-                      // Adding a tracking number to a Pending/Processing order
-                      // almost always means it just shipped - bump the status
-                      // automatically so it's not left showing "Pending" by
-                      // mistake. Still fully editable below.
-                      const shouldAutoShip =
-                        trackingNumber &&
-                        !updateForm.trackingNumber &&
-                        (updateForm.status === 'Pending' || updateForm.status === 'Processing');
-                      setUpdateForm({
-                        ...updateForm,
-                        trackingNumber,
-                        status: shouldAutoShip ? 'Shipped' : updateForm.status,
-                      });
-                    }}
+                    onChange={(e) => setUpdateForm({ ...updateForm, trackingNumber: e.target.value })}
                     placeholder="Enter tracking number"
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
                   />
