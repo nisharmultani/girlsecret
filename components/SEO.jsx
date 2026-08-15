@@ -59,7 +59,7 @@ export default function SEO({ page = {} }) {
       <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
 
       {/* Theme Color */}
-      <meta name="theme-color" content="#c35d3f" />
+      <meta name="theme-color" content="#e14d6c" />
 
       {/* Preconnect to external domains for performance */}
       <link rel="preconnect" href="https://www.googletagmanager.com" />
