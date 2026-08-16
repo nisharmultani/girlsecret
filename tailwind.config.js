@@ -64,8 +64,39 @@ module.exports = {
           900: '#6b1c2e',
           950: '#3d0f19',
         },
+        // `luxury` is referenced across checkout/cart/account/login/admin
+        // (~20 files) but was never defined, so those classes have been
+        // silently dropping - aliased to `rose` for the same reason `pink`
+        // is: fix every usage from this one place instead of touching
+        // every file.
+        luxury: {
+          50: '#fef4f6',
+          100: '#fce7ec',
+          200: '#f8ccd6',
+          300: '#f2a3b5',
+          400: '#ea7189',
+          500: '#e14d6c',
+          600: '#cc3a58',
+          700: '#af2c47',
+          800: '#8a2239',
+          900: '#6b1c2e',
+          950: '#3d0f19',
+        },
         // Small, sparing premium accent - dividers, badges, fine details.
-        gold: '#b8935c',
+        // Full scale (not just a flat value) because several existing
+        // pages already reference gold-400/500/600/700 shades.
+        gold: {
+          50: '#fbf8f2',
+          100: '#f5ecda',
+          200: '#ead6ab',
+          300: '#ddbc7e',
+          400: '#cca35f',
+          500: '#b8935c',
+          600: '#a17d49',
+          700: '#826339',
+          800: '#644c2c',
+          900: '#4a3821',
+        },
         // Warm off-white ground, distinct from plain white for alternating
         // sections (product shelf vs. content sections).
         paper: {
