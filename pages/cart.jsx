@@ -140,10 +140,10 @@ export default function Cart() {
 
   if (cart.length === 0) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-paper-warm flex items-center justify-center">
         <div className="text-center">
-          <ShoppingBagIcon className="w-24 h-24 text-gray-400 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Your cart is empty</h2>
+          <ShoppingBagIcon className="w-20 h-20 text-gray-300 mx-auto mb-4" strokeWidth={1.25} />
+          <h2 className="font-serif text-3xl text-gray-900 mb-2">Your cart is empty</h2>
           <p className="text-gray-600 mb-6">Start shopping to add items to your cart</p>
           <Link href="/shop" className="btn-primary inline-block">
             Start Shopping
@@ -154,19 +154,19 @@ export default function Cart() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
+    <div className="min-h-screen bg-paper-warm py-12">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <h1 className="text-3xl font-serif font-bold text-gray-900 mb-8">Shopping Cart</h1>
+        <h1 className="font-serif text-3xl md:text-4xl text-gray-900 mb-8">Shopping Cart</h1>
 
         {/* Referral Banner */}
         {referralApplied && influencerName && discount > 0 && (
-          <div className="bg-gradient-to-r from-luxury-50 to-pink-50 border border-luxury-200 rounded-lg p-4 mb-6 flex items-center gap-3">
-            <SparklesIcon className="w-6 h-6 text-luxury-600 flex-shrink-0" />
+          <div className="bg-rose-50 border border-rose-200 rounded-lg p-4 mb-6 flex items-center gap-3">
+            <SparklesIcon className="w-6 h-6 text-rose-600 flex-shrink-0" />
             <div>
-              <p className="font-semibold text-luxury-900">
-                Special discount applied! 🎉
+              <p className="font-semibold text-rose-900">
+                Special discount applied!
               </p>
-              <p className="text-sm text-luxury-700">
+              <p className="text-sm text-rose-700">
                 You&apos;re using {influencerName}&apos;s link - {formatPrice(discount)} discount applied automatically
               </p>
             </div>
@@ -177,7 +177,7 @@ export default function Cart() {
           {/* Cart Items */}
           <div className="lg:col-span-2 space-y-4">
             {cart.map((item, index) => (
-              <div key={`${item.id}-${item.size}-${item.color}-${index}`} className="bg-white rounded-lg shadow-md p-6">
+              <div key={`${item.id}-${item.size}-${item.color}-${index}`} className="bg-white rounded-lg border border-gray-200 p-6">
                 <div className="flex gap-4">
                   <div className="relative w-32 h-32 flex-shrink-0 bg-gray-100 rounded-lg">
                     <Image
@@ -193,7 +193,7 @@ export default function Cart() {
                     <div className="flex justify-between">
                       <div>
                         <Link href={`/products/${item.slug}`}>
-                          <h3 className="text-lg font-semibold text-gray-900 hover:text-luxury-600">
+                          <h3 className="text-lg font-semibold text-gray-900 hover:text-rose-600">
                             {item.name}
                           </h3>
                         </Link>
@@ -219,7 +219,7 @@ export default function Cart() {
                           {item.originalPrice && item.originalPrice > item.price ? (
                             <div className="flex flex-col gap-1">
                               <div className="flex items-center gap-2 flex-wrap">
-                                <span className="text-luxury-600 font-bold text-lg">
+                                <span className="text-gray-900 font-bold text-lg">
                                   {formatPrice(item.price)}
                                 </span>
                                 <span className="text-gray-500 line-through text-sm">
@@ -231,7 +231,7 @@ export default function Cart() {
                               </div>
                             </div>
                           ) : (
-                            <p className="text-luxury-600 font-bold text-lg">
+                            <p className="text-gray-900 font-bold text-lg">
                               {formatPrice(item.price)}
                             </p>
                           )}
@@ -248,19 +248,19 @@ export default function Cart() {
                     </div>
 
                     <div className="flex items-center gap-4 mt-4">
-                      <div className="flex items-center border border-gray-300 rounded-lg">
+                      <div className="flex items-center border border-gray-300 rounded-full">
                         <button
                           onClick={() => handleUpdateQuantity(item.id, item.quantity - 1, item.size, item.color)}
-                          className="px-3 py-1 hover:bg-gray-100"
+                          className="w-8 h-8 flex items-center justify-center hover:bg-gray-100 rounded-full transition-colors"
                         >
                           -
                         </button>
-                        <span className="px-4 py-1 border-x border-gray-300">
+                        <span className="w-8 text-center">
                           {item.quantity}
                         </span>
                         <button
                           onClick={() => handleUpdateQuantity(item.id, item.quantity + 1, item.size, item.color)}
-                          className="px-3 py-1 hover:bg-gray-100"
+                          className="w-8 h-8 flex items-center justify-center hover:bg-gray-100 rounded-full transition-colors"
                         >
                           +
                         </button>
@@ -278,7 +278,7 @@ export default function Cart() {
 
           {/* Order Summary */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow-md p-6 sticky top-24">
+            <div className="bg-white rounded-lg border border-gray-200 p-6 sticky top-24">
               <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
 
               {/* Promo Code */}

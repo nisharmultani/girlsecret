@@ -101,10 +101,10 @@ export default function Header() {
 
       {/* Main Navigation */}
       <nav
-        className={`transition-all duration-300 ${
+        className={`transition-all duration-300 border-b ${
           scrolled
-            ? 'bg-white shadow-md py-2'
-            : 'bg-white/95 backdrop-blur-sm py-4'
+            ? 'bg-white shadow-sm py-2 border-gray-100'
+            : 'bg-white/95 backdrop-blur-sm py-4 border-transparent'
         }`}
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -163,9 +163,10 @@ export default function Header() {
               <Link
                 key={item.name}
                 href={item.href}
-                className="text-sm font-semibold leading-6 text-gray-900 hover:text-rose-600 transition-colors"
+                className="group relative text-sm font-medium leading-6 text-gray-900 hover:text-rose-600 transition-colors py-1"
               >
                 {item.name}
+                <span className="absolute left-0 -bottom-0.5 h-px w-0 bg-rose-600 transition-all duration-300 group-hover:w-full" />
               </Link>
             ))}
           </div>
@@ -317,7 +318,7 @@ export default function Header() {
                 </Link>
                 <Link
                   href="/register"
-                  className="rounded-lg bg-black px-4 py-2 text-sm font-semibold text-white hover:bg-neutral-800 transition-colors whitespace-nowrap"
+                  className="rounded-full bg-gray-900 px-5 py-2 text-sm font-medium text-white hover:bg-black transition-colors whitespace-nowrap"
                 >
                   Sign Up
                 </Link>
@@ -502,7 +503,7 @@ export default function Header() {
                         </Link>
                         <Link
                           href="/register"
-                          className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 bg-black text-white hover:bg-neutral-800"
+                          className="-mx-3 block rounded-full text-center px-3 py-2.5 text-base font-medium leading-7 bg-gray-900 text-white hover:bg-black"
                           onClick={() => setMobileMenuOpen(false)}
                         >
                           Sign Up

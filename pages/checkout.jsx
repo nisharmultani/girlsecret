@@ -340,19 +340,19 @@ export default function Checkout() {
 
   if (orderComplete) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4">
-        <div className="bg-white rounded-2xl shadow-xl p-8 sm:p-12 text-center max-w-md w-full">
+      <div className="min-h-screen bg-paper-warm flex items-center justify-center py-12 px-4">
+        <div className="bg-white rounded-2xl border border-gray-200 p-8 sm:p-12 text-center max-w-md w-full">
           <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
             <CheckCircleIcon className="w-12 h-12 text-green-600" />
           </div>
-          <h2 className="text-3xl font-serif font-bold text-gray-900 mb-3">Order Confirmed!</h2>
+          <h2 className="text-3xl font-serif text-gray-900 mb-3">Order Confirmed</h2>
           <p className="text-gray-600 mb-6">
             Thank you for your purchase. Your order has been successfully placed.
           </p>
           {orderNumber && (
-            <div className="bg-luxury-50 rounded-lg p-4 mb-6">
+            <div className="bg-rose-50 rounded-lg p-4 mb-6">
               <p className="text-sm text-gray-600 mb-1">Order Number</p>
-              <p className="text-lg font-semibold text-luxury-700">{orderNumber}</p>
+              <p className="text-lg font-semibold text-rose-700">{orderNumber}</p>
             </div>
           )}
           <p className="text-sm text-gray-600 mb-4">
@@ -361,7 +361,7 @@ export default function Checkout() {
           {createAccount && !isAuthenticated && (
             <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-4">
               <p className="text-sm text-green-800 font-medium">
-                ✅ Account created successfully!
+                Account created successfully
               </p>
               <p className="text-xs text-green-700 mt-1">
                 You can now log in to track your order
@@ -385,14 +385,14 @@ export default function Checkout() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
+    <div className="min-h-screen bg-paper-warm py-12">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-serif font-bold text-gray-900">Checkout</h1>
+          <h1 className="font-serif text-3xl md:text-4xl text-gray-900">Checkout</h1>
           {!isAuthenticated && (
             <p className="mt-2 text-gray-600">
               Already have an account?{' '}
-              <Link href="/login?returnUrl=/checkout" className="text-luxury-600 hover:text-luxury-700 font-medium">
+              <Link href="/login?returnUrl=/checkout" className="text-rose-600 hover:text-rose-700 font-medium">
                 Sign in
               </Link>
               {' '}for faster checkout
@@ -402,11 +402,11 @@ export default function Checkout() {
 
         {/* Referral Banner for Guest Users */}
         {!isAuthenticated && influencerName && activeReferralCode && (
-          <div className="bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 rounded-lg p-4 mb-6">
-            <p className="text-sm font-medium text-purple-900">
-              🎉 You&apos;re shopping through {influencerName}&apos;s link!
+          <div className="bg-rose-50 border border-rose-200 rounded-lg p-4 mb-6">
+            <p className="text-sm font-medium text-rose-900">
+              You&apos;re shopping through {influencerName}&apos;s link
             </p>
-            <p className="text-xs text-purple-700 mt-1">
+            <p className="text-xs text-rose-700 mt-1">
               Create an account to track your order and never miss exclusive offers from your favorite influencers
             </p>
           </div>
@@ -417,7 +417,7 @@ export default function Checkout() {
             {/* Checkout Form */}
             <div className="lg:col-span-2 space-y-6">
               {/* Contact Information */}
-              <div className="bg-white rounded-xl shadow-sm p-6">
+              <div className="bg-white rounded-xl border border-gray-200 p-6">
                 <h2 className="text-xl font-semibold mb-4">Contact Information</h2>
 
                 <div className="space-y-4">
@@ -537,7 +537,7 @@ export default function Checkout() {
               </div>
 
               {/* Shipping Address */}
-              <div className="bg-white rounded-xl shadow-sm p-6">
+              <div className="bg-white rounded-xl border border-gray-200 p-6">
                 <div className="flex items-center gap-3 mb-6">
                   <div className="w-10 h-10 rounded-full bg-black/5 flex items-center justify-center">
                     <MapPinIcon className="w-5 h-5 text-black" />
@@ -688,7 +688,7 @@ export default function Checkout() {
               </div>
 
               {/* Gift Options & Order Notes */}
-              <div className="bg-white rounded-xl shadow-sm p-6">
+              <div className="bg-white rounded-xl border border-gray-200 p-6">
                 <h2 className="text-xl font-semibold mb-4">Additional Options</h2>
 
                 <div className="space-y-4">
@@ -703,7 +703,7 @@ export default function Checkout() {
                       />
                       <label htmlFor="isGift" className="ml-3">
                         <span className="text-sm font-medium text-gray-900">
-                          🎁 This is a gift
+                          This is a gift
                         </span>
                         <p className="text-xs text-gray-500 mt-1">
                           We&apos;ll exclude pricing information from the package
@@ -747,11 +747,11 @@ export default function Checkout() {
               </div>
 
               {/* Payment Information */}
-              <div className="bg-white rounded-xl shadow-sm p-6">
+              <div className="bg-white rounded-xl border border-gray-200 p-6">
                 <h2 className="text-xl font-semibold mb-4">Payment Information</h2>
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
-                  <p className="text-sm text-blue-800">
-                    <strong>Demo Mode:</strong> This is a demonstration. In production, integrate with Stripe, PayPal, or other secure payment gateways.
+                <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-4">
+                  <p className="text-sm text-gray-700">
+                    <strong>Demo mode:</strong> card details entered here are not processed or transmitted.
                   </p>
                 </div>
 
@@ -811,7 +811,7 @@ export default function Checkout() {
 
             {/* Order Summary */}
             <div className="lg:col-span-1">
-              <div className="bg-white rounded-xl shadow-sm p-6 sticky top-24">
+              <div className="bg-white rounded-xl border border-gray-200 p-6 sticky top-24">
                 <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
 
                 <div className="space-y-3 mb-6 max-h-64 overflow-y-auto">
