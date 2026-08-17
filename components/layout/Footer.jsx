@@ -140,8 +140,8 @@ export default function Footer() {
   height={45}
   className="h-16 w-auto"
 />
-            <p className="text-sm leading-6 text-gray-300">
-              Discover luxury beauty and lifestyle products that celebrate your unique beauty.
+            <p className="text-sm leading-6 text-gray-300 max-w-xs">
+              Confidence-first fashion essentials, designed in the UK for how you actually get dressed.
             </p>
             <div className="flex space-x-6">
               {footerNavigation.social.map((item) => (
@@ -150,7 +150,7 @@ export default function Footer() {
                   href={item.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-gray-400 hover:text-gold-400 transition-colors"
+                  className="text-gray-400 hover:text-rose-400 transition-colors"
                 >
                   <span className="sr-only">{item.name}</span>
                   <item.icon className="h-6 w-6" aria-hidden="true" />
@@ -255,14 +255,14 @@ export default function Footer() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 disabled={isSubmitting}
-                className="w-full min-w-0 appearance-none rounded-md border-0 bg-white/5 px-3 py-1.5 text-base text-white shadow-sm ring-1 ring-inset ring-white/10 placeholder:text-gray-500 focus:ring-2 focus:ring-inset focus:ring-gold-500 sm:w-56 sm:text-sm sm:leading-6 disabled:opacity-50"
+                className="w-full min-w-0 appearance-none rounded-full border-0 bg-white/5 px-4 py-2 text-base text-white shadow-sm ring-1 ring-inset ring-white/10 placeholder:text-gray-500 focus:ring-2 focus:ring-inset focus:ring-rose-500 sm:w-56 sm:text-sm sm:leading-6 disabled:opacity-50"
                 placeholder="Enter your email"
               />
               <div className="mt-4 sm:ml-4 sm:mt-0 sm:flex-shrink-0">
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="flex w-full items-center justify-center rounded-md bg-gold-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gold-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex w-full items-center justify-center rounded-full bg-rose-600 px-5 py-2 text-sm font-medium text-white hover:bg-rose-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isSubmitting ? 'Subscribing...' : 'Subscribe'}
                 </button>
