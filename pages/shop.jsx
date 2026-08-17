@@ -6,7 +6,6 @@ import ProductGrid from '../components/product/ProductGrid';
 import FilterBar from '../components/product/FilterBar';
 import MobileFilterDrawer from '../components/product/MobileFilterDrawer';
 import { ProductGridSkeleton } from '../components/ui/SkeletonLoader';
-import ShopHero from '../components/ui/ShopHero';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 
 export default function Shop({ products: initialProducts, categories }) {
@@ -213,30 +212,28 @@ export default function Shop({ products: initialProducts, categories }) {
 
       <div className="min-h-screen bg-white">
         {/* Hero Header */}
-        <ShopHero
-          imageSrc="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1920&h=600&fit=crop"
-          title="Exclusive Collection"
-          subtitle="New Arrivals"
-          description="Discover our latest designs crafted for elegance and comfort"
-          ctaText="Explore Now"
-          ctaLink="#products"
-          badge="Limited Time"
-          height="h-[300px] md:h-[400px] lg:h-[500px]"
-          textAlign="left"
-        />
+        <div className="bg-paper-warm pt-16 pb-10 md:pt-20 md:pb-14">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <p className="text-rose-600 text-sm font-medium uppercase tracking-wide mb-3">GirlSecret</p>
+            <h1 className="font-serif text-4xl md:text-5xl text-gray-900 mb-3">Shop the collection</h1>
+            <p className="text-gray-600 max-w-xl">
+              We&apos;re just getting started - new pieces launch here first.
+            </p>
+          </div>
+        </div>
 
         {/* Header - Refined */}
         <div className="bg-white border-b border-gray-100 py-6 md:py-8">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-2xl md:text-3xl font-serif font-bold text-gray-900 mb-1">
+                <h2 className="text-2xl md:text-3xl font-serif text-gray-900 mb-1">
                   {urlSearch
                     ? 'Search Results'
                     : selectedCategory !== 'all'
                     ? `${selectedCategory} Collection`
                     : 'Shop All'}
-                </h1>
+                </h2>
                 <p className="text-sm text-gray-500">
                   {filteredProducts.length} {filteredProducts.length === 1 ? 'product' : 'products'} available
                 </p>
@@ -272,9 +269,9 @@ export default function Shop({ products: initialProducts, categories }) {
             <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide py-2">
               <button
                 onClick={() => handleCategoryChange('all')}
-                className={`px-3 md:px-4 py-1.5 rounded-full text-xs md:text-sm font-semibold whitespace-nowrap transition-all ${
+                className={`px-3 md:px-4 py-1.5 rounded-full text-xs md:text-sm font-medium whitespace-nowrap transition-colors ${
                   selectedCategory === 'all'
-                    ? 'bg-black text-white shadow-md'
+                    ? 'bg-gray-900 text-white'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
@@ -284,9 +281,9 @@ export default function Shop({ products: initialProducts, categories }) {
                 <button
                   key={category}
                   onClick={() => handleCategoryChange(category)}
-                  className={`px-3 md:px-4 py-1.5 rounded-full text-xs md:text-sm font-semibold whitespace-nowrap transition-all ${
+                  className={`px-3 md:px-4 py-1.5 rounded-full text-xs md:text-sm font-medium whitespace-nowrap transition-colors ${
                     selectedCategory === category
-                      ? 'bg-black text-white shadow-md'
+                      ? 'bg-gray-900 text-white'
                       : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
                 >
@@ -320,14 +317,14 @@ export default function Shop({ products: initialProducts, categories }) {
         />
 
         {/* Products Grid - Enhanced Layout */}
-        <div id="products" className="bg-gray-50">
+        <div id="products" className="bg-paper-warm">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
             {isSearching ? (
               <ProductGridSkeleton count={10} />
             ) : filteredProducts.length > 0 ? (
               <ProductGrid products={filteredProducts} />
             ) : (
-              <div className="text-center py-20 bg-white rounded-lg">
+              <div className="text-center py-20 bg-white rounded-lg border border-gray-100">
                 <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gray-100 mb-6">
                   <MagnifyingGlassIcon className="w-10 h-10 text-gray-400" />
                 </div>
@@ -342,7 +339,7 @@ export default function Shop({ products: initialProducts, categories }) {
                 {urlSearch && (
                   <button
                     onClick={clearSearch}
-                    className="inline-flex items-center px-6 py-3 bg-black hover:bg-gray-800 text-white font-semibold transition-colors shadow-lg hover:shadow-xl"
+                    className="btn-primary"
                   >
                     View all products
                   </button>
